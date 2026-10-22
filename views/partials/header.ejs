@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof title !== 'undefined' ? title + ' · ' : '' %>UniShare — Kho tài liệu & giáo trình đại học</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="container nav">
+    <a href="/" class="brand"><span class="brand-mark">U</span>Uni<span>Share</span></a>
+    <form action="/search" method="get" class="nav-search">
+      <input type="search" name="q" placeholder="Tìm theo tên tài liệu, mã học phần (IT3011, TOKT1101)..." value="<%= typeof query !== 'undefined' && path === '/search' ? (query.q || '') : '' %>">
+    </form>
+    <button class="nav-toggle" type="button" onclick="document.querySelector('.nav-links').classList.toggle('open')">Menu</button>
+    <nav class="nav-links">
+      <a href="/search" class="<%= path.startsWith('/search') || path.startsWith('/documents') ? 'active' : '' %>">Kho tài liệu</a>
+      <a href="/market" class="<%= path.startsWith('/market') ? 'active' : '' %>">Giáo trình cũ</a>
+      <a href="/forum" class="<%= path.startsWith('/forum') ? 'active' : '' %>">Thảo luận</a>
+      <a href="/flashcards" class="<%= path.startsWith('/flashcards') ? 'active' : '' %>">Flashcard</a>
+      <a href="/premium" class="premium-link <%= path.startsWith('/premium') ? 'active' : '' %>">Premium</a>
+      <% if (currentUser) { %>
+        <a href="/documents/new" class="btn btn-primary btn-sm">+ Tải lên</a>
+        <a href="/notifications" class="bell" title="Thông báo">Thông báo<% if (unread) { %><span class="badge-dot"><%= unread %></span><% } %></a>
+        <div class="dropdown">
+          <button class="avatar" type="button"><%= currentUser.name.split(' ').slice(-2).join(' ') %> ▾</button>
+          <div class="dropdown-menu">
+            <div class="dropdown-head">
+              <strong><%= currentUser.name %></strong>
+              <% if (premium) { %><span class="tag tag-premium">Thành viên Premium</span><% } %>
+              <small class="muted"><%= u.fmtMoney(currentUser.balance) %> · <%= currentUser.points %> điểm</small>
+            </div>
+            <a href="/my/documents">Tài liệu đã đăng</a>
+            <a href="/my/library">Thư viện đã lưu</a>
+            <a href="/orders">Đơn hàng giáo trình</a>
+            <a href="/wallet">Ví & giao dịch</a>
+            <a href="/profile">Thiết lập tài khoản</a>
+            <% if (currentUser.role === 'admin') { %><a href="/admin">Bảng quản trị (Admin)</a><% } %>
+            <form action="/logout" method="post"><button type="submit">Đăng xuất</button></form>
+          </div>
+        </div>
+      <% } else { %>
+        <a href="/login">Đăng nhập</a>
+        <a href="/register" class="btn btn-primary btn-sm">Đăng ký</a>
+      <% } %>
+    </nav>
+  </div>
+</header>
+<main class="container main">
+<% if (flash) { %>
+  <div class="alert alert-<%= flash.type %>"><%= flash.msg %></div>
+<% } %>

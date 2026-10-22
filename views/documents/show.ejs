@@ -1,0 +1,173 @@
+<%- include('../partials/header') %>
+<div class="layout-main-side">
+  <div>
+    <% if (doc.status !== 'approved') { %>
+      <div class="alert alert-warning">
+        Trạng thái: <strong><%= config.DOC_STATUS[doc.status] %></strong> · <%= doc.moderation_notes %>
+        <% if (currentUser && currentUser.role === 'admin' && (doc.status === 'flagged' || doc.status === 'pending')) { %>
+          <form method="post" action="/admin/documents/<%= doc.id %>/approve" class="inline"><button class="btn btn-primary btn-sm">Duyệt</button></form>
+          <form method="post" action="/admin/documents/<%= doc.id %>/reject" class="inline"><button class="btn btn-danger btn-sm">Từ chối</button></form>
+        <% } %>
+      </div>
+    <% } %>
+
+    <div class="card doc-header">
+      <div class="doc-meta">
+        <span class="tag tag-type"><%= config.DOC_TYPES[doc.doc_type] %></span>
+        <% if (doc.school_code) { %><a class="tag tag-code" href="/search?school=<%= doc.school_id %>"><%= doc.school_code %></a><% } %>
+        <% if (doc.course_code) { %><a class="tag tag-code" href="/search?course=<%= doc.course_code %>"><%= doc.course_code %> – <%= doc.course_name %></a><% } %>
+        <span class="muted small">Đăng bởi <a href="/u/<%= doc.user_id %>"><%= doc.author_name %></a> · <%= u.fmtDate(doc.created_at) %></span>
+      </div>
+      <h1><%= doc.title %></h1>
+      <% if (doc.description) { %><p class="muted"><%= doc.description %></p><% } %>
+      <div class="doc-stats">
+        <span>Đánh giá: <strong><%= doc.rating_count ? doc.rating_avg.toFixed(1) + '/5' : 'Chưa có' %></strong> (<%= doc.rating_count %>)</span>
+        <span>Lượt xem: <strong><%= doc.views %></strong></span>
+        <span>Lượt tải: <strong><%= doc.downloads %></strong></span>
+        <% if (doc.file_name) { %><span>Tệp đính kèm: <code><%= doc.file_name %></code> (<%= u.fmtSize(doc.file_size) %>)</span><% } %>
+      </div>
+      <% if (sales) { %>
+        <div class="small muted" style="margin-top:6px">Đã bán: <strong><%= sales.c %></strong> lượt · Doanh thu tác giả nhận: <strong><%= u.fmtMoney(sales.earned) %></strong></div>
+      <% } %>
+    </div>
+
+    <div class="card viewer" id="doc-viewer" data-watermark="<%= watermark %>">
+      <div class="viewer-bar">
+        <span>Trình đọc bảo vệ bản quyền · <small class="muted">Đã vô hiệu hoá sao chép/in · Đóng dấu định danh người xem</small></span>
+        <span>
+          <% if (access.full && doc.file_path && (doc.allow_download || access.reason === 'owner' || access.reason === 'admin')) { %>
+            <a href="/documents/<%= doc.id %>/download" class="btn btn-primary btn-sm">Tải tệp gốc<%= fileKind === 'pdf' ? ' (đóng dấu PDF)' : '' %></a>
+          <% } else if (doc.file_path && !doc.allow_download) { %>
+            <span class="badge">Chỉ đọc trực tuyến</span>
+          <% } %>
+          <% if (access.full && (doc.content || doc.extracted_text)) { %>
+            <form method="post" action="/documents/<%= doc.id %>/flashcards" class="inline">
+              <button class="btn btn-ghost btn-sm" title="Tính năng Premium">Tạo bộ thẻ Flashcard</button>
+            </form>
+          <% } %>
+        </span>
+      </div>
+
+      <div class="watermark-layer" id="wm-floating"><%= watermark %></div>
+
+      <% if (fileKind === 'video') { %>
+        <% if (access.full) { %>
+          <div class="video-wrap">
+            <video controls controlsList="nodownload" disablePictureInPicture oncontextmenu="return false" src="/documents/<%= doc.id %>/stream"></video>
+            <div class="video-wm" id="video-wm"><%= watermark %></div>
+          </div>
+        <% } else { %>
+          <div class="video-locked">Khoá học video · Mua khoá học để mở trình phát toàn bộ bài giảng.</div>
+        <% } %>
+      <% } %>
+
+      <% if (fileKind === 'pdf') { %>
+        <iframe class="pdf-frame" src="/documents/<%= doc.id %>/file#toolbar=0&navpanes=0"></iframe>
+        <% if (!access.full) { %><div class="muted small center">Đang hiển thị bản xem trước 20% số trang đầu (đã đóng dấu chìm).</div><% } %>
+      <% } else if (fileKind === 'image' && access.full) { %>
+        <img src="/documents/<%= doc.id %>/file" alt="<%= doc.title %>" class="doc-image">
+      <% } %>
+
+      <% if (contentHtml) { %>
+        <article class="doc-body <%= access.full ? '' : 'faded' %>"><%- contentHtml %></article>
+      <% } %>
+
+      <% if (textFile) { %>
+        <pre class="code-view <%= access.full ? '' : 'faded' %>"><code><%= textFile %></code></pre>
+      <% } %>
+
+      <% if (!contentHtml && !textFile && fileKind === 'other') { %>
+        <p class="muted">Tệp đính kèm: <strong><%= doc.file_name %></strong> (<%= u.fmtSize(doc.file_size) %>).
+          <% if (!access.full) { %>Mở khoá hoặc mua tài liệu để truy cập tệp.<% } else if (!doc.allow_download && access.reason !== 'owner') { %>Tác giả chỉ cho phép đọc trực tuyến.<% } %>
+        </p>
+      <% } %>
+
+      <% if (!access.full) { %>
+        <div class="paywall">
+          <h3>Bạn đang xem trước <%= config.PREVIEW_RATIO * 100 %>% tài liệu</h3>
+          <% if (doc.price > 0) { %>
+            <p>Tài liệu tự biên soạn bởi <strong><%= doc.author_name %></strong>. Mua quyền truy cập để đọc toàn bộ nội dung<%= doc.allow_download ? ' và tải tệp' : '' %>.</p>
+            <div class="price-big"><%= u.fmtMoney(doc.price) %></div>
+            <p class="small muted">Tác giả nhận <%= 100 - config.DOC_COMMISSION_RATE * 100 %>% · Nền tảng thu <%= config.DOC_COMMISSION_RATE * 100 %>% phí dịch vụ trung gian.</p>
+            <% if (currentUser) { %>
+              <form method="post" action="/documents/<%= doc.id %>/buy">
+                <button class="btn btn-primary btn-lg">Mua bằng số dư ví (<%= u.fmtMoney(currentUser.balance) %>)</button>
+              </form>
+              <% if (currentUser.balance < doc.price) { %><a href="/wallet" class="btn btn-ghost">Nạp thêm vào ví →</a><% } %>
+            <% } else { %>
+              <a href="/login" class="btn btn-primary btn-lg">Đăng nhập để mua</a>
+            <% } %>
+          <% } else { %>
+            <p>Tài liệu miễn phí — mở khoá bằng <strong><%= config.POINTS.unlockCost %> điểm</strong> (nhận +<%= config.POINTS.approvedUpload %> điểm khi đóng góp tài liệu) hoặc dùng <strong>Premium</strong> để đọc không giới hạn.</p>
+            <% if (currentUser) { %>
+              <div class="btn-row center">
+                <form method="post" action="/documents/<%= doc.id %>/unlock">
+                  <button class="btn btn-primary">Mở khoá bằng <%= config.POINTS.unlockCost %> điểm (hiện có <%= currentUser.points %> điểm)</button>
+                </form>
+                <a href="/premium" class="btn btn-gold">Nâng cấp Premium</a>
+                <a href="/documents/new" class="btn btn-ghost">Đăng tài liệu (+<%= config.POINTS.approvedUpload %> điểm)</a>
+              </div>
+            <% } else { %>
+              <a href="/register" class="btn btn-primary btn-lg">Đăng ký nhận <%= config.POINTS.signup %> điểm miễn phí</a>
+            <% } %>
+          <% } %>
+        </div>
+      <% } %>
+    </div>
+
+    <section class="card" id="reviews">
+      <h2>Đánh giá từ người đọc (<%= reviews.length %>)</h2>
+      <% if (currentUser && access.full && access.reason !== 'owner') { %>
+        <form method="post" action="/documents/<%= doc.id %>/review" class="form review-form">
+          <div class="row">
+            <label>Mức đánh giá
+              <select name="rating">
+                <% [5,4,3,2,1].forEach(function (n) { %><option value="<%= n %>" <%= myReview && myReview.rating === n ? 'selected' : '' %>><%= n %> / 5</option><% }) %>
+              </select>
+            </label>
+            <label style="flex:3">Nhận xét<input type="text" name="comment" value="<%= myReview ? myReview.comment : '' %>" placeholder="Tài liệu có bám sát đề cương học phần không?"></label>
+          </div>
+          <button class="btn btn-primary btn-sm"><%= myReview ? 'Cập nhật đánh giá' : 'Gửi đánh giá' %></button>
+        </form>
+      <% } %>
+      <% if (!reviews.length) { %><p class="muted">Chưa có đánh giá nào.</p><% } %>
+      <% reviews.forEach(function (r) { %>
+        <div class="review-item">
+          <div><strong><%= r.user_name %></strong> · <span class="stars"><%= r.rating %>/5</span> <span class="muted small">· <%= u.fmtDate(r.created_at) %></span></div>
+          <div><%= r.comment %></div>
+        </div>
+      <% }) %>
+    </section>
+  </div>
+
+  <aside>
+    <div class="card">
+      <h3>Thông tin bản quyền</h3>
+      <p><strong>Mức giá:</strong> <%= doc.price ? u.fmtMoney(doc.price) : 'Miễn phí' %></p>
+      <p><strong>Người biên soạn:</strong> <a href="/u/<%= doc.user_id %>"><%= doc.author_name %></a></p>
+      <p class="small muted">Đã xác nhận cam kết quyền sở hữu trí tuệ (Click-wrap) lúc <%= u.fmtDate(doc.copyright_agreed_at) %>.</p>
+      <hr>
+      <a href="/dmca?doc=<%= doc.id %>" class="btn btn-ghost btn-sm btn-block text-danger">Báo cáo vi phạm bản quyền (DMCA)</a>
+      <% if (currentUser && (currentUser.id === doc.user_id || currentUser.role === 'admin')) { %>
+        <form method="post" action="/documents/<%= doc.id %>/delete" onsubmit="return confirm('Xoá tài liệu này?')">
+          <button class="btn btn-danger btn-sm btn-block" style="margin-top:8px">Xoá tài liệu</button>
+        </form>
+      <% } %>
+    </div>
+
+    <% if (related.length) { %>
+      <div class="card">
+        <h3>Tài liệu cùng học phần</h3>
+        <% related.forEach(function (r) { %>
+          <a href="/documents/<%= r.id %>" class="side-link">
+            <strong><%= r.title %></strong>
+            <span class="small muted"><%= r.course_code || '' %> · <%= r.price ? u.fmtMoney(r.price) : 'Miễn phí' %></span>
+          </a>
+        <% }) %>
+      </div>
+    <% } %>
+
+    <%- include('../partials/ads-sidebar') %>
+  </aside>
+</div>
+<%- include('../partials/footer') %>

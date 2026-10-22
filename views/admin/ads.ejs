@@ -1,0 +1,53 @@
+<%- include('../partials/header') %>
+<h1>📣 Quản lý quảng cáo đối tác</h1>
+<%- include('nav') %>
+
+<form method="post" action="/admin/ads" class="card form">
+  <h3>Thêm chiến dịch quảng cáo (nhà sách, trung tâm ngoại ngữ, khoá học, dịch vụ SV)</h3>
+  <div class="row">
+    <label>Nhà quảng cáo *<input type="text" name="advertiser" required></label>
+    <label>Nhóm
+      <select name="category">
+        <option value="bookstore">Nhà sách</option>
+        <option value="language">Trung tâm ngoại ngữ</option>
+        <option value="course">Khoá học</option>
+        <option value="service">Dịch vụ sinh viên</option>
+      </select>
+    </label>
+    <label>Vị trí
+      <select name="placement"><option value="sidebar">Sidebar</option><option value="home">Banner trang chủ</option></select>
+    </label>
+    <label>Ngân sách hợp đồng (đ)<input type="number" name="budget" value="2000000" step="100000"></label>
+  </div>
+  <div class="row">
+    <label>Tiêu đề *<input type="text" name="title" required></label>
+    <label>Link đích (https://...) *<input type="url" name="link_url" required placeholder="https://..."></label>
+  </div>
+  <label>Nội dung ngắn<input type="text" name="body"></label>
+  <button class="btn btn-primary btn-sm">+ Tạo quảng cáo</button>
+</form>
+
+<div class="card table-wrap">
+  <table>
+    <thead><tr><th>#</th><th>Đối tác & Nội dung</th><th>Vị trí</th><th>Ngân sách</th><th>Hiển thị</th><th>Click</th><th>CTR</th><th>Trạng thái</th><th></th></tr></thead>
+    <tbody>
+      <% ads.forEach(function (a) { %>
+        <tr>
+          <td>#<%= a.id %></td>
+          <td><strong><%= a.advertiser %></strong> – <%= a.title %><div class="small muted"><%= a.body %> · <a href="<%= a.link_url %>" target="_blank" rel="noopener"><%= a.link_url %></a></div></td>
+          <td><%= a.placement %></td>
+          <td><%= u.fmtMoney(a.budget) %></td>
+          <td><%= a.impressions %></td>
+          <td><%= a.clicks %></td>
+          <td><%= a.impressions ? (a.clicks * 100 / a.impressions).toFixed(1) + '%' : '0%' %></td>
+          <td><span class="status status-<%= a.active ? 'approved' : 'deleted' %>"><%= a.active ? 'Đang chạy' : 'Tạm dừng' %></span></td>
+          <td>
+            <form method="post" action="/admin/ads/<%= a.id %>/toggle" class="inline"><button class="btn btn-ghost btn-sm"><%= a.active ? 'Dừng' : 'Bật' %></button></form>
+            <form method="post" action="/admin/ads/<%= a.id %>/delete" class="inline"><button class="btn btn-danger btn-sm">✕</button></form>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+<%- include('../partials/footer') %>

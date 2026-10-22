@@ -1,0 +1,51 @@
+<%- include('../partials/header') %>
+<h1>⚠️ Khiếu nại bản quyền (Notice & Takedown – hạn <%= config.TAKEDOWN_HOURS %>h)</h1>
+<%- include('nav') %>
+
+<div class="card table-wrap">
+  <table>
+    <thead><tr><th>#</th><th>Tài liệu</th><th>Người khiếu nại</th><th>Lý do & bằng chứng</th><th>Hạn xử lý</th><th>Trạng thái</th><th>Xử lý</th></tr></thead>
+    <tbody>
+      <% reports.forEach(function (r) { var h = Math.round(r.hours_left); %>
+        <tr>
+          <td>#<%= r.id %></td>
+          <td>
+            <a href="/documents/<%= r.document_id %>" target="_blank"><strong>#<%= r.document_id %> <%= r.doc_title %></strong></a>
+            <div class="small muted">Người đăng: <%= r.uploader_name %> (<%= r.strikes %>/<%= config.STRIKE_BAN %> strike)</div>
+          </td>
+          <td>
+            <strong><%= r.reporter_name %></strong> (<%= config.REPORTER_ROLES[r.reporter_role] || r.reporter_role %>)
+            <div class="small muted"><%= r.reporter_email %></div>
+            <% if (r.original_work) { %><div class="small">Tác phẩm gốc: <%= r.original_work %></div><% } %>
+          </td>
+          <td class="small">
+            <%= r.reason %>
+            <% if (r.evidence_url) { %><div><a href="<%= r.evidence_url %>" target="_blank" rel="noopener">🔗 Bằng chứng</a></div><% } %>
+          </td>
+          <td>
+            <% if (r.status === 'open') { %>
+              <span class="tag <%= h < 0 ? 'tag-danger' : h < 12 ? 'tag-warn' : '' %>"><%= h < 0 ? 'Quá hạn ' + (-h) + 'h' : 'Còn ' + h + 'h' %></span>
+            <% } else { %><span class="small muted"><%= u.fmtDate(r.resolved_at) %></span><% } %>
+          </td>
+          <td><span class="status status-<%= r.status %>"><%= r.status === 'open' ? 'Đang mở' : r.status === 'resolved_removed' ? 'Đã gỡ bỏ' : 'Đã bác bỏ' %></span></td>
+          <td>
+            <% if (r.status === 'open') { %>
+              <form method="post" action="/admin/reports/<%= r.id %>/takedown" class="form-compact">
+                <input type="text" name="note" placeholder="Ghi chú xử lý" class="input-sm">
+                <label class="check small"><input type="checkbox" name="blacklist_hash" value="1" checked> Chặn hash file</label>
+                <button class="btn btn-danger btn-sm">Gỡ tài liệu & +1 strike</button>
+              </form>
+              <form method="post" action="/admin/reports/<%= r.id %>/reject" style="margin-top:4px">
+                <button class="btn btn-ghost btn-sm">Bác bỏ khiếu nại</button>
+              </form>
+            <% } else { %>
+              <span class="small muted"><%= r.admin_note || '' %></span>
+            <% } %>
+          </td>
+        </tr>
+      <% }) %>
+      <% if (!reports.length) { %><tr><td colspan="7" class="muted center">Không có khiếu nại nào.</td></tr><% } %>
+    </tbody>
+  </table>
+</div>
+<%- include('../partials/footer') %>

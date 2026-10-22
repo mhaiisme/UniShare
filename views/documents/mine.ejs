@@ -1,0 +1,35 @@
+<%- include('../partials/header') %>
+<div class="section-head">
+  <h1>📄 Tài liệu của tôi</h1>
+  <a href="/documents/new" class="btn btn-primary">+ Đăng tài liệu mới</a>
+</div>
+<div class="stats-row">
+  <div class="stat card"><strong><%= docs.length %></strong><span>Tài liệu đã đăng</span></div>
+  <div class="stat card"><strong><%= totals.sales %></strong><span>Lượt bán</span></div>
+  <div class="stat card"><strong><%= u.fmtMoney(totals.earned) %></strong><span>Doanh thu đã nhận (80%)</span></div>
+</div>
+<div class="card table-wrap">
+  <table>
+    <thead><tr><th>Tiêu đề</th><th>Môn</th><th>Giá</th><th>Trạng thái</th><th>Lượt xem</th><th>Đã bán</th><th>Thu nhập</th><th></th></tr></thead>
+    <tbody>
+      <% docs.forEach(function (d) { %>
+        <tr>
+          <td><a href="/documents/<%= d.id %>"><strong><%= d.title %></strong></a><div class="small muted"><%= d.moderation_notes %></div></td>
+          <td><%= d.course_code || '–' %></td>
+          <td><%= d.price ? u.fmtMoney(d.price) : 'Miễn phí' %></td>
+          <td><span class="status status-<%= d.status %>"><%= config.DOC_STATUS[d.status] %></span></td>
+          <td><%= d.views %></td>
+          <td><%= d.sales %></td>
+          <td><%= u.fmtMoney(d.earned) %></td>
+          <td>
+            <form method="post" action="/documents/<%= d.id %>/delete" onsubmit="return confirm('Xoá tài liệu?')">
+              <button class="btn btn-ghost btn-sm">Xoá</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+      <% if (!docs.length) { %><tr><td colspan="8" class="muted center">Bạn chưa đăng tài liệu nào.</td></tr><% } %>
+    </tbody>
+  </table>
+</div>
+<%- include('../partials/footer') %>

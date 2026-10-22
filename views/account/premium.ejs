@@ -1,0 +1,36 @@
+<%- include('../partials/header') %>
+<div class="center">
+  <h1>⭐ Nâng cấp UniShare Premium</h1>
+  <p class="muted">Xem không giới hạn kho tài liệu miễn phí, tự sinh Flashcard bằng AI, làm Quiz trắc nghiệm và không quảng cáo.</p>
+  <% if (premium) { %>
+    <div class="alert alert-success">Bạn đang là thành viên <strong>Premium</strong> đến ngày <strong><%= u.fmtDate(currentUser.premium_until) %></strong>. Mua thêm gói sẽ được cộng dồn thời hạn.</div>
+  <% } %>
+</div>
+
+<div class="grid grid-3" style="margin-top:20px">
+  <% Object.keys(config.PREMIUM_PLANS).forEach(function (key) { var p = config.PREMIUM_PLANS[key]; %>
+    <div class="card plan-card <%= key === 'semester' ? 'featured' : '' %>">
+      <% if (key === 'semester') { %><div class="plan-ribbon">Phổ biến nhất</div><% } %>
+      <h3><%= p.name %></h3>
+      <div class="price-big"><%= u.fmtMoney(p.price) %></div>
+      <div class="muted"><%= p.days %> ngày sử dụng</div>
+      <ul class="checklist">
+        <li>Xem toàn bộ tài liệu miễn phí không tốn điểm</li>
+        <li>Bộ thẻ & số lượng Flashcard không giới hạn</li>
+        <li>Tự động sinh Flashcard từ tài liệu</li>
+        <li>Tạo đề Quiz trắc nghiệm 4 đáp án</li>
+        <li>Ẩn toàn bộ quảng cáo</li>
+      </ul>
+      <% if (currentUser) { %>
+        <form method="post" action="/premium/buy">
+          <input type="hidden" name="plan" value="<%= key %>">
+          <button class="btn btn-primary btn-block">Đăng ký (<%= u.fmtMoney(p.price) %>)</button>
+        </form>
+      <% } else { %>
+        <a href="/login" class="btn btn-primary btn-block">Đăng nhập để đăng ký</a>
+      <% } %>
+    </div>
+  <% }) %>
+</div>
+<p class="muted small center" style="margin-top:16px">Lưu ý: Các tài liệu/khoá học do tác giả tự định giá trên chợ thương mại vẫn thanh toán riêng cho tác giả.</p>
+<%- include('../partials/footer') %>

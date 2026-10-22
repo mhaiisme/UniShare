@@ -1,0 +1,54 @@
+<%- include('../partials/header') %>
+<h1>Bảng quản trị hệ thống</h1>
+<%- include('nav') %>
+
+<div class="stats-row">
+  <div class="stat card"><strong><%= u.fmtMoney(totalRevenue) %></strong><span>Tổng doanh thu nền tảng</span></div>
+  <div class="stat card"><strong><%= u.fmtMoney(revenue30) %></strong><span>Doanh thu 30 ngày gần nhất</span></div>
+  <div class="stat card"><strong><%= u.fmtMoney(stats.gmv) %></strong><span>Tổng giá trị giao dịch (GMV)</span></div>
+  <div class="stat card"><strong><%= stats.users.toLocaleString('vi-VN') %> (<%= stats.premium %> Premium)</strong><span>Tài khoản sinh viên</span></div>
+</div>
+
+<div class="stats-row">
+  <a class="stat card" href="/admin/moderation"><strong><%= stats.flagged %></strong><span>Tài liệu chờ kiểm duyệt</span></a>
+  <a class="stat card" href="/admin/reports"><strong class="<%= stats.overdue ? 'text-danger' : '' %>"><%= stats.reports %> (<%= stats.overdue %> quá hạn)</strong><span>Khiếu nại bản quyền đang mở</span></a>
+  <div class="stat card"><strong><%= stats.docs.toLocaleString('vi-VN') %></strong><span>Tài liệu đã duyệt</span></div>
+  <div class="stat card"><strong><%= stats.purchases.toLocaleString('vi-VN') %> / <%= stats.orders.toLocaleString('vi-VN') %></strong><span>Lượt mua tài liệu / Đơn giáo trình</span></div>
+</div>
+
+<div class="two-col">
+  <div class="card table-wrap">
+    <h3 style="padding:12px 12px 4px">Cơ cấu doanh thu theo mô hình</h3>
+    <table>
+      <thead><tr><th>Nguồn thu</th><th>Số giao dịch</th><th>Doanh thu</th><th>Tỉ trọng</th></tr></thead>
+      <tbody>
+        <% revenue.forEach(function (r) { %>
+          <tr>
+            <td><strong><%= config.REVENUE_SOURCES[r.source] || r.source %></strong></td>
+            <td><%= r.n.toLocaleString('vi-VN') %></td>
+            <td><%= u.fmtMoney(r.total) %></td>
+            <td><%= totalRevenue ? Math.round(r.total * 100 / totalRevenue) : 0 %>%</td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card table-wrap">
+    <h3 style="padding:12px 12px 4px">Bút toán doanh thu gần đây</h3>
+    <table>
+      <thead><tr><th>Thời gian</th><th>Nguồn</th><th>Tham chiếu</th><th>Số tiền</th></tr></thead>
+      <tbody>
+        <% recent.forEach(function (r) { %>
+          <tr>
+            <td class="small muted"><%= u.fmtDate(r.created_at) %></td>
+            <td><span class="tag"><%= config.REVENUE_SOURCES[r.source] || r.source %></span></td>
+            <td class="small code"><%= r.ref %></td>
+            <td><strong><%= u.fmtMoney(r.amount) %></strong></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<%- include('../partials/footer') %>

@@ -1,0 +1,28 @@
+<%- include('../partials/header') %>
+<h1>🚫 Blacklist kiểm duyệt tự động</h1>
+<%- include('nav') %>
+<p class="muted">Từ khoá (keyword) sẽ gắn cờ tài liệu để duyệt thủ công; mã băm SHA-256 (hash) của file vi phạm sẽ chặn tải lên ngay lập tức.</p>
+
+<form method="post" action="/admin/blacklist" class="card form inline-form">
+  <select name="type"><option value="keyword">Từ khoá (keyword)</option><option value="hash">SHA-256 file (hash)</option></select>
+  <input type="text" name="value" required placeholder="Từ khoá hoặc chuỗi SHA-256">
+  <input type="text" name="note" placeholder="Ghi chú">
+  <button class="btn btn-primary">+ Thêm</button>
+</form>
+
+<div class="card table-wrap">
+  <table>
+    <thead><tr><th>Loại</th><th>Giá trị</th><th>Ghi chú</th><th></th></tr></thead>
+    <tbody>
+      <% items.forEach(function (i) { %>
+        <tr>
+          <td><span class="tag"><%= i.type %></span></td>
+          <td><code><%= i.value %></code></td>
+          <td class="muted small"><%= i.note || '' %></td>
+          <td><form method="post" action="/admin/blacklist/<%= i.id %>/delete"><button class="btn btn-ghost btn-sm">Xoá</button></form></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+<%- include('../partials/footer') %>

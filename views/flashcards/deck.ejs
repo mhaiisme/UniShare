@@ -1,0 +1,46 @@
+<%- include('../partials/header') %>
+<div class="section-head">
+  <div>
+    <h1><%= deck.title %></h1>
+    <p class="muted"><%= deck.description || '' %> · <%= cards.length %> thẻ</p>
+  </div>
+  <div class="btn-row">
+    <a href="/flashcards/<%= deck.id %>/study" class="btn btn-primary">▶ Học các thẻ đến hạn</a>
+    <a href="/flashcards/<%= deck.id %>/study?all=1" class="btn btn-ghost">Ôn toàn bộ</a>
+    <a href="/flashcards/<%= deck.id %>/quiz" class="btn btn-gold">🎯 Làm Quiz trắc nghiệm</a>
+    <form method="post" action="/flashcards/<%= deck.id %>/delete" onsubmit="return confirm('Xoá bộ thẻ?')" class="inline">
+      <button class="btn btn-danger btn-sm">Xoá bộ</button>
+    </form>
+  </div>
+</div>
+
+<form method="post" action="/flashcards/<%= deck.id %>/cards" class="card form">
+  <h3>Thêm thẻ mới</h3>
+  <div class="row">
+    <label>Mặt trước (câu hỏi / thuật ngữ)<input type="text" name="front" required></label>
+    <label>Mặt sau (đáp án / định nghĩa)<input type="text" name="back" required></label>
+  </div>
+  <button class="btn btn-primary btn-sm">+ Thêm thẻ</button>
+</form>
+
+<div class="card table-wrap">
+  <table>
+    <thead><tr><th>Mặt trước</th><th>Mặt sau</th><th>Hộp Leitner</th><th>Ôn tiếp</th><th></th></tr></thead>
+    <tbody>
+      <% cards.forEach(function (c) { %>
+        <tr>
+          <td><strong><%= c.front %></strong></td>
+          <td><%= c.back %></td>
+          <td>Hộp <%= c.box %>/5</td>
+          <td class="small muted"><%= c.next_review ? u.fmtDate(c.next_review) : 'Sẵn sàng' %></td>
+          <td>
+            <form method="post" action="/flashcards/<%= deck.id %>/cards/<%= c.id %>/delete">
+              <button class="btn btn-ghost btn-sm">✕</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+<%- include('../partials/footer') %>

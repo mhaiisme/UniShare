@@ -1,0 +1,39 @@
+<%- include('../partials/header') %>
+<h1>👥 Người dùng</h1>
+<%- include('nav') %>
+<form method="get" class="inline-filter">
+  <input type="text" name="q" placeholder="Tìm email hoặc họ tên" value="<%= q %>">
+  <button class="btn btn-ghost">Tìm</button>
+</form>
+
+<div class="card table-wrap">
+  <table>
+    <thead><tr><th>ID</th><th>Họ tên & Email</th><th>Trường</th><th>Số dư</th><th>Điểm</th><th>Premium</th><th>Tài liệu</th><th>Strike</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+    <tbody>
+      <% users.forEach(function (usr) { %>
+        <tr>
+          <td>#<%= usr.id %></td>
+          <td><a href="/u/<%= usr.id %>"><strong><%= usr.name %></strong></a><div class="small muted"><%= usr.email %> · <%= usr.role %></div></td>
+          <td><%= usr.school_code || '–' %></td>
+          <td><%= u.fmtMoney(usr.balance) %></td>
+          <td><%= usr.points %></td>
+          <td><%= u.isPremium(usr) ? u.fmtDate(usr.premium_until, false) : '–' %></td>
+          <td><%= usr.doc_count %></td>
+          <td><span class="<%= usr.strikes ? 'text-danger' : '' %>"><%= usr.strikes %>/<%= config.STRIKE_BAN %></span></td>
+          <td><span class="status status-<%= usr.banned ? 'rejected' : 'approved' %>"><%= usr.banned ? 'Đã khoá' : 'Hoạt động' %></span></td>
+          <td>
+            <% if (usr.id !== currentUser.id) { %>
+              <form method="post" action="/admin/users/<%= usr.id %>/ban" class="inline">
+                <button class="btn <%= usr.banned ? 'btn-primary' : 'btn-danger' %> btn-sm"><%= usr.banned ? 'Mở khoá' : 'Khoá' %></button>
+              </form>
+              <% if (usr.strikes > 0) { %>
+                <form method="post" action="/admin/users/<%= usr.id %>/strikes/reset" class="inline"><button class="btn btn-ghost btn-sm">Xoá strike</button></form>
+              <% } %>
+            <% } %>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+<%- include('../partials/footer') %>

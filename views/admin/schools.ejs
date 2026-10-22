@@ -1,0 +1,44 @@
+<%- include('../partials/header') %>
+<h1>🏫 Trường & Môn học</h1>
+<%- include('nav') %>
+
+<div class="two-col">
+  <div>
+    <form method="post" action="/admin/schools" class="card form">
+      <h3>Thêm trường</h3>
+      <div class="row">
+        <label>Mã trường<input type="text" name="code" required placeholder="VD: HUST"></label>
+        <label>Tên trường<input type="text" name="name" required></label>
+      </div>
+      <button class="btn btn-primary btn-sm">+ Thêm trường</button>
+    </form>
+    <div class="card table-wrap">
+      <table>
+        <thead><tr><th>Mã</th><th>Tên trường</th></tr></thead>
+        <tbody><% schools.forEach(function (s) { %><tr><td><strong><%= s.code %></strong></td><td><%= s.name %></td></tr><% }) %></tbody>
+      </table>
+    </div>
+  </div>
+  <div>
+    <form method="post" action="/admin/courses" class="card form">
+      <h3>Thêm môn học</h3>
+      <label>Trường
+        <select name="school_id" required>
+          <% schools.forEach(function (s) { %><option value="<%= s.id %>"><%= s.code %> – <%= s.name %></option><% }) %>
+        </select>
+      </label>
+      <div class="row">
+        <label>Mã môn<input type="text" name="code" required placeholder="IT3011"></label>
+        <label>Tên môn<input type="text" name="name" required></label>
+      </div>
+      <button class="btn btn-primary btn-sm">+ Thêm môn</button>
+    </form>
+    <div class="card table-wrap">
+      <table>
+        <thead><tr><th>Trường</th><th>Mã môn</th><th>Tên môn</th></tr></thead>
+        <tbody><% courses.forEach(function (c) { %><tr><td><%= c.school_code %></td><td><strong><%= c.code %></strong></td><td><%= c.name %></td></tr><% }) %></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<%- include('../partials/footer') %>

@@ -1,0 +1,119 @@
+<%- include('partials/header') %>
+<section class="hero">
+  <div>
+    <h1>Thư viện học liệu & đề cương ôn tập theo mã học phần</h1>
+    <p>Tra cứu đề cương tự biên soạn, bảng tóm tắt công thức, lời giải đề thi chi tiết và trao đổi giáo trình cũ giữa sinh viên các trường đại học.</p>
+    <form action="/search" method="get" class="hero-search">
+      <input type="text" name="q" placeholder="Tên môn, chủ đề (VD: quy hoạch động, OLS, L/C)...">
+      <select name="school">
+        <option value="">Tất cả trường (<%= stats.schools %>)</option>
+        <% schools.forEach(function (s) { %><option value="<%= s.id %>"><%= s.code %> – <%= s.name %></option><% }) %>
+      </select>
+      <input type="text" name="course" placeholder="Mã môn: IT3011" class="w-course">
+      <button class="btn btn-primary">Tra cứu</button>
+    </form>
+    <div class="hero-stats">
+      <div><strong><%= stats.docs.toLocaleString('vi-VN') %></strong><span>tài liệu đã duyệt</span></div>
+      <div><strong><%= stats.courses %></strong><span>môn học</span></div>
+      <div><strong><%= stats.users.toLocaleString('vi-VN') %></strong><span>sinh viên</span></div>
+      <div><strong><%= stats.reviews.toLocaleString('vi-VN') %></strong><span>đánh giá</span></div>
+      <div><strong><%= stats.listings %></strong><span>giáo trình đang bán</span></div>
+    </div>
+  </div>
+  <div class="hero-card">
+    <h3>Đóng góp học liệu & nhận doanh thu</h3>
+    <ul class="checklist">
+      <li>Nhận <strong>80%</strong> doanh thu khi bán đề cương, lời giải, báo cáo mẫu do chính bạn biên soạn</li>
+      <li>Cộng <strong>+<%= config.POINTS.approvedUpload %> điểm</strong> cho mỗi tài liệu miễn phí vượt qua kiểm duyệt</li>
+      <li>Bảo vệ tài liệu bằng trình đọc chống sao chép & đóng dấu chìm PDF động</li>
+    </ul>
+    <a href="/documents/new" class="btn btn-light btn-sm">Tải tài liệu lên →</a>
+  </div>
+</section>
+
+<section>
+  <div class="section-head">
+    <h2>Tra cứu theo trường đại học</h2>
+    <span class="muted small"><%= schools.length %> trường thành viên</span>
+  </div>
+  <div class="school-grid">
+    <% schools.forEach(function (s) { %>
+      <a class="school-item" href="/search?school=<%= s.id %>">
+        <div>
+          <span class="school-code"><%= s.code %></span>
+          <span class="school-name" title="<%= s.name %>"><%= s.name %></span>
+        </div>
+        <span class="school-count"><%= s.doc_count %> TL</span>
+      </a>
+    <% }) %>
+  </div>
+</section>
+
+<section>
+  <div class="section-head">
+    <h2>Học phần được tra cứu nhiều</h2>
+    <a href="/search" class="small">Xem toàn bộ kho tài liệu →</a>
+  </div>
+  <div class="course-chips">
+    <% popularCourses.forEach(function (c) { %>
+      <a class="course-chip" href="/search?school=<%= c.school_id %>&course=<%= c.code %>">
+        <code><%= c.school_code %> · <%= c.code %></code>
+        <span><%= c.name %></span>
+        <span class="muted small">(<%= c.doc_count %>)</span>
+      </a>
+    <% }) %>
+  </div>
+</section>
+
+<% if (ads.home && ads.home.length) { %>
+<section class="ad-strip">
+  <% ads.home.forEach(function (ad) { %>
+    <a class="ad-banner" href="/ads/<%= ad.id %>/click" target="_blank" rel="noopener sponsored">
+      <span class="ad-label">Đối tác tài trợ · <%= ad.advertiser %></span>
+      <strong><%= ad.title %></strong><span class="small muted"><%= ad.body %></span>
+    </a>
+  <% }) %>
+</section>
+<% } %>
+
+<section>
+  <div class="section-head"><h2>Tài liệu được đánh giá cao</h2><a href="/search?sort=rating" class="small">Xem tất cả →</a></div>
+  <div class="grid grid-3">
+    <% topRated.forEach(function (d) { %><%- include('partials/doc-card', { d: d }) %><% }) %>
+  </div>
+</section>
+
+<section>
+  <div class="section-head"><h2>Tài liệu mới cập nhật</h2><a href="/search?sort=newest" class="small">Xem tất cả →</a></div>
+  <div class="grid grid-4">
+    <% latest.forEach(function (d) { %><%- include('partials/doc-card', { d: d }) %><% }) %>
+    <% if (!latest.length) { %><p class="muted">Chưa có tài liệu nào.</p><% } %>
+  </div>
+</section>
+
+<section class="two-col">
+  <div>
+    <div class="section-head"><h2>Giáo trình cũ đang giao dịch</h2><a href="/market" class="small">Vào chợ giáo trình →</a></div>
+    <div class="grid grid-3">
+      <% listings.forEach(function (l) { %><%- include('partials/listing-card', { l: l }) %><% }) %>
+    </div>
+  </div>
+  <div>
+    <div class="section-head"><h2>Thảo luận & kinh nghiệm thi</h2><a href="/forum" class="small">Xem diễn đàn →</a></div>
+    <div class="card list">
+      <% posts.forEach(function (p) { %>
+        <a href="/forum/<%= p.id %>" class="list-item">
+          <div>
+            <div style="margin-bottom:2px">
+              <span class="tag"><%= config.POST_CATEGORIES[p.category] %></span>
+              <% if (p.course_code) { %><span class="tag tag-code"><%= p.school_code %> · <%= p.course_code %></span><% } %>
+            </div>
+            <strong><%= p.title %></strong>
+          </div>
+          <span class="muted small right" style="white-space:nowrap"><%= p.comment_count %> phản hồi</span>
+        </a>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<%- include('partials/footer') %>

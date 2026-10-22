@@ -1,0 +1,68 @@
+<%- include('partials/header') %>
+<div class="layout-sidebar">
+  <aside class="filters card">
+    <form method="get" action="/search">
+      <h3>Bộ lọc tra cứu</h3>
+      <label>Từ khoá<input type="text" name="q" value="<%= f.q %>" placeholder="Tên môn, chủ đề..."></label>
+      <label>Trường đại học
+        <select name="school">
+          <option value="">Tất cả trường</option>
+          <% schools.forEach(function (s) { %><option value="<%= s.id %>" <%= f.school === s.id ? 'selected' : '' %>><%= s.code %> – <%= s.name %></option><% }) %>
+        </select>
+      </label>
+      <label>Mã / tên học phần<input type="text" name="course" value="<%= f.course %>" placeholder="VD: IT3011, TOKT1101"></label>
+      <label>Loại tài liệu
+        <select name="type">
+          <option value="">Tất cả loại</option>
+          <% Object.keys(config.DOC_TYPES).forEach(function (k) { %><option value="<%= k %>" <%= f.type === k ? 'selected' : '' %>><%= config.DOC_TYPES[k] %></option><% }) %>
+        </select>
+      </label>
+      <label>Hình thức truy cập
+        <select name="price">
+          <option value="">Tất cả</option>
+          <option value="free" <%= f.price === 'free' ? 'selected' : '' %>>Miễn phí (đổi điểm / Premium)</option>
+          <option value="paid" <%= f.price === 'paid' ? 'selected' : '' %>>Trả phí (Marketplace)</option>
+        </select>
+      </label>
+      <label>Sắp xếp theo
+        <select name="sort">
+          <option value="newest" <%= f.sort === 'newest' ? 'selected' : '' %>>Mới cập nhật</option>
+          <option value="rating" <%= f.sort === 'rating' ? 'selected' : '' %>>Điểm đánh giá cao</option>
+          <option value="popular" <%= f.sort === 'popular' ? 'selected' : '' %>>Lượt xem nhiều</option>
+          <option value="price_asc" <%= f.sort === 'price_asc' ? 'selected' : '' %>>Giá tăng dần</option>
+        </select>
+      </label>
+      <button class="btn btn-primary btn-block">Lọc kết quả</button>
+      <a href="/search" class="btn btn-ghost btn-block">Đặt lại</a>
+    </form>
+    <%- include('partials/ads-sidebar') %>
+  </aside>
+  <section style="margin-top:0">
+    <div class="section-head">
+      <h2>Kết quả tra cứu (<%= total.toLocaleString('vi-VN') %> tài liệu)</h2>
+      <span class="muted small">Trang <%= page %> / <%= pages %></span>
+    </div>
+    <div class="grid grid-3">
+      <% docs.forEach(function (d) { %><%- include('partials/doc-card', { d: d }) %><% }) %>
+    </div>
+    <% if (!docs.length) { %>
+      <div class="empty card">Không tìm thấy tài liệu phù hợp với bộ lọc. Bạn có thể <a href="/documents/new">đóng góp tài liệu tự soạn</a> cho học phần này.</div>
+    <% } %>
+    <% if (pages > 1) {
+         var mkUrl = function(p) { return '/search?' + new URLSearchParams(Object.assign({}, query, { page: p })).toString(); };
+         var startP = Math.max(1, page - 3);
+         var endP = Math.min(pages, page + 3);
+    %>
+      <div class="pagination">
+        <% if (page > 1) { %><a href="<%= mkUrl(page - 1) %>">← Trước</a><% } %>
+        <% if (startP > 1) { %><a href="<%= mkUrl(1) %>">1</a><% if (startP > 2) { %><span>…</span><% } %><% } %>
+        <% for (var i = startP; i <= endP; i++) { %>
+          <a href="<%= mkUrl(i) %>" class="<%= i === page ? 'active' : '' %>"><%= i %></a>
+        <% } %>
+        <% if (endP < pages) { %><% if (endP < pages - 1) { %><span>…</span><% } %><a href="<%= mkUrl(pages) %>"><%= pages %></a><% } %>
+        <% if (page < pages) { %><a href="<%= mkUrl(page + 1) %>">Sau →</a><% } %>
+      </div>
+    <% } %>
+  </section>
+</div>
+<%- include('partials/footer') %>

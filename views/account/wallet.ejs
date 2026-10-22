@@ -1,0 +1,46 @@
+<%- include('../partials/header') %>
+<h1>💰 Ví của tôi</h1>
+<div class="stats-row">
+  <div class="stat card"><strong><%= u.fmtMoney(currentUser.balance) %></strong><span>Số dư khả dụng</span></div>
+  <div class="stat card"><strong><%= currentUser.points %></strong><span>Điểm mở khoá tài liệu</span></div>
+  <div class="stat card"><strong><%= premium ? 'Đang hoạt động' : 'Thường' %></strong><span><%= premium ? 'Hết hạn ' + u.fmtDate(currentUser.premium_until, false) : 'Nâng cấp Premium' %></span></div>
+</div>
+
+<form method="post" action="/wallet/topup" class="card form">
+  <h3>Nạp tiền vào ví (mô phỏng cổng thanh toán)</h3>
+  <div class="row">
+    <label>Số tiền (đ)
+      <select name="amount">
+        <% [20000,50000,100000,200000,500000].forEach(function (m) { %><option value="<%= m %>" <%= m === 100000 ? 'selected' : '' %>><%= u.fmtMoney(m) %></option><% }) %>
+      </select>
+    </label>
+    <label>Phương thức
+      <select name="method">
+        <option value="vnpay">VNPay QR</option>
+        <option value="momo">Ví MoMo</option>
+        <option value="bank">Chuyển khoản ngân hàng</option>
+      </select>
+    </label>
+  </div>
+  <button class="btn btn-primary">Nạp ngay</button>
+</form>
+
+<div class="card table-wrap">
+  <h3>Lịch sử giao dịch</h3>
+  <table>
+    <thead><tr><th>Thời gian</th><th>Loại</th><th>Mô tả</th><th>Số tiền</th><th>Số dư sau</th></tr></thead>
+    <tbody>
+      <% txns.forEach(function (t) { %>
+        <tr>
+          <td class="small muted"><%= u.fmtDate(t.created_at) %></td>
+          <td><span class="tag"><%= t.type %></span></td>
+          <td><%= t.description %></td>
+          <td class="<%= t.amount >= 0 ? 'text-success' : 'text-danger' %>"><strong><%= (t.amount >= 0 ? '+' : '') + u.fmtMoney(t.amount) %></strong></td>
+          <td><%= u.fmtMoney(t.balance_after) %></td>
+        </tr>
+      <% }) %>
+      <% if (!txns.length) { %><tr><td colspan="5" class="muted center">Chưa có giao dịch nào.</td></tr><% } %>
+    </tbody>
+  </table>
+</div>
+<%- include('../partials/footer') %>

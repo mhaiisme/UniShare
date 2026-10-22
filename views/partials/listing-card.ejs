@@ -1,0 +1,24 @@
+<a class="card listing-card" href="/market/<%= l.id %>">
+  <div>
+    <div class="listing-img">
+      <% if (l.image_path) { %>
+        <img src="/uploads/<%= l.image_path %>" alt="<%= l.title %>">
+      <% } else { %>
+        <div class="book-cover">
+          <code><%= l.course_code || l.school_code || 'BOOK' %></code>
+          <span><%= u.truncate(l.title, 36) %></span>
+        </div>
+      <% } %>
+    </div>
+    <h3><%= l.title %></h3>
+    <div class="muted small"><%= l.author || '' %></div>
+  </div>
+  <div>
+    <div class="doc-meta">
+      <% if (l.course_code) { %><span class="tag tag-code"><%= l.school_code || '' %> <%= l.course_code %></span><% } %>
+      <span class="tag"><%= config.CONDITIONS[l.condition] %></span>
+      <% if (l.exchange_ok) { %><span class="tag tag-green">Nhận đổi sách</span><% } %>
+    </div>
+    <div class="price <%= l.price === 0 ? 'free' : '' %>"><%= l.price === 0 ? 'Tặng miễn phí' : u.fmtMoney(l.price) %></div>
+  </div>
+</a>

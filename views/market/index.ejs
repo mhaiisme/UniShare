@@ -1,0 +1,51 @@
+<%- include('../partials/header') %>
+<div class="section-head">
+  <div>
+    <h1>📖 Chợ trao đổi & mua bán giáo trình cũ</h1>
+    <p class="muted">Thanh toán qua ví có giữ ký quỹ (escrow) – tiền chỉ chuyển cho người bán khi bạn xác nhận đã nhận sách.</p>
+  </div>
+  <div>
+    <a href="/orders" class="btn btn-ghost">📦 Đơn hàng của tôi</a>
+    <a href="/market/new" class="btn btn-primary">+ Đăng bán / tặng sách</a>
+  </div>
+</div>
+
+<div class="layout-sidebar">
+  <aside class="filters card">
+    <form method="get" action="/market">
+      <h3>Bộ lọc</h3>
+      <label>Từ khoá<input type="text" name="q" value="<%= f.q %>"></label>
+      <label>Trường
+        <select name="school">
+          <option value="">Tất cả</option>
+          <% schools.forEach(function (s) { %><option value="<%= s.id %>" <%= f.school === s.id ? 'selected' : '' %>><%= s.code %> – <%= s.name %></option><% }) %>
+        </select>
+      </label>
+      <label>Mã môn<input type="text" name="course" value="<%= f.course %>" placeholder="VD: MI1111"></label>
+      <label>Tình trạng
+        <select name="condition">
+          <option value="">Tất cả</option>
+          <% Object.keys(config.CONDITIONS).forEach(function (k) { %><option value="<%= k %>" <%= f.condition === k ? 'selected' : '' %>><%= config.CONDITIONS[k] %></option><% }) %>
+        </select>
+      </label>
+      <label class="check"><input type="checkbox" name="free" value="1" <%= f.free ? 'checked' : '' %>> Chỉ sách tặng miễn phí</label>
+      <label>Sắp xếp
+        <select name="sort">
+          <option value="newest" <%= f.sort === 'newest' ? 'selected' : '' %>>Mới nhất</option>
+          <option value="price_asc" <%= f.sort === 'price_asc' ? 'selected' : '' %>>Giá thấp → cao</option>
+          <option value="price_desc" <%= f.sort === 'price_desc' ? 'selected' : '' %>>Giá cao → thấp</option>
+        </select>
+      </label>
+      <button class="btn btn-primary btn-block">Lọc</button>
+    </form>
+    <%- include('../partials/ads-sidebar') %>
+  </aside>
+
+  <section>
+    <div class="grid grid-3">
+      <% listings.forEach(function (l) { %><%- include('../partials/listing-card', { l: l }) %><% }) %>
+    </div>
+    <% if (!listings.length) { %><div class="empty card">Chưa có giáo trình phù hợp.</div><% } %>
+  </section>
+</div>
+<%- include('../partials/footer') %>

@@ -1,0 +1,11 @@
+<% (ads.sidebar || []).forEach(function (ad) { %>
+  <a class="ad-box" href="/ads/<%= ad.id %>/click" target="_blank" rel="noopener sponsored">
+    <span class="ad-label">Tài trợ · <%= ad.advertiser %></span>
+    <% if (ad.image_url) { %><img src="<%= ad.image_url %>" alt=""><% } %>
+    <strong><%= ad.title %></strong>
+    <span class="small"><%= ad.body %></span>
+  </a>
+<% }) %>
+<% if (!premium && currentUser) { %>
+  <div class="ad-hint small muted">Nâng cấp <a href="/premium">Premium</a> để ẩn quảng cáo.</div>
+<% } %>

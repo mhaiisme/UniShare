@@ -1,0 +1,31 @@
+<%- include('../partials/header') %>
+<h1>🔍 Hàng đợi kiểm duyệt nội dung</h1>
+<%- include('nav') %>
+<p class="muted">Các tài liệu bị pipeline tự động gắn cờ (từ khoá bản quyền hoặc trùng lặp ≥ <%= config.SIMILARITY_THRESHOLD * 100 %>%) cần kiểm duyệt viên xem trước khi cho phép hiển thị và bật kiếm tiền.</p>
+
+<div class="card table-wrap">
+  <table>
+    <thead><tr><th>#</th><th>Tài liệu</th><th>Người đăng</th><th>Giá</th><th>Lý do gắn cờ</th><th>Tương đồng</th><th>Thao tác</th></tr></thead>
+    <tbody>
+      <% docs.forEach(function (d) { %>
+        <tr>
+          <td>#<%= d.id %></td>
+          <td><a href="/documents/<%= d.id %>" target="_blank"><strong><%= d.title %></strong></a><div class="small muted"><%= d.school_code %> · <%= d.course_code %></div></td>
+          <td><%= d.author_name %></td>
+          <td><%= d.price ? u.fmtMoney(d.price) : 'Miễn phí' %></td>
+          <td class="small"><%= d.moderation_notes %></td>
+          <td><%= (d.similarity * 100).toFixed(0) %>%</td>
+          <td>
+            <form method="post" action="/admin/documents/<%= d.id %>/approve" class="inline"><button class="btn btn-primary btn-sm">Duyệt</button></form>
+            <form method="post" action="/admin/documents/<%= d.id %>/reject" class="inline">
+              <input type="text" name="note" placeholder="Lý do từ chối" class="input-sm">
+              <button class="btn btn-danger btn-sm">Từ chối</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+      <% if (!docs.length) { %><tr><td colspan="7" class="muted center">🎉 Không có tài liệu nào chờ kiểm duyệt.</td></tr><% } %>
+    </tbody>
+  </table>
+</div>
+<%- include('../partials/footer') %>

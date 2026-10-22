@@ -1,0 +1,13 @@
+<%- include('../partials/header') %>
+<h1>📚 Thư viện của tôi</h1>
+<h2>Đã mua (<%= purchased.length %>)</h2>
+<div class="grid grid-4">
+  <% purchased.forEach(function (d) { %><%- include('../partials/doc-card', { d: d }) %><% }) %>
+  <% if (!purchased.length) { %><p class="muted">Chưa có tài liệu đã mua.</p><% } %>
+</div>
+<h2>Đã mở khoá bằng điểm (<%= unlocked.length %>)</h2>
+<div class="grid grid-4">
+  <% unlocked.forEach(function (d) { %><%- include('../partials/doc-card', { d: d }) %><% }) %>
+  <% if (!unlocked.length) { %><p class="muted">Chưa có tài liệu nào.</p><% } %>
+</div>
+<%- include('../partials/footer') %>

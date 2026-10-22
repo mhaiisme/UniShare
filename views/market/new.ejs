@@ -1,0 +1,37 @@
+<%- include('../partials/header') %>
+<div class="page-narrow">
+  <h1>Đăng bán / tặng giáo trình cũ</h1>
+  <% if (error) { %><div class="alert alert-error"><%= error %></div><% } %>
+  <form method="post" action="/market" enctype="multipart/form-data" class="form card">
+    <label>Tên sách / giáo trình *<input type="text" name="title" required value="<%= values.title || '' %>"></label>
+    <div class="row">
+      <label>Tác giả<input type="text" name="author" value="<%= values.author || '' %>"></label>
+      <label>Mã môn học<input type="text" name="course_code" placeholder="VD: MI1111" value="<%= values.course_code || '' %>"></label>
+    </div>
+    <div class="row">
+      <label>Trường
+        <select name="school_id">
+          <option value="">-- Chọn --</option>
+          <% schools.forEach(function (s) { %><option value="<%= s.id %>" <%= String(values.school_id) === String(s.id) ? 'selected' : '' %>><%= s.code %> – <%= s.name %></option><% }) %>
+        </select>
+      </label>
+      <label>Tình trạng *
+        <select name="condition" required>
+          <% Object.keys(config.CONDITIONS).forEach(function (k) { %><option value="<%= k %>" <%= values.condition === k ? 'selected' : '' %>><%= config.CONDITIONS[k] %></option><% }) %>
+        </select>
+      </label>
+    </div>
+    <div class="row">
+      <label>Giá bán (đ) – 0 = tặng miễn phí
+        <input type="number" name="price" min="0" step="1000" value="<%= values.price || 0 %>">
+        <small class="muted">Phí giao dịch <%= config.MARKET_FEE_RATE * 100 %>% (tối thiểu <%= u.fmtMoney(config.MARKET_FEE_MIN) %>) trừ khi hoàn tất.</small>
+      </label>
+      <label>Khu vực giao nhận<input type="text" name="location" placeholder="VD: KTX Bách Khoa, Cầu Giấy..." value="<%= values.location || '' %>"></label>
+    </div>
+    <label class="check"><input type="checkbox" name="exchange_ok" value="1" <%= values.exchange_ok ? 'checked' : '' %>> Nhận trao đổi sách môn khác</label>
+    <label>Mô tả thêm<textarea name="description" rows="4"><%= values.description || '' %></textarea></label>
+    <label>Ảnh sách (PNG/JPG, tối đa 5MB)<input type="file" name="image" accept="image/*"></label>
+    <button class="btn btn-primary btn-lg">Đăng tin</button>
+  </form>
+</div>
+<%- include('../partials/footer') %>

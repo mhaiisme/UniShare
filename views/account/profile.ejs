@@ -1,0 +1,28 @@
+<%- include('../partials/header') %>
+<div class="page-narrow">
+  <h1>👤 Hồ sơ cá nhân</h1>
+  <% if (error) { %><div class="alert alert-error"><%= error %></div><% } %>
+  <form method="post" action="/profile" class="card form">
+    <label>Email (không thay đổi)<input type="email" value="<%= currentUser.email %>" disabled></label>
+    <label>Họ tên *<input type="text" name="name" required value="<%= currentUser.name %>"></label>
+    <div class="row">
+      <label>Trường
+        <select name="school_id">
+          <option value="">-- Chọn --</option>
+          <% schools.forEach(function (s) { %><option value="<%= s.id %>" <%= currentUser.school_id === s.id ? 'selected' : '' %>><%= s.code %> – <%= s.name %></option><% }) %>
+        </select>
+      </label>
+      <label>Ngành học<input type="text" name="major" value="<%= currentUser.major || '' %>"></label>
+    </div>
+    <label>Giới thiệu<textarea name="bio" rows="3"><%= currentUser.bio || '' %></textarea></label>
+    <hr>
+    <h3>Đổi mật khẩu (bỏ trống nếu không đổi)</h3>
+    <div class="row">
+      <label>Mật khẩu hiện tại<input type="password" name="current_password"></label>
+      <label>Mật khẩu mới<input type="password" name="new_password" minlength="6"></label>
+    </div>
+    <button class="btn btn-primary">Lưu thay đổi</button>
+    <a href="/u/<%= currentUser.id %>" class="btn btn-ghost">Xem trang cá nhân công khai</a>
+  </form>
+</div>
+<%- include('../partials/footer') %>

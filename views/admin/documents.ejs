@@ -1,0 +1,37 @@
+<%- include('../partials/header') %>
+<h1>📄 Tất cả tài liệu</h1>
+<%- include('nav') %>
+<form method="get" class="inline-filter">
+  <select name="status">
+    <option value="">Tất cả trạng thái</option>
+    <% Object.keys(config.DOC_STATUS).forEach(function (k) { %><option value="<%= k %>" <%= f.status === k ? 'selected' : '' %>><%= config.DOC_STATUS[k] %></option><% }) %>
+  </select>
+  <input type="text" name="q" placeholder="Tiêu đề / email" value="<%= f.q %>">
+  <button class="btn btn-ghost">Lọc</button>
+</form>
+
+<div class="card table-wrap">
+  <table>
+    <thead><tr><th>#</th><th>Tiêu đề</th><th>Tác giả</th><th>Giá</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+    <tbody>
+      <% docs.forEach(function (d) { %>
+        <tr>
+          <td>#<%= d.id %></td>
+          <td><a href="/documents/<%= d.id %>"><%= d.title %></a></td>
+          <td><%= d.author_name %></td>
+          <td><%= d.price ? u.fmtMoney(d.price) : 'Miễn phí' %></td>
+          <td><span class="status status-<%= d.status %>"><%= config.DOC_STATUS[d.status] %></span></td>
+          <td>
+            <% if (d.status !== 'approved') { %>
+              <form method="post" action="/admin/documents/<%= d.id %>/approve" class="inline"><button class="btn btn-primary btn-sm">Duyệt</button></form>
+            <% } %>
+            <% if (d.status !== 'rejected') { %>
+              <form method="post" action="/admin/documents/<%= d.id %>/reject" class="inline"><button class="btn btn-danger btn-sm">Từ chối</button></form>
+            <% } %>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+<%- include('../partials/footer') %>

@@ -1,0 +1,17 @@
+<%- include('partials/header') %>
+<div class="card">
+  <h1>👤 <%= profile.name %></h1>
+  <p class="muted"><%= profile.school_name || '' %> <%= profile.major ? '· ' + profile.major : '' %> · Tham gia <%= u.fmtDate(profile.created_at, false) %></p>
+  <p><%= profile.bio || '' %></p>
+</div>
+<h2>📄 Tài liệu đã chia sẻ (<%= docs.length %>)</h2>
+<div class="grid grid-4">
+  <% docs.forEach(function (d) { %><%- include('partials/doc-card', { d: d }) %><% }) %>
+  <% if (!docs.length) { %><p class="muted">Chưa có tài liệu nào.</p><% } %>
+</div>
+<h2>📖 Giáo trình đang bán (<%= listings.length %>)</h2>
+<div class="grid grid-4">
+  <% listings.forEach(function (l) { %><%- include('partials/listing-card', { l: l }) %><% }) %>
+  <% if (!listings.length) { %><p class="muted">Chưa có tin bán nào.</p><% } %>
+</div>
+<%- include('partials/footer') %>

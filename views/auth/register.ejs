@@ -1,0 +1,25 @@
+<%- include('../partials/header') %>
+<div class="auth-box card">
+  <h1>Tạo tài khoản</h1>
+  <p class="muted">Nhận ngay <%= config.POINTS.signup %> điểm để mở khoá tài liệu.</p>
+  <% if (error) { %><div class="alert alert-error"><%= error %></div><% } %>
+  <form method="post" action="/register" class="form">
+    <label>Họ tên<input type="text" name="name" required value="<%= values.name || '' %>"></label>
+    <label>Email<input type="email" name="email" required value="<%= values.email || '' %>"></label>
+    <div class="row">
+      <label>Mật khẩu<input type="password" name="password" required minlength="6"></label>
+      <label>Nhập lại<input type="password" name="password2" required minlength="6"></label>
+    </div>
+    <label>Trường
+      <select name="school_id">
+        <option value="">-- Chọn trường --</option>
+        <% schools.forEach(function (s) { %><option value="<%= s.id %>" <%= String(values.school_id) === String(s.id) ? 'selected' : '' %>><%= s.code %> – <%= s.name %></option><% }) %>
+      </select>
+    </label>
+    <label>Ngành học<input type="text" name="major" value="<%= values.major || '' %>"></label>
+    <label class="check"><input type="checkbox" name="agree" value="1" <%= values.agree ? 'checked' : '' %>> Tôi đồng ý <a href="/terms" target="_blank">Điều khoản sử dụng & Chính sách bản quyền</a></label>
+    <button class="btn btn-primary btn-block">Đăng ký</button>
+  </form>
+  <p class="muted small center">Đã có tài khoản? <a href="/login">Đăng nhập</a></p>
+</div>
+<%- include('../partials/footer') %>

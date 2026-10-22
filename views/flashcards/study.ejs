@@ -1,0 +1,26 @@
+<%- include('../partials/header') %>
+<div class="page-narrow center">
+  <h1>🧠 Học: <%= deck.title %></h1>
+  <% if (!cards.length) { %>
+    <div class="card">
+      <p>🎉 Bạn đã ôn hết các thẻ đến hạn hôm nay!</p>
+      <a href="/flashcards/<%= deck.id %>/study?all=1" class="btn btn-primary">Ôn lại toàn bộ bộ thẻ</a>
+      <a href="/flashcards/<%= deck.id %>" class="btn btn-ghost">Quay lại</a>
+    </div>
+  <% } else { %>
+    <p class="muted" id="fc-progress">Thẻ 1 / <%= cards.length %> · Bấm vào thẻ (hoặc phím Space) để lật</p>
+    <div class="flashcard" id="fc-box" onclick="flipCard()">
+      <div class="fc-side" id="fc-front"></div>
+      <div class="fc-side fc-back" id="fc-back" hidden></div>
+    </div>
+    <div class="btn-row center" style="margin-top:16px">
+      <button class="btn btn-danger btn-lg" onclick="gradeCard('again')">❌ Chưa nhớ (về hộp 1)</button>
+      <button class="btn btn-primary btn-lg" onclick="gradeCard('good')">✅ Đã nhớ (lên hộp)</button>
+    </div>
+    <script>
+      window.FC_DECK_ID = <%= deck.id %>;
+      window.FC_CARDS = <%- JSON.stringify(cards).replace(/</g, '\\u003c') %>;
+    </script>
+  <% } %>
+</div>
+<%- include('../partials/footer') %>

@@ -1,0 +1,62 @@
+<%- include('../partials/header') %>
+<h1>📦 Đơn hàng giáo trình</h1>
+
+<h2>Đơn tôi mua (<%= buying.length %>)</h2>
+<div class="card table-wrap">
+  <table>
+    <thead><tr><th>#</th><th>Sách</th><th>Người bán</th><th>Giá</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+    <tbody>
+      <% buying.forEach(function (o) { %>
+        <tr>
+          <td>#<%= o.id %></td>
+          <td><a href="/market/<%= o.listing_id %>"><%= o.title %></a><% if (o.note) { %><div class="small muted">Ghi chú: <%= o.note %></div><% } %></td>
+          <td><%= o.seller_name %> <span class="small muted">(<%= o.seller_email %>)</span></td>
+          <td><%= o.price ? u.fmtMoney(o.price) : 'Miễn phí' %></td>
+          <td><span class="status status-<%= o.status %>"><%= config.ORDER_STATUS[o.status] %></span></td>
+          <td>
+            <% if (o.status === 'confirmed') { %>
+              <form method="post" action="/orders/<%= o.id %>/complete" class="inline"><button class="btn btn-primary btn-sm">✅ Đã nhận sách</button></form>
+            <% } %>
+            <% if (o.status === 'pending') { %>
+              <form method="post" action="/orders/<%= o.id %>/cancel" class="inline"><button class="btn btn-ghost btn-sm">Huỷ đơn</button></form>
+            <% } %>
+          </td>
+        </tr>
+      <% }) %>
+      <% if (!buying.length) { %><tr><td colspan="6" class="muted center">Chưa có đơn mua nào.</td></tr><% } %>
+    </tbody>
+  </table>
+</div>
+
+<h2>Đơn khách đặt mua của tôi (<%= selling.length %>)</h2>
+<div class="card table-wrap">
+  <table>
+    <thead><tr><th>#</th><th>Sách</th><th>Người mua</th><th>Giá (nhận về)</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+    <tbody>
+      <% selling.forEach(function (o) { var fee = o.status === 'completed' ? o.fee : marketFee(o.price); %>
+        <tr>
+          <td>#<%= o.id %></td>
+          <td><a href="/market/<%= o.listing_id %>"><%= o.title %></a><% if (o.note) { %><div class="small muted">Ghi chú: <%= o.note %></div><% } %></td>
+          <td><%= o.buyer_name %> <span class="small muted">(<%= o.buyer_email %>)</span></td>
+          <td><%= u.fmtMoney(o.price) %> (<%= u.fmtMoney(o.price - fee) %>)</td>
+          <td><span class="status status-<%= o.status %>"><%= config.ORDER_STATUS[o.status] %></span></td>
+          <td>
+            <% if (o.status === 'pending') { %>
+              <form method="post" action="/orders/<%= o.id %>/confirm" class="inline"><button class="btn btn-primary btn-sm">Xác nhận bán</button></form>
+            <% } %>
+            <% if (o.status === 'pending' || o.status === 'confirmed') { %>
+              <form method="post" action="/orders/<%= o.id %>/cancel" class="inline"><button class="btn btn-ghost btn-sm">Huỷ & hoàn tiền</button></form>
+            <% } %>
+          </td>
+        </tr>
+      <% }) %>
+      <% if (!selling.length) { %><tr><td colspan="6" class="muted center">Chưa có đơn bán nào.</td></tr><% } %>
+    </tbody>
+  </table>
+</div>
+
+<h2>Tin đã đăng (<%= myListings.length %>)</h2>
+<div class="grid grid-4">
+  <% myListings.forEach(function (l) { %><%- include('../partials/listing-card', { l: l }) %><% }) %>
+</div>
+<%- include('../partials/footer') %>

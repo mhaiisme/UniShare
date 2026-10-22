@@ -1,0 +1,38 @@
+<%- include('../partials/header') %>
+<div class="section-head">
+  <div>
+    <h1>💬 Diễn đàn sinh viên</h1>
+    <p class="muted">Chia sẻ kinh nghiệm làm bài thi, hỏi đáp ôn tập, mẹo học và trao đổi đề thi cũ.</p>
+  </div>
+  <a href="/forum/new" class="btn btn-primary">+ Viết bài</a>
+</div>
+
+<div class="tabs">
+  <a href="/forum" class="<%= !f.category ? 'active' : '' %>">Tất cả</a>
+  <% Object.keys(config.POST_CATEGORIES).forEach(function (k) { %>
+    <a href="/forum?category=<%= k %>" class="<%= f.category === k ? 'active' : '' %>"><%= config.POST_CATEGORIES[k] %></a>
+  <% }) %>
+</div>
+
+<form method="get" action="/forum" class="inline-filter">
+  <input type="hidden" name="category" value="<%= f.category %>">
+  <input type="text" name="q" placeholder="Tìm bài viết..." value="<%= f.q %>">
+  <input type="text" name="course" placeholder="Mã môn" value="<%= f.course %>" class="w-course">
+  <button class="btn btn-ghost">Tìm</button>
+</form>
+
+<div class="card list">
+  <% posts.forEach(function (p) { %>
+    <a href="/forum/<%= p.id %>" class="list-item">
+      <div>
+        <span class="tag"><%= config.POST_CATEGORIES[p.category] %></span>
+        <% if (p.school_code || p.course_code) { %><span class="tag"><%= p.school_code || '' %> <%= p.course_code || '' %></span><% } %>
+        <strong><%= p.title %></strong>
+        <div class="muted small"><%= u.truncate(p.body, 140) %></div>
+      </div>
+      <div class="muted small right"><%= p.author_name %><br>💬 <%= p.comment_count %> · <%= u.fmtDate(p.created_at, false) %></div>
+    </a>
+  <% }) %>
+  <% if (!posts.length) { %><p class="muted center">Chưa có bài viết nào.</p><% } %>
+</div>
+<%- include('../partials/footer') %>

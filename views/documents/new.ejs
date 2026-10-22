@@ -1,0 +1,55 @@
+<%- include('../partials/header') %>
+<div class="page-narrow">
+  <h1>Đăng tài liệu</h1>
+  <div class="alert alert-info">
+    💡 <strong>Chỉ đăng nội dung do bạn tự biên soạn</strong>: tóm tắt, sơ đồ tư duy, lời giải chi tiết, báo cáo/đồ án/code tự làm, video bạn tự quay.
+    Không đăng nguyên văn sách giáo khoa, slide của giảng viên hay khoá học của trung tâm. Xem <a href="/terms" target="_blank">chính sách bản quyền</a>.
+  </div>
+  <% if (error) { %><div class="alert alert-error"><%= error %></div><% } %>
+  <form method="post" action="/documents" enctype="multipart/form-data" class="form card">
+    <label>Tiêu đề *<input type="text" name="title" required minlength="5" maxlength="200" value="<%= values.title || '' %>"></label>
+    <label>Mô tả ngắn<textarea name="description" rows="2" maxlength="1000"><%= values.description || '' %></textarea></label>
+    <div class="row">
+      <label>Loại tài liệu *
+        <select name="doc_type" required>
+          <option value="">-- Chọn --</option>
+          <% Object.keys(config.DOC_TYPES).forEach(function (k) { %><option value="<%= k %>" <%= values.doc_type === k ? 'selected' : '' %>><%= config.DOC_TYPES[k] %></option><% }) %>
+        </select>
+      </label>
+      <label>Trường *
+        <select name="school_id" required data-course-school>
+          <option value="">-- Chọn trường --</option>
+          <% schools.forEach(function (s) { %><option value="<%= s.id %>" <%= String(values.school_id) === String(s.id) ? 'selected' : '' %>><%= s.code %> – <%= s.name %></option><% }) %>
+        </select>
+      </label>
+    </div>
+    <div class="row">
+      <label>Mã môn học *<input type="text" name="course_code" required list="course-list" placeholder="VD: IT3011" value="<%= values.course_code || '' %>" data-course-code></label>
+      <label>Tên môn (nếu môn mới)<input type="text" name="course_name" value="<%= values.course_name || '' %>" data-course-name></label>
+    </div>
+    <datalist id="course-list"></datalist>
+    <label>Nội dung (hỗ trợ Markdown: # tiêu đề, - danh sách, **đậm**, ```code```)
+      <textarea name="content" rows="12" placeholder="# Chương 1&#10;- Khái niệm A: định nghĩa...&#10;- Khái niệm B: định nghĩa..."><%= values.content || '' %></textarea>
+    </label>
+    <label>File đính kèm (PDF, DOCX, PPTX, TXT, ZIP, ảnh, MP4/WEBM cho khoá học, file code – tối đa <%= config.UPLOAD_MAX_MB %>MB)
+      <input type="file" name="file">
+    </label>
+    <div class="row">
+      <label>Giá bán (đ) – 0 = miễn phí
+        <input type="number" name="price" min="0" step="1000" value="<%= values.price || 0 %>">
+        <small class="muted">Từ <%= u.fmtMoney(config.DOC_MIN_PRICE) %>. Bạn nhận <%= 100 - config.DOC_COMMISSION_RATE * 100 %>%, nền tảng thu <%= config.DOC_COMMISSION_RATE * 100 %>% phí dịch vụ.</small>
+      </label>
+      <label class="check top"><input type="checkbox" name="allow_download" value="1" <%= values.allow_download ? 'checked' : '' %>> Cho phép người có quyền tải file gốc (PDF tải về luôn có watermark người mua)</label>
+    </div>
+    <div class="clickwrap">
+      <label class="check">
+        <input type="checkbox" name="agree_copyright" value="1" required>
+        <span><strong>Tôi cam đoan tài liệu/khoá học này do chính tôi biên soạn hoặc có toàn quyền phân phối hợp pháp, và tôi chịu hoàn toàn trách nhiệm trước pháp luật nếu xảy ra tranh chấp bản quyền.</strong>
+        Tôi đồng ý với <a href="/terms" target="_blank">Điều khoản sử dụng</a>.</span>
+      </label>
+    </div>
+    <button class="btn btn-primary btn-lg">Đăng tài liệu</button>
+    <p class="muted small">Tài liệu sẽ qua kiểm duyệt tự động (hash blacklist, từ khoá bản quyền, độ tương đồng). Tài liệu bị gắn cờ cần kiểm duyệt viên duyệt thủ công.</p>
+  </form>
+</div>
+<%- include('../partials/footer') %>

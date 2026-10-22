@@ -1,0 +1,18 @@
+<a class="card doc-card" href="/documents/<%= d.id %>">
+  <div>
+    <div class="doc-card-top">
+      <span class="tag tag-type"><%= config.DOC_TYPES[d.doc_type] || d.doc_type %></span>
+      <% if (d.price > 0) { %><span class="price"><%= u.fmtMoney(d.price) %></span><% } else { %><span class="price free">Miễn phí</span><% } %>
+    </div>
+    <h3><%= d.title %></h3>
+    <p class="muted small" style="margin:4px 0 8px"><%= u.truncate(d.description, 95) %></p>
+  </div>
+  <div>
+    <div class="doc-meta">
+      <% if (d.course_code) { %><span class="tag tag-code"><%= d.school_code %> · <%= d.course_code %></span><% } %>
+      <span><%= d.rating_count ? d.rating_avg.toFixed(1) + '/5 (' + d.rating_count + ')' : 'Mới' %></span>
+      <span>· <%= d.views %> lượt xem</span>
+    </div>
+    <div class="muted small">Tác giả: <%= d.author_name %></div>
+  </div>
+</a>

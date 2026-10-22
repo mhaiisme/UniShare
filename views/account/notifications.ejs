@@ -1,0 +1,14 @@
+<%- include('../partials/header') %>
+<div class="page-narrow">
+  <h1>🔔 Thông báo</h1>
+  <div class="card list">
+    <% items.forEach(function (n) { %>
+      <a class="list-item" href="<%= n.link || '#' %>">
+        <span><%= n.message %></span>
+        <span class="small muted"><%= u.fmtDate(n.created_at) %></span>
+      </a>
+    <% }) %>
+    <% if (!items.length) { %><p class="muted center">Chưa có thông báo nào.</p><% } %>
+  </div>
+</div>
+<%- include('../partials/footer') %>

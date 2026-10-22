@@ -1,0 +1,40 @@
+<%- include('partials/header') %>
+<div class="page-narrow card doc-body">
+  <h1>Điều khoản sử dụng & Chính sách bản quyền (Safe Harbor)</h1>
+  <p>Cập nhật lần cuối: 2026 · Áp dụng theo <strong>Điều 198b Luật Sở hữu trí tuệ sửa đổi 2022</strong> và <strong>Nghị định 17/2023/NĐ-CP</strong>.</p>
+
+  <h2>1. Vai trò dịch vụ trung gian (OSP)</h2>
+  <p>UniShare là nền tảng cung cấp hạ tầng kỹ thuật để người dùng tự đăng tải, chia sẻ và giao dịch nội dung học tập. Nền tảng <strong>không chủ động khởi xướng, lựa chọn hay chỉnh sửa</strong> nội dung do người dùng tải lên.</p>
+
+  <h2>2. Nội dung được phép & khuyến khích</h2>
+  <ul>
+    <li><strong>Tài liệu học tập phái sinh độc lập & UGC:</strong> bản tóm tắt kiến thức (study guide), cheat sheet, sơ đồ tư duy (mindmap), công thức do chính người đăng tự biên soạn bằng ngôn từ và cấu trúc riêng.</li>
+    <li><strong>Lời giải chi tiết & nhận xét:</strong> bài giải từng bước, phân tích lỗi sai do chính người đăng tự viết cho các đề thi công khai.</li>
+    <li><strong>Báo cáo mẫu, đồ án mẫu, source code:</strong> bài tập lớn, đồ án, tài liệu BRD/SRS, thiết kế hệ thống và mã nguồn do chính tác giả thực hiện.</li>
+    <li><strong>Khoá học Peer-to-Peer:</strong> video hướng dẫn ôn tập do chính sinh viên/mentor tự quay.</li>
+    <li><strong>Sách, giáo trình giấy cũ hợp pháp</strong> mua bán/trao đổi lại giữa sinh viên.</li>
+  </ul>
+
+  <h2>3. Nội dung bị nghiêm cấm</h2>
+  <ul>
+    <li>Bản scan/PDF nguyên văn sách giáo khoa, sách tham khảo của các Nhà xuất bản khi chưa được phép.</li>
+    <li>Slide bài giảng, giáo trình lưu hành nội bộ của giảng viên/nhà trường khi chưa có sự đồng ý.</li>
+    <li>Video khoá học thu lậu từ các trung tâm hoặc nền tảng khác.</li>
+    <li>Nội dung sao chép từ tài liệu của người dùng khác trên nền tảng.</li>
+  </ul>
+
+  <h2>4. Cam kết bản quyền đầu vào (Click-wrap Agreement)</h2>
+  <p>Trước khi xuất bản bất kỳ tài liệu/khoá học nào, người tải lên bắt buộc xác nhận cam kết chịu hoàn toàn trách nhiệm pháp lý nếu xảy ra tranh chấp bản quyền. Hệ thống lưu lại thời điểm và địa chỉ IP khi cam kết.</p>
+
+  <h2>5. Quy trình Thông báo và Gỡ bỏ (Notice & Takedown)</h2>
+  <p>Chủ sở hữu quyền tác giả (giảng viên, nhà trường, tác giả, NXB) có thể gửi yêu cầu qua trang <a href="/dmca">Báo cáo vi phạm bản quyền / DMCA</a>. Khi nhận được thông báo hợp lệ, UniShare cam kết:</p>
+  <ol>
+    <li>Tiếp nhận và gỡ bỏ / chặn truy cập nội dung vi phạm trong vòng <strong><%= config.TAKEDOWN_HOURS %> giờ</strong>.</li>
+    <li>Đưa mã băm (SHA-256) của file vi phạm vào danh sách đen để ngăn tải lên lại.</li>
+    <li>Áp dụng chính sách <strong><%= config.STRIKE_BAN %> lần cảnh cáo (strike)</strong>: tài khoản vi phạm đủ <%= config.STRIKE_BAN %> lần sẽ bị khoá vĩnh viễn.</li>
+  </ol>
+
+  <h2>6. Bảo vệ doanh thu tác giả & chống phát tán</h2>
+  <p>Tài liệu được hiển thị trên trình đọc đã tắt sao chép/in và được đóng dấu chìm động (Dynamic Watermark) thông tin người xem trên từng trang PDF và trên màn hình video.</p>
+</div>
+<%- include('partials/footer') %>

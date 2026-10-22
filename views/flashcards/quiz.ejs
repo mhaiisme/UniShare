@@ -1,0 +1,21 @@
+<%- include('../partials/header') %>
+<div class="page-narrow">
+  <div class="section-head">
+    <h1>🎯 Quiz: <%= deck.title %></h1>
+    <a href="/flashcards/<%= deck.id %>" class="btn btn-ghost">← Quay lại bộ thẻ</a>
+  </div>
+  <div id="quiz-score" class="alert alert-success" hidden></div>
+  <form id="quiz-form">
+    <% questions.forEach(function (q, idx) { %>
+      <div class="card quiz-q" data-answer="<%= q.answer %>">
+        <h3>Câu <%= idx + 1 %>: <%= q.question %></h3>
+        <% q.options.forEach(function (opt, oi) { %>
+          <label class="quiz-opt"><input type="radio" name="q<%= idx %>" value="<%= oi %>" required> <span><%= opt %></span></label>
+        <% }) %>
+      </div>
+    <% }) %>
+    <button type="submit" class="btn btn-primary btn-lg">Chấm bài</button>
+    <a href="/flashcards/<%= deck.id %>/quiz" class="btn btn-ghost btn-lg">Đề mới</a>
+  </form>
+</div>
+<%- include('../partials/footer') %>

@@ -1,0 +1,25 @@
+<%- include('../partials/header') %>
+<div class="page-narrow">
+  <h1>Viết bài mới</h1>
+  <% if (error) { %><div class="alert alert-error"><%= error %></div><% } %>
+  <form method="post" action="/forum" class="form card">
+    <div class="row">
+      <label>Chuyên mục *
+        <select name="category" required>
+          <% Object.keys(config.POST_CATEGORIES).forEach(function (k) { %><option value="<%= k %>" <%= values.category === k ? 'selected' : '' %>><%= config.POST_CATEGORIES[k] %></option><% }) %>
+        </select>
+      </label>
+      <label>Trường
+        <select name="school_id">
+          <option value="">-- Không chọn --</option>
+          <% schools.forEach(function (s) { %><option value="<%= s.id %>" <%= String(values.school_id) === String(s.id) ? 'selected' : '' %>><%= s.code %> – <%= s.name %></option><% }) %>
+        </select>
+      </label>
+      <label>Mã môn<input type="text" name="course_code" value="<%= values.course_code || '' %>" placeholder="VD: IT3011"></label>
+    </div>
+    <label>Tiêu đề *<input type="text" name="title" required minlength="5" value="<%= values.title || '' %>"></label>
+    <label>Nội dung * (hỗ trợ Markdown)<textarea name="body" rows="8" required><%= values.body || '' %></textarea></label>
+    <button class="btn btn-primary">Đăng bài</button>
+  </form>
+</div>
+<%- include('../partials/footer') %>

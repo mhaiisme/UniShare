@@ -1,0 +1,58 @@
+<%- include('../partials/header') %>
+<div class="layout-main-side">
+  <div class="card">
+    <div class="listing-detail">
+      <div class="listing-detail-img">
+        <% if (listing.image_path) { %>
+          <img src="/uploads/<%= listing.image_path %>" alt="<%= listing.title %>">
+        <% } else { %>
+          <div class="book-cover" style="width:110px;height:150px">
+            <code><%= listing.course_code || listing.school_code || 'BOOK' %></code>
+            <span><%= u.truncate(listing.title, 48) %></span>
+          </div>
+        <% } %>
+      </div>
+      <div>
+        <div class="doc-meta">
+          <% if (listing.school_code) { %><span class="tag tag-code"><%= listing.school_code %></span><% } %>
+          <% if (listing.course_code) { %><span class="tag tag-code"><%= listing.course_code %></span><% } %>
+          <span class="tag"><%= config.CONDITIONS[listing.condition] %></span>
+          <% if (listing.exchange_ok) { %><span class="tag tag-green">Nhận đổi sách</span><% } %>
+          <span class="status status-<%= listing.status %>"><%= listing.status === 'available' ? 'Đang bán' : listing.status === 'reserved' ? 'Đang giao dịch' : listing.status === 'sold' ? 'Đã bán' : 'Đã ẩn' %></span>
+        </div>
+        <h1><%= listing.title %></h1>
+        <% if (listing.author) { %><p class="muted">Tác giả / đơn vị biên soạn: <%= listing.author %></p><% } %>
+        <div class="price-big"><%= listing.price === 0 ? 'Tặng miễn phí' : u.fmtMoney(listing.price) %></div>
+        <p><strong>Người đăng:</strong> <a href="/u/<%= listing.seller_id %>"><%= listing.seller_name %></a></p>
+        <% if (listing.location) { %><p><strong>Điểm giao nhận:</strong> <%= listing.location %></p><% } %>
+        <p><%= listing.description || '' %></p>
+
+        <% if (listing.status === 'available' && (!currentUser || currentUser.id !== listing.seller_id)) { %>
+          <form method="post" action="/market/<%= listing.id %>/order" class="form" style="margin-top:12px">
+            <label>Lời nhắn cho người bán (SĐT/Zalo, thời gian & địa điểm nhận sách)<input type="text" name="note" placeholder="VD: Mình nhận ở thư viện Tạ Quang Bửu chiều thứ 5..."></label>
+            <button class="btn btn-primary btn-lg"><%= listing.price === 0 ? 'Đăng ký nhận sách' : 'Đặt mua qua ví ký quỹ (' + u.fmtMoney(listing.price) + ')' %></button>
+            <small class="muted">Số tiền được hệ thống giữ ký quỹ (escrow) và chỉ giải ngân cho người bán (trừ phí giao dịch <%= u.fmtMoney(fee) %>) sau khi bạn bấm xác nhận đã nhận sách.</small>
+          </form>
+        <% } %>
+
+        <% if (currentUser && currentUser.id === listing.seller_id && ['available', 'hidden'].includes(listing.status)) { %>
+          <form method="post" action="/market/<%= listing.id %>/toggle" style="margin-top:12px">
+            <button class="btn btn-ghost"><%= listing.status === 'available' ? 'Tạm ẩn tin' : 'Hiển thị lại tin' %></button>
+          </form>
+        <% } %>
+      </div>
+    </div>
+  </div>
+  <aside>
+    <% if (more.length) { %>
+      <div class="card">
+        <h3>Giáo trình cùng học phần</h3>
+        <% more.forEach(function (m) { %>
+          <a href="/market/<%= m.id %>" class="side-link"><strong><%= m.title %></strong><span class="small muted"><%= m.price ? u.fmtMoney(m.price) : 'Miễn phí' %></span></a>
+        <% }) %>
+      </div>
+    <% } %>
+    <%- include('../partials/ads-sidebar') %>
+  </aside>
+</div>
+<%- include('../partials/footer') %>

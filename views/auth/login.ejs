@@ -1,0 +1,18 @@
+<%- include('../partials/header') %>
+<div class="auth-box card">
+  <h1>Đăng nhập</h1>
+  <% if (error) { %><div class="alert alert-error"><%= error %></div><% } %>
+  <form method="post" action="/login" class="form">
+    <label>Email<input type="email" name="email" required value="<%= values.email || '' %>" autofocus></label>
+    <label>Mật khẩu<input type="password" name="password" required></label>
+    <button class="btn btn-primary btn-block">Đăng nhập</button>
+  </form>
+  <p class="muted small center">Chưa có tài khoản? <a href="/register">Đăng ký</a></p>
+  <div class="demo-box small">
+    <strong>Tài khoản demo:</strong><br>
+    Admin: admin@unishare.vn / admin123<br>
+    SV Premium: an@student.vn / 123456<br>
+    SV thường: binh@student.vn / 123456 · chi@student.vn / 123456
+  </div>
+</div>
+<%- include('../partials/footer') %>

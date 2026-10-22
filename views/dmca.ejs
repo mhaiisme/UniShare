@@ -1,0 +1,36 @@
+<%- include('partials/header') %>
+<div class="page-narrow">
+  <h1>⚠️ Báo cáo vi phạm bản quyền (Notice & Takedown)</h1>
+  <p class="muted">Theo Điều 198b Luật SHTT 2022 & Nghị định 17/2023/NĐ-CP, yêu cầu hợp lệ sẽ được xử lý gỡ bỏ trong vòng <strong><%= config.TAKEDOWN_HOURS %> giờ</strong>.</p>
+  <% if (error) { %><div class="alert alert-error"><%= error %></div><% } %>
+  <form method="post" action="/dmca" class="card form">
+    <label>Mã tài liệu bị khiếu nại *
+      <input type="number" name="document_id" required value="<%= doc ? doc.id : (values.document_id || '') %>" placeholder="VD: 2">
+      <% if (doc) { %><small class="muted">Đang báo cáo: <strong>#<%= doc.id %> – <%= doc.title %></strong></small><% } %>
+    </label>
+    <div class="row">
+      <label>Họ tên người thông báo *<input type="text" name="reporter_name" required value="<%= values.reporter_name || '' %>"></label>
+      <label>Email liên hệ *<input type="email" name="reporter_email" required value="<%= values.reporter_email || '' %>"></label>
+    </div>
+    <div class="row">
+      <label>Tư cách
+        <select name="reporter_role">
+          <% Object.keys(config.REPORTER_ROLES).forEach(function (k) { %><option value="<%= k %>" <%= values.reporter_role === k ? 'selected' : '' %>><%= config.REPORTER_ROLES[k] %></option><% }) %>
+        </select>
+      </label>
+      <label>Tác phẩm gốc bị xâm phạm<input type="text" name="original_work" placeholder="Tên giáo trình / bài giảng / sách..." value="<%= values.original_work || '' %>"></label>
+    </div>
+    <label>Mô tả chi tiết hành vi vi phạm * (tối thiểu 20 ký tự)
+      <textarea name="reason" rows="4" required minlength="20"><%= values.reason || '' %></textarea>
+    </label>
+    <label>Link bằng chứng chứng minh quyền sở hữu (trang web trường, ISBN, Google Drive...)
+      <input type="url" name="evidence_url" value="<%= values.evidence_url || '' %>" placeholder="https://...">
+    </label>
+    <label class="check">
+      <input type="checkbox" name="good_faith" value="1" required>
+      <span>Tôi cam đoan các thông tin trên là trung thực, tôi là chủ sở hữu quyền hoặc người được uỷ quyền hợp pháp, và chịu trách nhiệm trước pháp luật về thông báo này.</span>
+    </label>
+    <button class="btn btn-danger btn-lg">Gửi yêu cầu gỡ bỏ</button>
+  </form>
+</div>
+<%- include('partials/footer') %>

@@ -1,0 +1,36 @@
+<%- include('../partials/header') %>
+<div class="section-head">
+  <div>
+    <h1>🗂️ Flashcard ôn tập (Leitner 5 hộp)</h1>
+    <p class="muted">
+      <% if (unlimited) { %>Tài khoản <strong>Premium</strong>: không giới hạn bộ thẻ, tự sinh thẻ từ tài liệu và tạo đề trắc nghiệm.<% } else { %>
+      Tài khoản thường: tối đa <%= config.FREE_DECK_LIMIT %> bộ / <%= config.FREE_CARD_LIMIT %> thẻ. <a href="/premium">Nâng cấp Premium</a> để không giới hạn + AI tạo thẻ & Quiz.<% } %>
+    </p>
+  </div>
+</div>
+
+<form method="post" action="/flashcards" class="card form inline-form">
+  <input type="text" name="title" required placeholder="Tên bộ thẻ mới (VD: Công thức Kinh tế lượng)">
+  <input type="text" name="description" placeholder="Mô tả ngắn">
+  <button class="btn btn-primary">+ Tạo bộ thẻ</button>
+</form>
+
+<div class="grid grid-3">
+  <% decks.forEach(function (d) { %>
+    <div class="card">
+      <h3><a href="/flashcards/<%= d.id %>"><%= d.title %></a></h3>
+      <p class="muted small"><%= d.description || '' %></p>
+      <div class="doc-meta">
+        <span class="tag"><%= d.card_count %> thẻ</span>
+        <span class="tag tag-green"><%= d.due_count %> cần ôn hôm nay</span>
+      </div>
+      <div class="btn-row" style="margin-top:10px">
+        <a href="/flashcards/<%= d.id %>/study" class="btn btn-primary btn-sm">▶ Học (<%= d.due_count %>)</a>
+        <a href="/flashcards/<%= d.id %>" class="btn btn-ghost btn-sm">Sửa</a>
+        <% if (unlimited && d.card_count >= 4) { %><a href="/flashcards/<%= d.id %>/quiz" class="btn btn-gold btn-sm">🎯 Quiz</a><% } %>
+      </div>
+    </div>
+  <% }) %>
+  <% if (!decks.length) { %><div class="empty card">Bạn chưa có bộ flashcard nào. Bạn cũng có thể bấm "✨ Tạo Flashcard AI" ngay trên trang xem tài liệu!</div><% } %>
+</div>
+<%- include('../partials/footer') %>
