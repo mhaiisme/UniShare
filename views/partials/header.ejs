@@ -4,12 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= typeof title !== 'undefined' ? title + ' · ' : '' %>UniShare — Kho tài liệu & giáo trình đại học</title>
+  <link rel="icon" type="image/png" href="/img/logo.png">
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 <header class="topbar">
   <div class="container nav">
-    <a href="/" class="brand"><span class="brand-mark">U</span>Uni<span>Share</span></a>
+    <a href="/" class="brand"><img src="/img/logo.png" alt="Bá Khí UniShare" class="brand-logo"><span>Uni<b>Share</b></span></a>
     <form action="/search" method="get" class="nav-search">
       <input type="search" name="q" placeholder="Tìm theo tên tài liệu, mã học phần (IT3011, TOKT1101)..." value="<%= typeof query !== 'undefined' && path === '/search' ? (query.q || '') : '' %>">
     </form>

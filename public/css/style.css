@@ -64,22 +64,18 @@ code, .code { font-family: var(--mono); font-size: 0.85em; }
   letter-spacing: -0.02em;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 9px;
 }
-.brand-mark {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  background: #198754;
-  color: #fff;
-  font-family: var(--mono);
-  font-size: 0.82rem;
-  font-weight: 700;
-  border-radius: 4px;
+.brand-logo {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  background: #fff;
+  border-radius: 6px;
+  padding: 2px;
+  display: block;
 }
-.brand span { color: #6ee7b7; }
+.brand b { color: #6ee7b7; }
 .nav-search { flex: 1; max-width: 360px; }
 .nav-search input {
   width: 100%;
