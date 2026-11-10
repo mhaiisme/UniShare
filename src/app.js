@@ -54,8 +54,8 @@ async function createApp() {
 if (require.main === module) {
   createApp()
     .then((app) => {
-      app.listen(config.PORT, () => {
-        console.log(`\n🚀 UniShare đang chạy tại http://localhost:${config.PORT}\n`);
+      app.listen(config.PORT, '0.0.0.0', () => {
+        console.log(`\n🚀 UniShare đang chạy tại http://0.0.0.0:${config.PORT}\n`);
       });
       const shutdown = () => {
         db.close();
