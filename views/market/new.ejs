@@ -28,6 +28,17 @@
       </label>
       <label>Khu vực giao nhận<input type="text" name="location" placeholder="VD: KTX Bách Khoa, Cầu Giấy..." value="<%= values.location || '' %>"></label>
     </div>
+    <label>🎁 Tặng kèm Học liệu số độc quyền của bạn (Combo Sách giấy + Học liệu số)
+      <select name="bundle_document_id">
+        <option value="">-- Không đính kèm (Chỉ bán sách giấy) --</option>
+        <% if (typeof myDocs !== 'undefined') { myDocs.forEach(function (d) { %>
+          <option value="<%= d.id %>" <%= String(values.bundle_document_id) === String(d.id) ? 'selected' : '' %>>
+            [<%= d.course_code || 'DOC' %>] <%= d.title %> (Trị giá <%= d.price ? u.fmtMoney(d.price) : 'Miễn phí' %>)
+          </option>
+        <% }); } %>
+      </select>
+      <small class="muted">Khi người mua bấm "Đã nhận sách", hệ thống sẽ tự động cấp quyền đọc trọn đời tài liệu số này cho người mua (giúp sách của bạn bán nhanh gấp 3 lần).</small>
+    </label>
     <label class="check"><input type="checkbox" name="exchange_ok" value="1" <%= values.exchange_ok ? 'checked' : '' %>> Nhận trao đổi sách môn khác</label>
     <label>Mô tả thêm<textarea name="description" rows="4"><%= values.description || '' %></textarea></label>
     <label>Ảnh sách (PNG/JPG, tối đa 5MB)<input type="file" name="image" accept="image/*"></label>

@@ -28,6 +28,26 @@
       <label>Tên môn (nếu môn mới)<input type="text" name="course_name" value="<%= values.course_name || '' %>" data-course-name></label>
     </div>
     <datalist id="course-list"></datalist>
+    <div class="row">
+      <label>Giảng viên phụ trách học phần (tuỳ chọn)
+        <input type="text" name="lecturer_name" placeholder="VD: PGS.TS Nguyễn Văn A" value="<%= values.lecturer_name || '' %>">
+      </label>
+      <label>Học kỳ học (tuỳ chọn)
+        <input type="text" name="semester" placeholder="VD: 2025.2" value="<%= values.semester || '' %>">
+      </label>
+      <label>Điểm tổng kết môn của bạn
+        <select name="author_grade">
+          <option value="">-- Không công khai --</option>
+          <% ['A+', 'A', 'B+'].forEach(function (g) { %>
+            <option value="<%= g %>" <%= values.author_grade === g ? 'selected' : '' %>>Đạt điểm <%= g %></option>
+          <% }) %>
+        </select>
+      </label>
+    </div>
+    <label class="check" style="margin-bottom:12px">
+      <input type="checkbox" name="grade_proof" value="1" <%= values.grade_proof ? 'checked' : '' %>>
+      <span>Cam kết điểm số học phần trên là chính xác (Gắn huy hiệu <strong>Verified A/A+</strong> để tăng uy tín học liệu)</span>
+    </label>
     <label>Nội dung (hỗ trợ Markdown: # tiêu đề, - danh sách, **đậm**, ```code```)
       <textarea name="content" rows="12" placeholder="# Chương 1&#10;- Khái niệm A: định nghĩa...&#10;- Khái niệm B: định nghĩa..."><%= values.content || '' %></textarea>
     </label>

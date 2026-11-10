@@ -85,6 +85,17 @@ router.post('/documents/:id/reject', (req, res) => {
   back(req, res, '/admin/moderation');
 });
 
+router.post('/documents/:id/verify-grade', (req, res) => {
+  const doc = db.get('SELECT * FROM documents WHERE id = ?', [toInt(req.params.id)]);
+  if (doc) {
+    const grade = doc.author_grade || 'A';
+    const nextVal = doc.grade_verified ? 0 : 1;
+    db.run('UPDATE documents SET author_grade = ?, grade_verified = ? WHERE id = ?', [grade, nextVal, doc.id]);
+    flash(req, 'success', nextVal ? `Đã cấp huy hiệu Verified ${grade} cho tài liệu #${doc.id}.` : `Đã gỡ huy hiệu Verified cho tài liệu #${doc.id}.`);
+  }
+  back(req, res, '/admin/documents');
+});
+
 // ---------- Khiếu nại bản quyền (Notice & Takedown) ----------
 router.get('/reports', (req, res) => {
   const reports = db.all(

@@ -1,11 +1,14 @@
 <%- include('../partials/header') %>
 <div class="section-head">
   <div>
-    <h1>🗂️ Flashcard ôn tập (Leitner 5 hộp)</h1>
+    <h1>🗂️ Trung tâm Ôn tập Chủ động & Flashcard (Leitner 5 hộp)</h1>
     <p class="muted">
-      <% if (unlimited) { %>Tài khoản <strong>Premium</strong>: không giới hạn bộ thẻ, tự sinh thẻ từ tài liệu và tạo đề trắc nghiệm.<% } else { %>
-      Tài khoản thường: tối đa <%= config.FREE_DECK_LIMIT %> bộ / <%= config.FREE_CARD_LIMIT %> thẻ. <a href="/premium">Nâng cấp Premium</a> để không giới hạn + AI tạo thẻ & Quiz.<% } %>
+      <% if (unlimited) { %>Tài khoản <strong>Premium</strong>: không giới hạn bộ thẻ, tự sinh thẻ từ tài liệu, Phòng thi thử bấm giờ & Sổ tay bẫy đề thi.<% } else { %>
+      Tài khoản thường: tối đa <%= config.FREE_DECK_LIMIT %> bộ / <%= config.FREE_CARD_LIMIT %> thẻ. <a href="/premium">Nâng cấp Premium</a> để không giới hạn + tạo đề thi thử.<% } %>
     </p>
+  </div>
+  <div class="btn-row">
+    <a href="/flashcards/errors" class="btn btn-gold">📓 Sổ tay bẫy đề thi <% if (typeof errorCount !== 'undefined' && errorCount > 0) { %>(<%= errorCount %> câu cần lưu ý)<% } %></a>
   </div>
 </div>
 

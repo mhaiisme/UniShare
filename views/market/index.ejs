@@ -1,13 +1,19 @@
 <%- include('../partials/header') %>
 <div class="section-head">
   <div>
-    <h1>📖 Chợ trao đổi & mua bán giáo trình cũ</h1>
-    <p class="muted">Thanh toán qua ví có giữ ký quỹ (escrow) – tiền chỉ chuyển cho người bán khi bạn xác nhận đã nhận sách.</p>
+    <h1>📖 Chợ Giáo trình & Combo Học liệu số Độc quyền</h1>
+    <p class="muted">Thanh toán giữ ký quỹ (escrow) an toàn · Tự động mở khoá <strong>Học liệu số tặng kèm</strong> ngay khi xác nhận nhận sách.</p>
   </div>
   <div>
     <a href="/orders" class="btn btn-ghost">📦 Đơn hàng của tôi</a>
     <a href="/market/new" class="btn btn-primary">+ Đăng bán / tặng sách</a>
   </div>
+</div>
+
+<div class="tabs">
+  <a href="/market" class="<%= !f.bundle && !f.free ? 'active' : '' %>">Tất cả giáo trình (<%= typeof counts !== 'undefined' ? counts.total : listings.length %>)</a>
+  <a href="/market?bundle=1" class="<%= f.bundle ? 'active' : '' %>">🎁 Combo Sách giấy + Học liệu số (<%= typeof counts !== 'undefined' ? (counts.bundles || counts.bundle || 0) : '' %>)</a>
+  <a href="/market?free=1" class="<%= f.free ? 'active' : '' %>">🌱 Tủ sách 0 đồng – Tặng đàn em (<%= typeof counts !== 'undefined' ? counts.free : '' %>)</a>
 </div>
 
 <div class="layout-sidebar">
@@ -28,7 +34,8 @@
           <% Object.keys(config.CONDITIONS).forEach(function (k) { %><option value="<%= k %>" <%= f.condition === k ? 'selected' : '' %>><%= config.CONDITIONS[k] %></option><% }) %>
         </select>
       </label>
-      <label class="check"><input type="checkbox" name="free" value="1" <%= f.free ? 'checked' : '' %>> Chỉ sách tặng miễn phí</label>
+      <label class="check"><input type="checkbox" name="bundle" value="1" <%= f.bundle ? 'checked' : '' %>> Chỉ Combo tặng kèm Học liệu số</label>
+      <label class="check"><input type="checkbox" name="free" value="1" <%= f.free ? 'checked' : '' %>> Tủ sách 0 đồng (Tặng miễn phí)</label>
       <label>Sắp xếp
         <select name="sort">
           <option value="newest" <%= f.sort === 'newest' ? 'selected' : '' %>>Mới nhất</option>

@@ -8,7 +8,7 @@ const { docFile, DOC_DIR } = require('../middleware/upload');
 const { getAccess, canSee } = require('../services/access');
 const { extractText, moderate } = require('../services/moderation');
 const { watermarkPdf, pageCount } = require('../services/watermark');
-const { generateCards } = require('../services/flashcardGen');
+const { generateCards, generateRoadmap, generatePracticeBank } = require('../services/flashcardGen');
 const wallet = require('../services/wallet');
 const { toInt, sha256, isPremium, renderMarkdown, previewText } = require('../utils');
 const { DOC_SELECT } = require('./pages');
@@ -74,14 +74,21 @@ router.post('/documents', requireLogin, docFile, async (req, res, next) => {
     const courseId = findOrCreateCourse(schoolId, b.course_code, b.course_name);
 
     const status = result.status;
+    const lecturerName = String(b.lecturer_name || '').trim().slice(0, 120) || null;
+    const semester = String(b.semester || '').trim().slice(0, 40) || null;
+    const allowedGrades = ['A+', 'A', 'B+'];
+    const authorGrade = allowedGrades.includes(b.author_grade) ? b.author_grade : null;
+    const gradeVerified = authorGrade && b.grade_proof ? 1 : 0;
+
     const id = db.tx(() => {
       const docId = db.run(
-        `INSERT INTO documents (user_id, school_id, course_id, title, description, doc_type, content, extracted_text,
+        `INSERT INTO documents (user_id, school_id, course_id, title, description, doc_type, lecturer_name, semester, author_grade, grade_verified, content, extracted_text,
            file_path, file_name, file_mime, file_size, file_hash, price, allow_download, status, moderation_notes, similarity,
            points_awarded, copyright_agreed_at, agreement_ip)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), ?)`,
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), ?)`,
         [
-          req.user.id, schoolId, courseId, title, String(b.description || '').trim(), b.doc_type, content, fileText,
+          req.user.id, schoolId, courseId, title, String(b.description || '').trim(), b.doc_type,
+          lecturerName, semester, authorGrade, gradeVerified, content, fileText,
           file && status !== 'rejected' ? path.basename(file.path) : null,
           file ? file.originalname : null, file ? file.mimetype : null, file ? file.size : null, fileHash,
           price, b.allow_download ? 1 : 0, status, result.notes.join(' '), result.similarity,
@@ -328,6 +335,21 @@ router.post('/documents/:id/flashcards', requireLogin, (req, res, next) => {
   });
   flash(req, 'success', `Đã tạo ${cards.length} flashcard từ tài liệu.`);
   res.redirect('/flashcards/' + deckId);
+});
+
+// ---------- Active Learning: Lộ trình ôn thi nước rút & Bộ câu hỏi phân tầng (Hints 3 bước) ----------
+router.get('/documents/:id/roadmap', requireLogin, (req, res, next) => {
+  const doc = loadDoc(req.params.id);
+  if (!canSee(req.user, doc)) return next();
+  const access = getAccess(req.user, doc);
+  if (!access.full) {
+    flash(req, 'warning', 'Bạn cần mở khoá hoặc mua tài liệu để sử dụng Lộ trình ôn tập & Bộ câu hỏi gợi ý.');
+    return res.redirect('/documents/' + doc.id);
+  }
+  const days = [3, 7, 14].includes(toInt(req.query.days)) ? toInt(req.query.days) : 7;
+  const roadmap = generateRoadmap(doc, [], days);
+  const practice = generatePracticeBank(doc, []);
+  res.render('documents/roadmap', { title: 'Lộ trình ôn thi & Câu hỏi gợi ý: ' + doc.title, doc, access, roadmap, practice, days });
 });
 
 // ---------- Tài liệu của tôi / Thư viện ----------

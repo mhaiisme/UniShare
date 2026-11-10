@@ -1,21 +1,46 @@
 <%- include('../partials/header') %>
 <div class="page-narrow">
   <div class="section-head">
-    <h1>🎯 Quiz: <%= deck.title %></h1>
-    <a href="/flashcards/<%= deck.id %>" class="btn btn-ghost">← Quay lại bộ thẻ</a>
+    <div>
+      <h1>⏱️ Phòng thi thử bấm giờ: <%= deck.title %></h1>
+      <p class="muted small">Mô phỏng áp lực thời gian phòng thi thật · Các câu làm sai sẽ tự động được ghi vào <a href="/flashcards/errors"><strong>Sổ tay bẫy đề thi</strong></a>.</p>
+    </div>
+    <div class="btn-row">
+      <a href="/flashcards/errors" class="btn btn-ghost btn-sm">📓 Sổ tay bẫy đề thi</a>
+      <a href="/flashcards/<%= deck.id %>" class="btn btn-ghost btn-sm">← Quay lại bộ thẻ</a>
+    </div>
   </div>
+
+  <div class="card exam-toolbar">
+    <div>
+      <strong>Chế độ thời gian:</strong>
+      <div class="tabs" style="display:inline-flex;margin:0 0 0 8px;border:0;padding:0">
+        <% [5, 15, 30, 45].forEach(function (m) { %>
+          <a href="/flashcards/<%= deck.id %>/quiz?duration=<%= m %>" class="<%= (typeof duration !== 'undefined' ? duration : 15) === m ? 'active' : '' %>"><%= m %> phút</a>
+        <% }) %>
+      </div>
+    </div>
+    <div class="exam-status">
+      <span class="badge" id="tab-warning" title="Cảnh báo rời khỏi màn hình thi">Rời tab: <strong id="tab-count">0</strong> lần</span>
+      <span class="timer-badge" id="exam-timer" data-minutes="<%= typeof duration !== 'undefined' ? duration : 15 %>"><%= typeof duration !== 'undefined' ? duration : 15 %>:00</span>
+    </div>
+  </div>
+
   <div id="quiz-score" class="alert alert-success" hidden></div>
-  <form id="quiz-form">
+
+  <form id="quiz-form" data-deck-id="<%= deck.id %>">
     <% questions.forEach(function (q, idx) { %>
-      <div class="card quiz-q" data-answer="<%= q.answer %>">
+      <div class="card quiz-q" data-answer="<%= q.answer %>" data-question="<%= q.question %>" data-correct-text="<%= q.options[q.answer] %>">
         <h3>Câu <%= idx + 1 %>: <%= q.question %></h3>
         <% q.options.forEach(function (opt, oi) { %>
-          <label class="quiz-opt"><input type="radio" name="q<%= idx %>" value="<%= oi %>" required> <span><%= opt %></span></label>
+          <label class="quiz-opt"><input type="radio" name="q<%= idx %>" value="<%= oi %>" data-opt-text="<%= opt %>" required> <span><%= opt %></span></label>
         <% }) %>
       </div>
     <% }) %>
-    <button type="submit" class="btn btn-primary btn-lg">Chấm bài</button>
-    <a href="/flashcards/<%= deck.id %>/quiz" class="btn btn-ghost btn-lg">Đề mới</a>
+    <div class="btn-row">
+      <button type="submit" class="btn btn-primary btn-lg">Nộp bài & Chấm điểm</button>
+      <a href="/flashcards/<%= deck.id %>/quiz?duration=<%= typeof duration !== 'undefined' ? duration : 15 %>" class="btn btn-ghost btn-lg">Sinh đề thi mới</a>
+    </div>
   </form>
 </div>
 <%- include('../partials/footer') %>

@@ -12,13 +12,25 @@
 
 <div class="card table-wrap">
   <table>
-    <thead><tr><th>#</th><th>Tiêu đề</th><th>Tác giả</th><th>Giá</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+    <thead><tr><th>#</th><th>Tiêu đề</th><th>Tác giả</th><th>Điểm học phần</th><th>Giá</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
     <tbody>
       <% docs.forEach(function (d) { %>
         <tr>
           <td>#<%= d.id %></td>
-          <td><a href="/documents/<%= d.id %>"><%= d.title %></a></td>
+          <td>
+            <a href="/documents/<%= d.id %>"><%= d.title %></a>
+            <% if (d.lecturer_name) { %><div class="small muted">GV: <%= d.lecturer_name %><% if (d.semester) { %> · HK <%= d.semester %><% } %></div><% } %>
+          </td>
           <td><%= d.author_name %></td>
+          <td>
+            <% if (d.grade_verified && d.author_grade) { %>
+              <span class="tag tag-green">Verified <%= d.author_grade %></span>
+            <% } else if (d.author_grade) { %>
+              <span class="tag"><%= d.author_grade %> (Chưa xác thực)</span>
+            <% } else { %>
+              <span class="muted small">—</span>
+            <% } %>
+          </td>
           <td><%= d.price ? u.fmtMoney(d.price) : 'Miễn phí' %></td>
           <td><span class="status status-<%= d.status %>"><%= config.DOC_STATUS[d.status] %></span></td>
           <td>
@@ -28,6 +40,10 @@
             <% if (d.status !== 'rejected') { %>
               <form method="post" action="/admin/documents/<%= d.id %>/reject" class="inline"><button class="btn btn-danger btn-sm">Từ chối</button></form>
             <% } %>
+            <form method="post" action="/admin/documents/<%= d.id %>/verify-grade" class="inline">
+              <input type="hidden" name="grade" value="<%= d.author_grade || 'A' %>">
+              <button class="btn btn-ghost btn-sm"><%= d.grade_verified ? 'Huỷ Verified' : 'Cấp Verified A' %></button>
+            </form>
           </td>
         </tr>
       <% }) %>

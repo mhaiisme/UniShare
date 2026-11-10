@@ -51,6 +51,8 @@ router.get('/search', (req, res) => {
   const course = String(req.query.course || '').trim();
   const type = String(req.query.type || '');
   const price = String(req.query.price || '');
+  const lecturer = String(req.query.lecturer || '').trim();
+  const verified = req.query.verified ? '1' : '';
   const sort = String(req.query.sort || 'newest');
   const page = Math.max(1, toInt(req.query.page, 1));
   const perPage = 12;
@@ -58,8 +60,8 @@ router.get('/search', (req, res) => {
   const where = ["d.status = 'approved'"];
   const params = [];
   if (q) {
-    where.push('(d.title LIKE ? OR d.description LIKE ? OR c.code LIKE ? OR c.name LIKE ?)');
-    params.push(`%${q}%`, `%${q}%`, `%${q}%`, `%${q}%`);
+    where.push('(d.title LIKE ? OR d.description LIKE ? OR c.code LIKE ? OR c.name LIKE ? OR d.lecturer_name LIKE ?)');
+    params.push(`%${q}%`, `%${q}%`, `%${q}%`, `%${q}%`, `%${q}%`);
   }
   if (school) {
     where.push('d.school_id = ?');
@@ -68,6 +70,13 @@ router.get('/search', (req, res) => {
   if (course) {
     where.push('(c.code LIKE ? OR c.name LIKE ?)');
     params.push(`%${course}%`, `%${course}%`);
+  }
+  if (lecturer) {
+    where.push('d.lecturer_name LIKE ?');
+    params.push(`%${lecturer}%`);
+  }
+  if (verified) {
+    where.push('d.grade_verified = 1');
   }
   if (type && config.DOC_TYPES[type]) {
     where.push('d.doc_type = ?');
@@ -89,7 +98,7 @@ router.get('/search', (req, res) => {
   ).c;
   const docs = db.all(`${DOC_SELECT} WHERE ${whereSql} ORDER BY ${orderBy} LIMIT ? OFFSET ?`, [...params, perPage, (page - 1) * perPage]);
   const schools = db.all('SELECT * FROM schools ORDER BY name');
-  res.render('search', { title: 'Tìm tài liệu', docs, schools, total, page, pages: Math.max(1, Math.ceil(total / perPage)), f: { q, school, course, type, price, sort } });
+  res.render('search', { title: 'Tìm tài liệu', docs, schools, total, page, pages: Math.max(1, Math.ceil(total / perPage)), f: { q, school, course, type, price, lecturer, verified, sort } });
 });
 
 router.get('/api/courses', (req, res) => {

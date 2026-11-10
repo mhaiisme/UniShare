@@ -7,7 +7,11 @@
   <div class="btn-row">
     <a href="/flashcards/<%= deck.id %>/study" class="btn btn-primary">▶ Học các thẻ đến hạn</a>
     <a href="/flashcards/<%= deck.id %>/study?all=1" class="btn btn-ghost">Ôn toàn bộ</a>
-    <a href="/flashcards/<%= deck.id %>/quiz" class="btn btn-gold">🎯 Làm Quiz trắc nghiệm</a>
+    <a href="/flashcards/<%= deck.id %>/quiz" class="btn btn-gold">⏱️ Phòng thi thử bấm giờ</a>
+    <a href="/flashcards/errors" class="btn btn-ghost">📓 Sổ tay bẫy đề thi</a>
+    <% if (deck.document_id) { %>
+      <a href="/documents/<%= deck.document_id %>/roadmap" class="btn btn-ghost">🗺️ Lộ trình ôn thi</a>
+    <% } %>
     <form method="post" action="/flashcards/<%= deck.id %>/delete" onsubmit="return confirm('Xoá bộ thẻ?')" class="inline">
       <button class="btn btn-danger btn-sm">Xoá bộ</button>
     </form>

@@ -9,7 +9,13 @@
       <% buying.forEach(function (o) { %>
         <tr>
           <td>#<%= o.id %></td>
-          <td><a href="/market/<%= o.listing_id %>"><%= o.title %></a><% if (o.note) { %><div class="small muted">Ghi chú: <%= o.note %></div><% } %></td>
+          <td>
+            <a href="/market/<%= o.listing_id %>"><%= o.title %></a>
+            <% if (o.bundle_document_id) { %>
+              <div class="small"><span class="tag tag-premium">🎁 Kèm Học liệu số:</span> <a href="/documents/<%= o.bundle_document_id %>"><%= o.bundle_doc_title || ('Tài liệu #' + o.bundle_document_id) %></a></div>
+            <% } %>
+            <% if (o.note) { %><div class="small muted">Ghi chú: <%= o.note %></div><% } %>
+          </td>
           <td><%= o.seller_name %> <span class="small muted">(<%= o.seller_email %>)</span></td>
           <td><%= o.price ? u.fmtMoney(o.price) : 'Miễn phí' %></td>
           <td><span class="status status-<%= o.status %>"><%= config.ORDER_STATUS[o.status] %></span></td>
@@ -36,7 +42,13 @@
       <% selling.forEach(function (o) { var fee = o.status === 'completed' ? o.fee : marketFee(o.price); %>
         <tr>
           <td>#<%= o.id %></td>
-          <td><a href="/market/<%= o.listing_id %>"><%= o.title %></a><% if (o.note) { %><div class="small muted">Ghi chú: <%= o.note %></div><% } %></td>
+          <td>
+            <a href="/market/<%= o.listing_id %>"><%= o.title %></a>
+            <% if (o.bundle_document_id) { %>
+              <div class="small"><span class="tag tag-premium">🎁 Kèm Học liệu số:</span> <a href="/documents/<%= o.bundle_document_id %>"><%= o.bundle_doc_title || ('Tài liệu #' + o.bundle_document_id) %></a></div>
+            <% } %>
+            <% if (o.note) { %><div class="small muted">Ghi chú: <%= o.note %></div><% } %>
+          </td>
           <td><%= o.buyer_name %> <span class="small muted">(<%= o.buyer_email %>)</span></td>
           <td><%= u.fmtMoney(o.price) %> (<%= u.fmtMoney(o.price - fee) %>)</td>
           <td><span class="status status-<%= o.status %>"><%= config.ORDER_STATUS[o.status] %></span></td>

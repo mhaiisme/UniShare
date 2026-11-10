@@ -11,6 +11,7 @@
         </select>
       </label>
       <label>Mã / tên học phần<input type="text" name="course" value="<%= f.course %>" placeholder="VD: IT3011, TOKT1101"></label>
+      <label>Giảng viên phụ trách<input type="text" name="lecturer" value="<%= f.lecturer || '' %>" placeholder="VD: PGS.TS Nguyễn Văn A"></label>
       <label>Loại tài liệu
         <select name="type">
           <option value="">Tất cả loại</option>
@@ -24,6 +25,7 @@
           <option value="paid" <%= f.price === 'paid' ? 'selected' : '' %>>Trả phí (Marketplace)</option>
         </select>
       </label>
+      <label class="check"><input type="checkbox" name="verified" value="1" <%= f.verified ? 'checked' : '' %>> Chỉ tài liệu Verified A/A+</label>
       <label>Sắp xếp theo
         <select name="sort">
           <option value="newest" <%= f.sort === 'newest' ? 'selected' : '' %>>Mới cập nhật</option>

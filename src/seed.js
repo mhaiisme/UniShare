@@ -118,6 +118,12 @@ const FIRST_NAMES = ['An', 'Bình', 'Chi', 'Dũng', 'Đạt', 'Giang', 'Hà', 'H
 
 const SEMESTERS = ['20241', '20242', '20251', '20252', '20261', 'HK1 2024-2025', 'HK2 2024-2025', 'HK1 2025-2026'];
 
+const LECTURERS = [
+  'PGS.TS Nguyễn Đức Nghĩa', 'TS. Trần Trọng Minh', 'PGS.TS Đặng Văn Đức', 'TS. Lê Thị Thanh Hương',
+  'PGS.TS Phạm Văn Đạt', 'TS. Vũ Minh Hoàng', 'TS. Bùi Quốc Khánh', 'PGS.TS Hoàng Xuân Thảo',
+  'TS. Ngô Tuấn Anh', 'PGS.TS Phan Thị Minh Ngọc', 'ThS. Nguyễn Hữu Tùng', 'TS. Đỗ Quang Vinh',
+];
+
 const REVIEW_COMMENTS = [
   'Tài liệu cô đọng, bám sát nội dung thi cuối kỳ. Đọc 2 tối là nắm được khung chính.',
   'Phần phân tích lỗi sai rất thực tế, mình đi thi gặp đúng dạng câu 2 và câu 4.',
@@ -442,13 +448,14 @@ Tích phân từng phần: u = x, dv = e^x dx ⇒ kết quả x·e^x - e^x + C.
     ];
 
     const docIds = [];
-    for (const [uid, sc, cc, title, desc, type, price, content] of coreDocs) {
+    for (let idx = 0; idx < coreDocs.length; idx++) {
+      const [uid, sc, cc, title, desc, type, price, content] = coreDocs[idx];
       docIds.push(
         db.run(
-          `INSERT INTO documents (user_id, school_id, course_id, title, description, doc_type, content, price, status, moderation_notes,
+          `INSERT INTO documents (user_id, school_id, course_id, title, description, doc_type, lecturer_name, semester, author_grade, grade_verified, content, price, status, moderation_notes,
              copyright_agreed_at, agreement_ip, points_awarded, views, downloads, rating_avg, rating_count)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'approved', 'Vượt qua kiểm duyệt tự động.', ?, '127.0.0.1', 1, ?, ?, 0, 0)`,
-          [uid, sid(sc), cid(sc, cc), title, desc, type, content, price, now, rInt(180, 950), rInt(30, 210)]
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, 'approved', 'Vượt qua kiểm duyệt tự động.', ?, '127.0.0.1', 1, ?, ?, 0, 0)`,
+          [uid, sid(sc), cid(sc, cc), title, desc, type, LECTURERS[idx % LECTURERS.length], '20251', idx % 2 === 0 ? 'A+' : 'A', content, price, now, rInt(180, 950), rInt(30, 210)]
         ).lastInsertRowid
       );
     }
@@ -521,14 +528,18 @@ Tích phân từng phần: u = x, dv = e^x dx ⇒ kết quả x·e^x - e^x + C.
 
       const views = status === 'approved' ? rInt(12, 1850) : rInt(1, 15);
       const downloads = status === 'approved' && allowDownload ? Math.floor(views * (0.08 + rand() * 0.22)) : 0;
+      const lecturer = pick(LECTURERS);
+      const hasGrade = rand() < 0.42;
+      const authorGrade = hasGrade ? pick(['A+', 'A', 'A', 'B+']) : null;
+      const gradeVerified = hasGrade && (authorGrade === 'A+' || authorGrade === 'A') && rand() < 0.8 ? 1 : 0;
 
       const did = db.run(
-        `INSERT INTO documents (user_id, school_id, course_id, title, description, doc_type, content, price, allow_download,
+        `INSERT INTO documents (user_id, school_id, course_id, title, description, doc_type, lecturer_name, semester, author_grade, grade_verified, content, price, allow_download,
            status, moderation_notes, similarity, points_awarded, views, downloads, copyright_agreed_at, agreement_ip, created_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '127.0.0.1', ?)`,
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '127.0.0.1', ?)`,
         [
           authorId, sm.id, course.id,
-          `${tpl.title} #${d}`, tpl.desc, type, tpl.body,
+          `${tpl.title} #${d}`, tpl.desc, type, lecturer, sem, authorGrade, gradeVerified, tpl.body,
           price, allowDownload, status, notes, sim,
           status === 'approved' ? 1 : 0, views, downloads, createdAt, createdAt,
         ]
@@ -608,16 +619,16 @@ Tích phân từng phần: u = x, dv = e^x dx ⇒ kết quả x·e^x - e^x + C.
     const listingPrices = [0, 20000, 25000, 30000, 35000, 40000, 45000, 55000, 65000, 80000, 95000, 120000];
 
     const coreListings = [
-      [an, 'HUST', 'Giải tích I – Tuyển tập bài tập & hướng dẫn', 'Bộ môn Toán cơ bản', 'MI1111', 'good', 45000, 1, 'KTX Bách khoa', 'Sách còn tốt, bìa cứng, có ghi chú công thức bằng bút chì.'],
-      [binh, 'NEU', 'Kinh tế lượng – Bài tập và thực hành Stata/EViews', 'Khoa Toán Kinh tế', 'TOKT1101', 'fair', 35000, 0, 'Cổng Trần Đại Nghĩa', 'Ruột sạch, đã bọc nilon, tặng kèm bảng tra phân phối t và F.'],
-      [chi, 'UET', 'Introduction to Algorithms (CLRS – bản in tham khảo)', 'Cormen, Leiserson, Rivest, Stein', 'INT2210', 'good', 120000, 1, 'Xuân Thuỷ – Cầu Giấy', 'Sách dày, giấy vàng chống loá, nhận trao đổi sách Cơ sở dữ liệu.'],
-      [chi, 'UET', 'Đại số tuyến tính và ứng dụng', 'Nhiều tác giả', 'MAT1093', 'good', 0, 1, 'Xuân Thuỷ – Cầu Giấy', 'Tặng miễn phí cho sinh viên khoá dưới.'],
+      [an, 'HUST', 'Giải tích I – Tuyển tập bài tập & hướng dẫn', 'Bộ môn Toán cơ bản', 'MI1111', 'good', 45000, 1, docIds[1], 'KTX Bách khoa', 'Sách còn tốt, bìa cứng, tặng kèm bản Lời giải chi tiết đề thi Giải tích I do mình tự giải (đạt A+).'],
+      [binh, 'NEU', 'Kinh tế lượng – Bài tập và thực hành Stata/EViews', 'Khoa Toán Kinh tế', 'TOKT1101', 'fair', 35000, 0, docIds[2], 'Cổng Trần Đại Nghĩa', 'Ruột sạch, đã bọc nilon, tặng kèm Đề cương ôn tập Kinh tế lượng OLS & kiểm định.'],
+      [chi, 'UET', 'Introduction to Algorithms (CLRS – bản in tham khảo)', 'Cormen, Leiserson, Rivest, Stein', 'INT2210', 'good', 120000, 1, docIds[4], 'Xuân Thuỷ – Cầu Giấy', 'Sách dày, giấy vàng chống loá, tặng kèm tài liệu Kinh nghiệm thi cuối kỳ CTDL&GT UET.'],
+      [chi, 'UET', 'Đại số tuyến tính và ứng dụng', 'Nhiều tác giả', 'MAT1093', 'good', 0, 1, null, 'Xuân Thuỷ – Cầu Giấy', 'Tủ sách 0 đồng: Tặng miễn phí cho tân sinh viên khoá dưới.'],
     ];
     const listingIds = [];
     for (const l of coreListings) {
       listingIds.push({
         id: db.run(
-          'INSERT INTO listings (seller_id, school_id, title, author, course_code, condition, price, exchange_ok, location, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+          'INSERT INTO listings (seller_id, school_id, title, author, course_code, condition, price, exchange_ok, bundle_document_id, location, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
           [l[0], sid(l[1]), ...l.slice(2)]
         ).lastInsertRowid,
         sellerId: l[0],
@@ -637,13 +648,15 @@ Tích phân từng phần: u = x, dv = e^x dx ⇒ kết quả x·e^x - e^x + C.
       const exch = rand() < 0.45 ? 1 : 0;
       const loc = pick(locations);
       const createdAt = sqlNow(-rInt(1, 120) * 86400 * 1000);
+      const hasBundle = rand() < 0.4 && docMeta.length > 0;
+      const bundleDoc = hasBundle ? pick(docMeta).id : null;
       const lid = db.run(
-        `INSERT INTO listings (seller_id, school_id, title, author, course_code, condition, price, exchange_ok, location, description, status, created_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'available', ?)`,
+        `INSERT INTO listings (seller_id, school_id, title, author, course_code, condition, price, exchange_ok, bundle_document_id, location, description, status, created_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'available', ?)`,
         [
           seller, sm.id, `${prefix} ${course.name} (${course.code})`, `Bộ môn / Khoa chuyên ngành ${sm.code}`,
-          course.code, cond, price, exch, loc,
-          `Sách phục vụ học phần ${course.name} (${course.code}) tại ${sm.name}. Tình trạng: ${config.CONDITIONS[cond].toLowerCase()}, nhận giao trực tiếp tại ${loc}.`,
+          course.code, cond, price, exch, bundleDoc, loc,
+          `Sách phục vụ học phần ${course.name} (${course.code}) tại ${sm.name}. Tình trạng: ${config.CONDITIONS[cond].toLowerCase()}, nhận giao trực tiếp tại ${loc}.` + (bundleDoc ? ' Tặng kèm bộ học liệu số ôn thi trên UniShare khi hoàn tất nhận sách.' : ''),
           createdAt,
         ]
       ).lastInsertRowid;
@@ -749,7 +762,17 @@ Tích phân từng phần: u = x, dv = e^x dx ⇒ kết quả x·e^x - e^x + C.
       }
     }
 
-    // 9. Khiếu nại bản quyền mẫu (Notice & Takedown)
+    // Khởi tạo mẫu Sổ tay bẫy đề thi (Error Notebook) cho tài khoản demo
+    for (const [q, a, wc] of [
+      ['Quick sort có độ phức tạp trường hợp xấu nhất là bao nhiêu và có ổn định không?', 'Xấu nhất O(n^2) khi chốt lệch; Quick sort KHÔNG phải là thuật toán sắp xếp ổn định.', 3],
+      ['Khi nào dùng Dijkstra bị sai kết quả?', 'Khi đồ thị có cạnh trọng số âm (phải chuyển sang dùng thuật toán Bellman-Ford).', 2],
+      ['Dùng quy tắc L’Hospital cho lim (sin x - x)/x^3 cần lưu ý bẫy gì?', 'Dùng khai triển Maclaurin sin x = x - x^3/6 + o(x^3) sẽ nhanh hơn và tránh quên kiểm tra dạng vô định 0/0 ở từng bước.', 2],
+    ]) {
+      db.run(
+        'INSERT INTO error_logs (user_id, deck_id, document_id, question, answer, wrong_count) VALUES (?, ?, ?, ?, ?, ?)',
+        [an, deck1, docIds[0], q, a, wc]
+      );
+    }
     const deadlineOpen = sqlNow(48 * 3600 * 1000);
     db.run(
       `INSERT INTO reports (document_id, reporter_name, reporter_email, reporter_role, original_work, reason, evidence_url, status, deadline)

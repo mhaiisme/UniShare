@@ -1,0 +1,57 @@
+<%- include('../partials/header') %>
+<div class="section-head">
+  <div>
+    <h1>📓 Sổ tay bẫy đề thi & Câu hay sai (<%= items.length %>)</h1>
+    <p class="muted">Tự động tổng hợp các thẻ Flashcard bạn bấm "Quên", các câu làm sai trong Phòng thi thử, hoặc các bẫy lý thuyết bạn tự lưu.</p>
+  </div>
+  <div class="btn-row">
+    <a href="/flashcards/errors?resolved=<%= showResolved ? '0' : '1' %>" class="btn btn-ghost">
+      <%= showResolved ? 'Ẩn câu đã thuộc' : 'Hiện cả câu đã thuộc' %>
+    </a>
+    <a href="/flashcards" class="btn btn-ghost">← Bộ thẻ Flashcard</a>
+  </div>
+</div>
+
+<form method="post" action="/flashcards/errors/add" class="card form">
+  <h3>+ Ghi chú nhanh bẫy đề thi / lỗi sai mới</h3>
+  <div class="row">
+    <label>Câu hỏi / Tình huống dễ nhầm *<input type="text" name="question" required placeholder="VD: Phân biệt độ phức tạp QuickSort trường hợp trung bình và xấu nhất"></label>
+    <label>Đáp án / Công thức chuẩn *<input type="text" name="answer" required placeholder="VD: Trung bình O(n log n), xấu nhất O(n^2) khi chọn pivot đầu mảng đã sắp xếp"></label>
+  </div>
+  <button class="btn btn-primary btn-sm">Lưu vào sổ tay</button>
+</form>
+
+<div class="grid grid-2">
+  <% items.forEach(function (err) { %>
+    <div class="card <%= err.resolved ? 'error-resolved' : '' %>">
+      <div class="doc-card-top">
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+          <span class="tag <%= err.resolved ? 'tag-green' : 'tag-danger' %>">
+            <%= err.resolved ? 'Đã khắc phục' : 'Sai ' + err.wrong_count + ' lần' %>
+          </span>
+          <% if (err.deck_title) { %><span class="muted small">Bộ thẻ: <%= u.truncate(err.deck_title, 28) %></span><% } %>
+          <% if (err.doc_title) { %><a class="small" href="/documents/<%= err.document_id %>"><%= u.truncate(err.doc_title, 30) %></a><% } %>
+        </div>
+        <span class="muted small"><%= u.fmtDate(err.last_wrong_at) %></span>
+      </div>
+      <h3 style="margin:8px 0 6px"><%= err.question %></h3>
+      <div class="small" style="background:var(--primary-soft);padding:8px 10px;border-radius:4px;margin:6px 0">
+        <strong>✓ Đáp án / Kiến thức chuẩn:</strong> <%= err.answer %>
+      </div>
+      <div class="btn-row" style="margin-top:10px">
+        <form method="post" action="/flashcards/errors/<%= err.id %>/resolve" class="inline">
+          <button class="btn <%= err.resolved ? 'btn-ghost' : 'btn-primary' %> btn-sm">
+            <%= err.resolved ? 'Đưa lại vào danh sách cần ôn' : '✓ Đánh dấu đã thuộc kỹ' %>
+          </button>
+        </form>
+        <% if (err.document_id) { %>
+          <a href="/documents/<%= err.document_id %>/roadmap" class="btn btn-ghost btn-sm">Lộ trình ôn thi môn này</a>
+        <% } %>
+      </div>
+    </div>
+  <% }) %>
+</div>
+<% if (!items.length) { %>
+  <div class="empty card">Bạn chưa có câu hỏi nào trong Sổ tay bẫy đề thi. Khi ôn Flashcard (bấm "Quên") hoặc làm bài ở Phòng thi thử, các câu sai sẽ tự động được gom về đây!</div>
+<% } %>
+<%- include('../partials/footer') %>

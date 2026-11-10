@@ -1,7 +1,12 @@
 <a class="card doc-card" href="/documents/<%= d.id %>">
   <div>
     <div class="doc-card-top">
-      <span class="tag tag-type"><%= config.DOC_TYPES[d.doc_type] || d.doc_type %></span>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center">
+        <span class="tag tag-type"><%= config.DOC_TYPES[d.doc_type] || d.doc_type %></span>
+        <% if (d.grade_verified && d.author_grade) { %>
+          <span class="tag tag-green" title="Tác giả đã xác thực bảng điểm học phần">Verified <%= d.author_grade %></span>
+        <% } %>
+      </div>
       <% if (d.price > 0) { %><span class="price"><%= u.fmtMoney(d.price) %></span><% } else { %><span class="price free">Miễn phí</span><% } %>
     </div>
     <h3><%= d.title %></h3>
@@ -10,9 +15,10 @@
   <div>
     <div class="doc-meta">
       <% if (d.course_code) { %><span class="tag tag-code"><%= d.school_code %> · <%= d.course_code %></span><% } %>
+      <% if (d.lecturer_name) { %><span class="tag" title="Giảng viên phụ trách">GV: <%= u.truncate(d.lecturer_name, 20) %></span><% } %>
       <span><%= d.rating_count ? d.rating_avg.toFixed(1) + '/5 (' + d.rating_count + ')' : 'Mới' %></span>
       <span>· <%= d.views %> lượt xem</span>
     </div>
-    <div class="muted small">Tác giả: <%= d.author_name %></div>
+    <div class="muted small">Tác giả: <%= d.author_name %><% if (d.semester) { %> · HK <%= d.semester %><% } %></div>
   </div>
 </a>

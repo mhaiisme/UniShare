@@ -55,6 +55,18 @@ async function init() {
   db = fs.existsSync(DB_FILE) ? new SQL.Database(fs.readFileSync(DB_FILE)) : new SQL.Database();
   db.exec('PRAGMA foreign_keys = ON;');
   db.exec(fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8'));
+  const alterCols = [
+    ['documents', 'lecturer_name', 'TEXT'],
+    ['documents', 'semester', 'TEXT'],
+    ['documents', 'author_grade', 'TEXT'],
+    ['documents', 'grade_verified', 'INTEGER NOT NULL DEFAULT 0'],
+    ['listings', 'bundle_document_id', 'INTEGER REFERENCES documents(id)'],
+  ];
+  for (const [tbl, col, def] of alterCols) {
+    try {
+      db.exec(`ALTER TABLE ${tbl} ADD COLUMN ${col} ${def}`);
+    } catch (_) { /* cột đã tồn tại */ }
+  }
   saveNow();
 }
 

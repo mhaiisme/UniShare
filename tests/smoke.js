@@ -200,12 +200,65 @@ function ok() {
     assert(quizPage.text.includes('Câu 1'));
     ok();
 
-    step('Chợ giáo trình cũ: đăng bán -> đặt mua (giữ ký quỹ) -> xác nhận -> hoàn tất (trừ phí 5%)');
+    step('Vòng lặp học tập chủ động: Lộ trình ôn thi 3-7-14 ngày, Gợi ý 3 bước, Phòng thi thử & Sổ tay bẫy đề thi');
+    const roadmapRes = await sv2.get(`/documents/${newDoc.id}/roadmap?days=3`);
+    assert.strictEqual(roadmapRes.status, 200);
+    assert(roadmapRes.text.includes('Checklist Lộ trình ôn thi nước rút (3 ngày)'));
+    assert(roadmapRes.text.includes('Gợi ý bước 1'));
+    assert(roadmapRes.text.includes('Gợi ý bước 2'));
+
+    // Bấm "again" khi ôn Flashcard -> tự động ghi vào Sổ tay bẫy đề thi (error_logs)
+    await sv2.req('POST', `/flashcards/${genDeck.id}/cards/${genCards[1].id}/review`, { json: { result: 'again' } });
+    const errFromCard = db.get('SELECT * FROM error_logs WHERE user_id = ? AND question = ?', [binhUser.id, genCards[1].front]);
+    assert(errFromCard, 'Thẻ đánh dấu Quên (again) phải tự động vào Sổ tay bẫy đề thi');
+
+    // Nộp kết quả câu sai từ Phòng thi thử bấm giờ -> tự động ghi vào Sổ tay bẫy đề thi
+    const submitQuiz = await sv2.req('POST', `/flashcards/${genDeck.id}/quiz/submit`, {
+      json: {
+        wrongItems: [
+          { question: 'Tầng nào định tuyến gói tin?', chosenAnswer: 'Tầng vật lý', correctAnswer: 'Tầng mạng' },
+        ],
+      },
+    });
+    assert.strictEqual(submitQuiz.status, 200);
+    const errFromQuiz = db.get("SELECT * FROM error_logs WHERE user_id = ? AND question = 'Tầng nào định tuyến gói tin?'", [binhUser.id]);
+    assert(errFromQuiz, 'Câu làm sai trong Phòng thi thử phải được lưu vào Sổ tay bẫy đề thi');
+
+    const errPage = await sv2.get('/flashcards/errors');
+    assert.strictEqual(errPage.status, 200);
+    assert(errPage.text.includes('Tầng nào định tuyến gói tin?'));
+    await sv2.post(`/flashcards/errors/${errFromQuiz.id}/resolve`, {});
+    assert.strictEqual(db.get('SELECT resolved FROM error_logs WHERE id = ?', [errFromQuiz.id]).resolved, 1);
+    ok();
+
+    step('Chợ giáo trình cũ & Combo Sách giấy + Học liệu số độc quyền + Verified A+');
+    // sv1 đăng tài liệu trả phí kèm cam kết điểm A+ và Giảng viên phụ trách
+    await sv1.post('/documents', {
+      title: 'Bí kíp đạt A+ Giải tích 1 thầy Lê Đình Định',
+      doc_type: 'study_guide',
+      school_id: '1',
+      course_code: 'MI1111',
+      lecturer_name: 'PGS.TS Lê Đình Định',
+      semester: '2025.2',
+      author_grade: 'A+',
+      grade_proof: '1',
+      price: '45000',
+      content: '- Chuỗi số dương: tiêu chuẩn D’Alembert và Cauchy\n- Tích phân suy rộng: hội tụ tuyệt đối và bán hội tụ',
+      agree_copyright: '1',
+    });
+    const bundleDoc = db.get("SELECT * FROM documents WHERE title LIKE 'Bí kíp đạt A+ Giải tích 1%'");
+    assert(bundleDoc && bundleDoc.grade_verified === 1 && bundleDoc.author_grade === 'A+');
+    const searchVerified = await guest.get('/search?verified=1&lecturer=' + encodeURIComponent('Lê Đình Định'));
+    assert(searchVerified.text.includes('Bí kíp đạt A+ Giải tích 1'));
+
+    // sv1 đăng bán giáo trình giấy kèm Combo tặng học liệu số bundleDoc
     await sv1.post('/market', {
       title: 'Sách Mạng máy tính Andrew Tanenbaum', author: 'Tanenbaum', course_code: 'IT3080',
       school_id: '1', condition: 'good', price: '100000', location: 'Bách Khoa', description: 'Sách còn rất mới',
+      bundle_document_id: String(bundleDoc.id),
     });
     const listing = db.get("SELECT * FROM listings WHERE title LIKE 'Sách Mạng máy tính%'");
+    assert.strictEqual(listing.bundle_document_id, bundleDoc.id);
     const s1Before = db.get('SELECT balance FROM users WHERE id = ?', [u1.id]).balance;
     await sv2.post(`/market/${listing.id}/order`, { note: 'Hẹn ở thư viện Tạ Quang Bửu' });
     const order = db.get('SELECT * FROM orders WHERE listing_id = ?', [listing.id]);
@@ -217,6 +270,13 @@ function ok() {
     assert.strictEqual(db.get('SELECT status FROM orders WHERE id = ?', [order.id]).status, 'completed');
     const s1After = db.get('SELECT balance FROM users WHERE id = ?', [u1.id]).balance;
     assert.strictEqual(s1After - s1Before, 95000, 'Người bán nhận 95.000đ (trừ 5% phí)');
+    // Kiểm tra người mua (sv2) đã tự động được mở khoá tài liệu số đính kèm (bundleDoc)
+    const bundleUnlocked =
+      db.get('SELECT * FROM purchases WHERE user_id = ? AND document_id = ?', [binhUser.id, bundleDoc.id]) ||
+      db.get('SELECT * FROM unlocks WHERE user_id = ? AND document_id = ?', [binhUser.id, bundleDoc.id]);
+    assert(bundleUnlocked, 'Hoàn tất nhận sách Combo phải tự động mở khoá học liệu số đính kèm cho người mua');
+    const buyerBundleView = await sv2.get(`/documents/${bundleDoc.id}`);
+    assert(!buyerBundleView.text.includes('Bạn đang xem trước 20%'), 'Người mua sách Combo phải xem được toàn bộ học liệu số đính kèm');
     ok();
 
     step('Quy trình Notice & Takedown (DMCA): báo cáo -> Admin gỡ bỏ + chặn hash -> chặn upload lại file đó');

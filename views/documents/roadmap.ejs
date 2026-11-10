@@ -1,0 +1,146 @@
+<%- include('../partials/header') %>
+<div class="section-head">
+  <div>
+    <div class="doc-meta" style="margin-bottom:4px">
+      <% if (doc.school_code) { %><span class="tag tag-code"><%= doc.school_code %></span><% } %>
+      <% if (doc.course_code) { %><span class="tag tag-code"><%= doc.course_code %> – <%= doc.course_name %></span><% } %>
+      <% if (doc.lecturer_name) { %><span class="tag">GV: <%= doc.lecturer_name %></span><% } %>
+      <% if (doc.grade_verified && doc.author_grade) { %><span class="tag tag-green">Verified <%= doc.author_grade %></span><% } %>
+    </div>
+    <h1>Lộ trình ôn thi nước rút & Ngân hàng câu hỏi phân tầng</h1>
+    <p class="muted">Tự động bóc tách từ tài liệu: <strong><a href="/documents/<%= doc.id %>"><%= doc.title %></a></strong></p>
+  </div>
+  <div class="btn-row">
+    <a href="/documents/<%= doc.id %>" class="btn btn-ghost">← Quay lại tài liệu</a>
+    <a href="/flashcards/errors" class="btn btn-ghost">📓 Sổ tay bẫy đề thi</a>
+    <% if (access && access.full) { %>
+      <form method="post" action="/documents/<%= doc.id %>/flashcards" class="inline">
+        <button class="btn btn-primary">Vào Phòng thi thử & Flashcard</button>
+      </form>
+    <% } %>
+  </div>
+</div>
+
+<div class="layout-main-side">
+  <div>
+    <div class="card">
+      <div class="section-head" style="margin-bottom:10px">
+        <h2>1. Checklist Lộ trình ôn thi nước rút (<%= days %> ngày)</h2>
+        <div class="tabs" style="margin:0;border:0;padding:0">
+          <a href="/documents/<%= doc.id %>/roadmap?days=3" class="<%= days === 3 ? 'active' : '' %>">3 ngày (Cấp tốc)</a>
+          <a href="/documents/<%= doc.id %>/roadmap?days=7" class="<%= days === 7 ? 'active' : '' %>">7 ngày (Tiêu chuẩn)</a>
+          <a href="/documents/<%= doc.id %>/roadmap?days=14" class="<%= days === 14 ? 'active' : '' %>">14 ngày (Chắc điểm A)</a>
+        </div>
+      </div>
+      <p class="muted small">Đánh dấu từng hạng mục hoàn thành. Tiến độ được lưu tự động trên trình duyệt của bạn.</p>
+
+      <div class="roadmap-list" data-roadmap-doc="<%= doc.id %>-<%= days %>">
+        <% (roadmap.plan || []).forEach(function (r) { %>
+          <div class="roadmap-day">
+            <div class="roadmap-day-head">
+              <strong>Ngày <%= r.day %>: <%= r.focus %></strong>
+              <span class="tag tag-code">~<%= r.estMinutes %> phút</span>
+            </div>
+            <div class="roadmap-tasks">
+              <% (r.tasks || []).forEach(function (t, ti) { %>
+                <label class="check roadmap-task">
+                  <input type="checkbox" data-task-id="d<%= r.day %>_t<%= ti %>">
+                  <span><%= t %></span>
+                </label>
+              <% }) %>
+            </div>
+            <% if (r.concepts && r.concepts.length) { %>
+              <div class="roadmap-topics">
+                <span class="small muted">Trọng tâm cần thuộc:</span>
+                <% r.concepts.forEach(function (kp) { %>
+                  <div class="small" style="margin-top:3px">• <strong><%= kp.front %>:</strong> <span class="muted"><%= kp.back %></span></div>
+                <% }) %>
+              </div>
+            <% } %>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-head">
+        <h2>2. Bộ câu hỏi phân tầng 3 mức độ & Gợi ý tư duy 3 bước</h2>
+        <span class="muted small">Nhận biết · Vận dụng · Tự luận phân loại</span>
+      </div>
+      <p class="muted small">Thay vì xem đáp án ngay, hãy bấm mở từng bước <strong>Gợi ý bước 1 → Gợi ý bước 2 → Lời giải chuẩn</strong> để rèn phản xạ phòng thi.</p>
+
+      <% (practice.tier3 || []).forEach(function (q, idx) { %>
+        <div class="practice-item">
+          <div class="doc-meta" style="margin-top:0">
+            <span class="tag tag-premium">Tầng 3 · Tự luận & Vận dụng cao</span>
+            <span class="muted small">Chủ đề: <strong><%= q.topic %></strong></span>
+          </div>
+          <h3 style="margin:6px 0 8px"><%= q.question %></h3>
+
+          <div class="hint-steps">
+            <details class="hint-box">
+              <summary>Gợi ý bước 1 (Định hướng khái niệm & giả thiết)</summary>
+              <div class="hint-body"><%= q.hint1 %></div>
+            </details>
+            <details class="hint-box">
+              <summary>Gợi ý bước 2 (Biến đổi trung gian & cảnh báo bẫy)</summary>
+              <div class="hint-body"><%= q.hint2 %></div>
+            </details>
+            <details class="hint-box hint-solution">
+              <summary>Lời giải chuẩn & Thang điểm đối chiếu</summary>
+              <div class="hint-body"><pre style="white-space:pre-wrap;margin:0;font-family:inherit"><%= q.solution %></pre></div>
+            </details>
+          </div>
+
+          <form method="post" action="/flashcards/errors/add" style="margin-top:8px">
+            <input type="hidden" name="document_id" value="<%= doc.id %>">
+            <input type="hidden" name="question" value="<%= q.question %>">
+            <input type="hidden" name="answer" value="<%= q.solution %>">
+            <input type="hidden" name="back" value="/documents/<%= doc.id %>/roadmap?days=<%= days %>">
+            <button class="btn btn-ghost btn-sm">+ Lưu vào Sổ tay bẫy đề thi</button>
+          </form>
+        </div>
+      <% }) %>
+
+      <% (practice.tier2 || []).forEach(function (q, idx) { %>
+        <div class="practice-item">
+          <div class="doc-meta" style="margin-top:0">
+            <span class="tag tag-warn">Tầng 2 · Phân biệt & Bẫy thường gặp #<%= idx + 1 %></span>
+          </div>
+          <h3 style="margin:6px 0 8px"><%= q.question %></h3>
+          <div class="hint-steps">
+            <details class="hint-box">
+              <summary>Gợi ý bước 1 (Điểm mấu chốt cần so sánh)</summary>
+              <div class="hint-body"><%= q.hint %></div>
+            </details>
+            <details class="hint-box hint-solution">
+              <summary>Đáp án & Lưu ý phòng thi</summary>
+              <div class="hint-body"><pre style="white-space:pre-wrap;margin:0;font-family:inherit"><%= q.answer %></pre></div>
+            </details>
+          </div>
+          <form method="post" action="/flashcards/errors/add" style="margin-top:8px">
+            <input type="hidden" name="document_id" value="<%= doc.id %>">
+            <input type="hidden" name="question" value="<%= q.question %>">
+            <input type="hidden" name="answer" value="<%= q.answer %>">
+            <input type="hidden" name="back" value="/documents/<%= doc.id %>/roadmap?days=<%= days %>">
+            <button class="btn btn-ghost btn-sm">+ Lưu vào Sổ tay bẫy đề thi</button>
+          </form>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+
+  <aside>
+    <div class="card">
+      <h3>Phương pháp Ôn tập Chủ động</h3>
+      <ul class="checklist">
+        <li><strong>Bước 1:</strong> Chọn quỹ thời gian còn lại (3, 7 hoặc 14 ngày) và bám sát tiến độ từng ngày.</li>
+        <li><strong>Bước 2:</strong> Tự trả lời câu hỏi phân tầng bằng cách mở từng gợi ý trước khi xem lời giải.</li>
+        <li><strong>Bước 3:</strong> Lưu các câu dễ nhầm vào <strong>Sổ tay bẫy đề thi</strong> để rà soát 24h trước giờ thi.</li>
+      </ul>
+      <a href="/flashcards/errors" class="btn btn-light btn-block">Mở Sổ tay bẫy đề thi →</a>
+    </div>
+    <%- include('../partials/ads-sidebar') %>
+  </aside>
+</div>
+<%- include('../partials/footer') %>

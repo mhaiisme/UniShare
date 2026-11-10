@@ -17,8 +17,9 @@
     <div class="doc-meta">
       <% if (l.course_code) { %><span class="tag tag-code"><%= l.school_code || '' %> <%= l.course_code %></span><% } %>
       <span class="tag"><%= config.CONDITIONS[l.condition] %></span>
+      <% if (l.bundle_document_id) { %><span class="tag tag-premium" title="Tặng kèm mở khoá học liệu số độc quyền khi nhận sách">Combo +Học liệu số</span><% } %>
       <% if (l.exchange_ok) { %><span class="tag tag-green">Nhận đổi sách</span><% } %>
     </div>
-    <div class="price <%= l.price === 0 ? 'free' : '' %>"><%= l.price === 0 ? 'Tặng miễn phí' : u.fmtMoney(l.price) %></div>
+    <div class="price <%= l.price === 0 ? 'free' : '' %>"><%= l.price === 0 ? 'Tủ sách 0đ (Tặng)' : u.fmtMoney(l.price) %></div>
   </div>
 </a>

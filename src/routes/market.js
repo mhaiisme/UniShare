@@ -9,8 +9,11 @@ const { toInt } = require('../utils');
 
 const router = express.Router();
 
-const LISTING_SELECT = `SELECT l.*, u.name AS seller_name, s.code AS school_code, s.name AS school_name
-  FROM listings l JOIN users u ON u.id = l.seller_id LEFT JOIN schools s ON s.id = l.school_id`;
+const LISTING_SELECT = `SELECT l.*, u.name AS seller_name, s.code AS school_code, s.name AS school_name,
+  bd.title AS bundle_doc_title, bd.doc_type AS bundle_doc_type, bd.price AS bundle_doc_price, bd.author_grade AS bundle_doc_grade
+  FROM listings l JOIN users u ON u.id = l.seller_id
+  LEFT JOIN schools s ON s.id = l.school_id
+  LEFT JOIN documents bd ON bd.id = l.bundle_document_id`;
 
 function marketFee(price) {
   if (price <= 0) return 0;
@@ -42,23 +45,31 @@ router.get('/market', (req, res) => {
     params.push(condition);
   }
   if (req.query.free) where.push('l.price = 0');
+  if (req.query.bundle) where.push('l.bundle_document_id IS NOT NULL');
   const order = { newest: 'l.created_at DESC, l.id DESC', price_asc: 'l.price ASC', price_desc: 'l.price DESC' }[sort] || 'l.created_at DESC';
   const listings = db.all(`${LISTING_SELECT} WHERE ${where.join(' AND ')} ORDER BY ${order} LIMIT 60`, params);
+  const counts = {
+    total: db.get("SELECT COUNT(*) AS c FROM listings WHERE status = 'available'").c,
+    bundles: db.get("SELECT COUNT(*) AS c FROM listings WHERE status = 'available' AND bundle_document_id IS NOT NULL").c,
+    free: db.get("SELECT COUNT(*) AS c FROM listings WHERE status = 'available' AND price = 0").c,
+  };
   res.render('market/index', {
-    title: 'Chợ giáo trình cũ', listings, schools: db.all('SELECT * FROM schools ORDER BY name'),
-    f: { q, school, course, condition, sort, free: req.query.free },
+    title: 'Chợ giáo trình cũ & Combo qua môn', listings, counts, schools: db.all('SELECT * FROM schools ORDER BY name'),
+    f: { q, school, course, condition, sort, free: req.query.free, bundle: req.query.bundle },
   });
 });
 
 router.get('/market/new', requireLogin, (req, res) => {
-  res.render('market/new', { title: 'Đăng bán giáo trình', schools: db.all('SELECT * FROM schools ORDER BY name'), values: { school_id: req.user.school_id }, error: null });
+  const myDocs = db.all("SELECT id, title, price FROM documents WHERE user_id = ? AND status = 'approved' ORDER BY id DESC", [req.user.id]);
+  res.render('market/new', { title: 'Đăng bán giáo trình', schools: db.all('SELECT * FROM schools ORDER BY name'), myDocs, values: { school_id: req.user.school_id }, error: null });
 });
 
 router.post('/market', requireLogin, listingImage, (req, res) => {
   const b = req.body;
+  const myDocs = db.all("SELECT id, title, price FROM documents WHERE user_id = ? AND status = 'approved' ORDER BY id DESC", [req.user.id]);
   const fail = (error) => {
     if (req.file) fs.unlink(req.file.path, () => {});
-    res.status(400).render('market/new', { title: 'Đăng bán giáo trình', schools: db.all('SELECT * FROM schools ORDER BY name'), values: b, error });
+    res.status(400).render('market/new', { title: 'Đăng bán giáo trình', schools: db.all('SELECT * FROM schools ORDER BY name'), myDocs, values: b, error });
   };
   if (req.uploadError) return fail(req.uploadError);
   const title = String(b.title || '').trim();
@@ -66,12 +77,19 @@ router.post('/market', requireLogin, listingImage, (req, res) => {
   if (title.length < 3) return fail('Vui lòng nhập tên sách/giáo trình.');
   if (price < 0 || price > 10000000) return fail('Giá không hợp lệ (0 = tặng miễn phí).');
   if (!config.CONDITIONS[b.condition]) return fail('Vui lòng chọn tình trạng sách.');
+
+  let bundleDocId = toInt(b.bundle_document_id) || null;
+  if (bundleDocId) {
+    const owned = db.get("SELECT id FROM documents WHERE id = ? AND status = 'approved'", [bundleDocId]);
+    if (!owned) bundleDocId = null;
+  }
+
   const id = db.run(
-    `INSERT INTO listings (seller_id, school_id, title, author, course_code, condition, price, exchange_ok, location, description, image_path)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO listings (seller_id, school_id, title, author, course_code, condition, price, exchange_ok, bundle_document_id, location, description, image_path)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       req.user.id, toInt(b.school_id) || null, title, String(b.author || '').trim(), String(b.course_code || '').trim().toUpperCase(),
-      b.condition, price, b.exchange_ok ? 1 : 0, String(b.location || '').trim(), String(b.description || '').trim(),
+      b.condition, price, b.exchange_ok ? 1 : 0, bundleDocId, String(b.location || '').trim(), String(b.description || '').trim(),
       req.file ? req.file.filename : null,
     ]
   ).lastInsertRowid;
@@ -132,16 +150,19 @@ router.post('/market/:id/toggle', requireLogin, (req, res, next) => {
 
 // ---------- Đơn hàng ----------
 router.get('/orders', requireLogin, (req, res) => {
-  const sel = `SELECT o.*, l.title, l.image_path, b.name AS buyer_name, b.email AS buyer_email, s.name AS seller_name, s.email AS seller_email
-    FROM orders o JOIN listings l ON l.id = o.listing_id JOIN users b ON b.id = o.buyer_id JOIN users s ON s.id = o.seller_id`;
+  const sel = `SELECT o.*, l.title, l.image_path, l.bundle_document_id, bd.title AS bundle_doc_title,
+    b.name AS buyer_name, b.email AS buyer_email, s.name AS seller_name, s.email AS seller_email
+    FROM orders o JOIN listings l ON l.id = o.listing_id
+    LEFT JOIN documents bd ON bd.id = l.bundle_document_id
+    JOIN users b ON b.id = o.buyer_id JOIN users s ON s.id = o.seller_id`;
   const buying = db.all(`${sel} WHERE o.buyer_id = ? ORDER BY o.id DESC`, [req.user.id]);
   const selling = db.all(`${sel} WHERE o.seller_id = ? ORDER BY o.id DESC`, [req.user.id]);
-  const myListings = db.all('SELECT * FROM listings WHERE seller_id = ? ORDER BY id DESC', [req.user.id]);
+  const myListings = db.all(`${LISTING_SELECT} WHERE l.seller_id = ? ORDER BY l.id DESC`, [req.user.id]);
   res.render('market/orders', { title: 'Đơn hàng giáo trình', buying, selling, myListings, marketFee });
 });
 
 function loadOrder(req) {
-  return db.get('SELECT o.*, l.title FROM orders o JOIN listings l ON l.id = o.listing_id WHERE o.id = ?', [toInt(req.params.id)]);
+  return db.get('SELECT o.*, l.title, l.bundle_document_id FROM orders o JOIN listings l ON l.id = o.listing_id WHERE o.id = ?', [toInt(req.params.id)]);
 }
 
 router.post('/orders/:id/confirm', requireLogin, (req, res, next) => {
@@ -174,9 +195,21 @@ router.post('/orders/:id/complete', requireLogin, (req, res, next) => {
     }
     db.run("UPDATE orders SET status = 'completed', fee = ?, updated_at = datetime('now') WHERE id = ?", [fee, o.id]);
     db.run("UPDATE listings SET status = 'sold' WHERE id = ?", [o.listing_id]);
+    // Tự động mở khoá Học liệu số tặng kèm trong gói Combo
+    if (o.bundle_document_id) {
+      const bDoc = db.get('SELECT id, title, price FROM documents WHERE id = ?', [o.bundle_document_id]);
+      if (bDoc) {
+        if (bDoc.price > 0) {
+          db.run('INSERT OR IGNORE INTO purchases (user_id, document_id, price, commission) VALUES (?, ?, 0, 0)', [o.buyer_id, bDoc.id]);
+        } else {
+          db.run('INSERT OR IGNORE INTO unlocks (user_id, document_id) VALUES (?, ?)', [o.buyer_id, bDoc.id]);
+        }
+        wallet.notify(o.buyer_id, `Đã tự động mở khoá học liệu số tặng kèm "${bDoc.title}" từ gói Combo sách #${o.id}.`, '/documents/' + bDoc.id);
+      }
+    }
     wallet.notify(o.seller_id, `Đơn #${o.id} hoàn tất. Bạn nhận ${(o.price - fee).toLocaleString('vi-VN')}đ.`, '/wallet');
   });
-  flash(req, 'success', 'Cảm ơn bạn! Giao dịch đã hoàn tất.');
+  flash(req, 'success', 'Cảm ơn bạn! Giao dịch đã hoàn tất' + (o.bundle_document_id ? ' và đã mở khoá học liệu số tặng kèm trong Thư viện.' : '.'));
   res.redirect('/orders');
 });
 

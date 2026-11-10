@@ -14,8 +14,13 @@
     <div class="card doc-header">
       <div class="doc-meta">
         <span class="tag tag-type"><%= config.DOC_TYPES[doc.doc_type] %></span>
+        <% if (doc.grade_verified && doc.author_grade) { %>
+          <span class="tag tag-green">Verified <%= doc.author_grade %></span>
+        <% } %>
         <% if (doc.school_code) { %><a class="tag tag-code" href="/search?school=<%= doc.school_id %>"><%= doc.school_code %></a><% } %>
         <% if (doc.course_code) { %><a class="tag tag-code" href="/search?course=<%= doc.course_code %>"><%= doc.course_code %> – <%= doc.course_name %></a><% } %>
+        <% if (doc.lecturer_name) { %><a class="tag" href="/search?lecturer=<%= encodeURIComponent(doc.lecturer_name) %>">GV: <%= doc.lecturer_name %></a><% } %>
+        <% if (doc.semester) { %><span class="tag">HK <%= doc.semester %></span><% } %>
         <span class="muted small">Đăng bởi <a href="/u/<%= doc.user_id %>"><%= doc.author_name %></a> · <%= u.fmtDate(doc.created_at) %></span>
       </div>
       <h1><%= doc.title %></h1>
@@ -29,6 +34,14 @@
       <% if (sales) { %>
         <div class="small muted" style="margin-top:6px">Đã bán: <strong><%= sales.c %></strong> lượt · Doanh thu tác giả nhận: <strong><%= u.fmtMoney(sales.earned) %></strong></div>
       <% } %>
+      <div class="btn-row" style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border)">
+        <a href="/documents/<%= doc.id %>/roadmap" class="btn btn-primary btn-sm">Lộ trình ôn thi 3-7-14 ngày & Câu hỏi gợi ý 3 bước</a>
+        <% if (access.full && (doc.content || doc.extracted_text)) { %>
+          <form method="post" action="/documents/<%= doc.id %>/flashcards" class="inline">
+            <button class="btn btn-ghost btn-sm">Tạo bộ thẻ Flashcard & Phòng thi thử</button>
+          </form>
+        <% } %>
+      </div>
     </div>
 
     <div class="card viewer" id="doc-viewer" data-watermark="<%= watermark %>">

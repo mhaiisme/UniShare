@@ -37,6 +37,10 @@ CREATE TABLE IF NOT EXISTS documents (
   title TEXT NOT NULL,
   description TEXT,
   doc_type TEXT NOT NULL,
+  lecturer_name TEXT,
+  semester TEXT,
+  author_grade TEXT,
+  grade_verified INTEGER NOT NULL DEFAULT 0,
   content TEXT,
   extracted_text TEXT,
   file_path TEXT,
@@ -101,6 +105,7 @@ CREATE TABLE IF NOT EXISTS listings (
   condition TEXT NOT NULL DEFAULT 'good',
   price INTEGER NOT NULL DEFAULT 0,
   exchange_ok INTEGER NOT NULL DEFAULT 0,
+  bundle_document_id INTEGER REFERENCES documents(id),
   location TEXT,
   description TEXT,
   image_path TEXT,
@@ -155,6 +160,19 @@ CREATE TABLE IF NOT EXISTS flashcards (
   back TEXT NOT NULL,
   box INTEGER NOT NULL DEFAULT 1,
   next_review TEXT
+);
+
+CREATE TABLE IF NOT EXISTS error_logs (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  deck_id INTEGER REFERENCES flashcard_decks(id) ON DELETE CASCADE,
+  document_id INTEGER REFERENCES documents(id) ON DELETE CASCADE,
+  question TEXT NOT NULL,
+  answer TEXT NOT NULL,
+  wrong_count INTEGER NOT NULL DEFAULT 1,
+  resolved INTEGER NOT NULL DEFAULT 0,
+  last_wrong_at TEXT NOT NULL DEFAULT (datetime('now')),
+  UNIQUE (user_id, question)
 );
 
 CREATE TABLE IF NOT EXISTS posts (

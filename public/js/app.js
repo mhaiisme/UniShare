@@ -91,14 +91,49 @@
   show();
 })();
 
-// 4. Chấm Quiz trắc nghiệm
+// 4. Phòng thi thử bấm giờ (Timed Mock Exam Simulator) & tự động lưu câu sai vào Sổ tay bẫy đề thi
 (function () {
   const form = document.getElementById('quiz-form');
   if (!form) return;
-  form.addEventListener('submit', (e) => {
+  const timerEl = document.getElementById('exam-timer');
+  const tabCountEl = document.getElementById('tab-count');
+  let submitted = false;
+  let tabSwitches = 0;
+
+  // Cảnh báo chuyển tab khi đang làm bài thi
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && !submitted && tabCountEl) {
+      tabSwitches++;
+      tabCountEl.textContent = String(tabSwitches);
+      const warnBadge = document.getElementById('tab-warning');
+      if (warnBadge) warnBadge.classList.add('tag-danger');
+    }
+  });
+
+  // Đồng hồ đếm ngược
+  let remainingSec = (timerEl ? Number(timerEl.dataset.minutes || 15) : 15) * 60;
+  const interval = setInterval(() => {
+    if (submitted || !timerEl) return;
+    remainingSec = Math.max(0, remainingSec - 1);
+    const m = String(Math.floor(remainingSec / 60)).padStart(2, '0');
+    const s = String(remainingSec % 60).padStart(2, '0');
+    timerEl.textContent = `${m}:${s}`;
+    if (remainingSec <= 60) timerEl.classList.add('timer-urgent');
+    if (remainingSec === 0) {
+      clearInterval(interval);
+      form.requestSubmit();
+    }
+  }, 1000);
+
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    if (submitted) return;
+    submitted = true;
+    clearInterval(interval);
+
     const qs = form.querySelectorAll('.quiz-q');
     let right = 0;
+    const wrongItems = [];
     qs.forEach((q, idx) => {
       const ans = Number(q.dataset.answer);
       const chosen = form.querySelector(`input[name="q${idx}"]:checked`);
@@ -107,11 +142,53 @@
         if (oi === ans) opt.classList.add('correct');
         else if (chosen && Number(chosen.value) === oi) opt.classList.add('wrong');
       });
-      if (chosen && Number(chosen.value) === ans) right++;
+      if (chosen && Number(chosen.value) === ans) {
+        right++;
+      } else {
+        wrongItems.push({
+          question: q.dataset.question || q.querySelector('h3').textContent,
+          chosenAnswer: chosen ? (chosen.dataset.optText || '') : 'Chưa chọn (Hết giờ)',
+          correctAnswer: q.dataset.correctText || '',
+        });
+      }
     });
+
+    const deckId = form.dataset.deckId;
+    if (deckId && wrongItems.length > 0) {
+      try {
+        await fetch(`/flashcards/${deckId}/quiz/submit`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ wrongItems }),
+        });
+      } catch (_) {}
+    }
+
     const score = document.getElementById('quiz-score');
     score.hidden = false;
-    score.textContent = `Kết quả: đúng ${right}/${qs.length} câu (${Math.round((right * 100) / qs.length)} điểm).`;
+    const pct = Math.round((right * 100) / qs.length);
+    score.innerHTML = `<strong>Kết quả: đúng ${right}/${qs.length} câu (${pct} điểm)</strong> · Số lần rời màn hình: ${tabSwitches}. ${
+      wrongItems.length
+        ? `Đã tự động lưu <strong>${wrongItems.length} câu làm sai</strong> vào <a href="/flashcards/errors"><strong>Sổ tay bẫy đề thi</strong></a> để bạn ôn lại.`
+        : 'Xuất sắc! Bạn không mắc lỗi sai nào.'
+    }`;
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+})();
+
+// 5. Lưu trạng thái Checklist Lộ trình ôn thi 3-7-14 ngày trên trình duyệt
+(function () {
+  const wrap = document.querySelector('[data-roadmap-doc]');
+  if (!wrap) return;
+  const key = 'unishare_roadmap_' + wrap.dataset.roadmapDoc;
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem(key) || '{}'); } catch (_) {}
+  wrap.querySelectorAll('input[type="checkbox"][data-task-id]').forEach((cb) => {
+    const id = cb.dataset.taskId;
+    if (saved[id]) cb.checked = true;
+    cb.addEventListener('change', () => {
+      saved[id] = cb.checked;
+      try { localStorage.setItem(key, JSON.stringify(saved)); } catch (_) {}
+    });
   });
 })();

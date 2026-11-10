@@ -492,6 +492,29 @@ tbody tr:hover { background: #fafaf7; }
 .quiz-opt.correct { background: #dcfce7; border-color: var(--success); }
 .quiz-opt.wrong { background: #fee2e2; border-color: var(--danger); }
 
+/* Active Learning Loop: Roadmap, 3-Tier Hints, Timed Exam, Error Notebook */
+.roadmap-list { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
+.roadmap-day { border: 1px solid var(--border); border-radius: 6px; padding: 12px 14px; background: #fafaf7; }
+.roadmap-day-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
+.roadmap-tasks { display: flex; flex-direction: column; gap: 6px; }
+.roadmap-task { font-size: 0.89rem; margin: 0 !important; }
+.roadmap-task input:checked + span { text-decoration: line-through; color: var(--muted); }
+.roadmap-topics { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border); }
+
+.practice-item { border-top: 1px solid var(--border); padding: 14px 0; }
+.practice-item:first-of-type { border-top: 0; }
+.hint-steps { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.hint-box { border: 1px solid var(--border); border-radius: 5px; background: #faf9f5; padding: 6px 11px; font-size: 0.88rem; }
+.hint-box summary { cursor: pointer; font-weight: 600; color: var(--primary-dark); user-select: none; }
+.hint-box .hint-body { margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--border); color: var(--text); }
+.hint-solution { background: var(--primary-soft); border-color: #b7d7c8; }
+
+.exam-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; background: #fafaf7; }
+.exam-status { display: flex; align-items: center; gap: 8px; }
+.timer-badge { font-family: var(--mono); font-weight: 700; font-size: 1.05rem; background: #16181d; color: #6ee7b7; padding: 4px 11px; border-radius: 5px; }
+.timer-badge.timer-urgent { background: var(--danger); color: #fff; }
+.error-resolved { opacity: 0.72; background: #fafaf7; }
+
 .ad-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; }
 .ad-banner, .ad-box {
   display: flex; flex-direction: column; gap: 3px; background: #faf9f5; border: 1px solid var(--border);
