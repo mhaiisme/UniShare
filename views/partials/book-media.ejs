@@ -1,0 +1,8 @@
+<div class="book-media" data-book-media>
+  <% if (String(book.image_path || '').trim()) { %>
+    <img class="seller-book-photo" data-book-photo src="/uploads/<%= book.image_path %>" alt="Ảnh người bán: <%= String(book.title || '').normalize('NFC') %>" loading="lazy" decoding="async">
+    <div class="book-media-fallback" data-book-fallback hidden><%- include('book-art',{book}) %></div>
+  <% } else { %>
+    <%- include('book-art',{book}) %>
+  <% } %>
+</div>

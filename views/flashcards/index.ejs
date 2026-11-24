@@ -1,39 +1,24 @@
 <%- include('../partials/header') %>
-<div class="section-head">
-  <div>
-    <h1>🗂️ Trung tâm Ôn tập Chủ động & Flashcard (Leitner 5 hộp)</h1>
-    <p class="muted">
-      <% if (unlimited) { %>Tài khoản <strong>Premium</strong>: không giới hạn bộ thẻ, tự sinh thẻ từ tài liệu, Phòng thi thử bấm giờ & Sổ tay bẫy đề thi.<% } else { %>
-      Tài khoản thường: tối đa <%= config.FREE_DECK_LIMIT %> bộ / <%= config.FREE_CARD_LIMIT %> thẻ. <a href="/premium">Nâng cấp Premium</a> để không giới hạn + tạo đề thi thử.<% } %>
-    </p>
-  </div>
-  <div class="btn-row">
-    <a href="/flashcards/errors" class="btn btn-gold">📓 Sổ tay bẫy đề thi <% if (typeof errorCount !== 'undefined' && errorCount > 0) { %>(<%= errorCount %> câu cần lưu ý)<% } %></a>
-  </div>
+<%
+const totalCards=decks.reduce((sum,d)=>sum+Number(d.card_count||0),0);
+const dueCards=decks.reduce((sum,d)=>sum+Number(d.due_count||0),0);
+const nextDeck=decks.find(d=>Number(d.due_count)>0);
+%>
+<div class="learning-page flashcards-page">
+<header class="learning-hero"><div><p class="eyebrow">GÓC ÔN TẬP CHỦ ĐỘNG</p><h1>Mỗi lần nhớ lại,<br><span>hiểu thêm một chút.</span></h1><p class="learning-lead">Ôn theo lịch, tự kiểm tra và ghi lại những câu dễ nhầm. Bắt đầu từ bộ thẻ của bạn.</p><a href="/flashcards/errors" class="text-link">Sổ tay lỗi sai<%= typeof errorCount!=='undefined' && errorCount>0?' · '+errorCount+' câu cần lưu ý':'' %> →</a></div><div class="learning-art"><img src="/img/illustrations/study-cards.svg" width="640" height="400" alt=""><div class="art-caption"><span>NHỚ LẠI</span><span>TỰ KIỂM TRA</span><span>ÔN ĐÚNG LỊCH</span></div></div></header>
+<div class="learning-metrics" aria-label="Tổng quan bộ thẻ"><div><strong><%= decks.length %></strong><span>Bộ thẻ của bạn</span></div><div><strong><%= totalCards %></strong><span>Thẻ đã tạo</span></div><div><strong><%= dueCards %></strong><span>Đến lịch ôn</span></div></div>
+<div class="study-dashboard">
+<section class="study-next"><p class="eyebrow">NHỊP HỌC HÔM NAY</p>
+<% if(nextDeck){ %><h2><%= nextDeck.title %></h2><p><strong><%= nextDeck.due_count %> thẻ</strong> đến lịch ôn trong bộ này. Một phiên ngắn để giữ kiến thức luôn mới.</p><a class="btn btn-primary" href="/flashcards/<%= nextDeck.id %>/study">Học tiếp →</a>
+<% }else if(totalCards){ %><h2>Hôm nay chưa có thẻ đến hạn.</h2><p>Bạn có thể mở một bộ thẻ bên dưới để ôn thêm hoặc tạo bộ thẻ cho học phần tiếp theo.</p><a class="text-link" href="#my-decks">Xem các bộ thẻ →</a>
+<% }else{ %><h2>Bắt đầu từ một câu hỏi nhỏ.</h2><p>Tạo bộ thẻ đầu tiên hoặc học thử bộ Cấu trúc dữ liệu &amp; Giải thuật có sẵn bên cạnh.</p><a class="text-link" href="#create-deck">Tạo bộ thẻ của bạn →</a><% } %>
+</section>
+<section class="study-demo"><p class="eyebrow">HỌC THỬ</p><h2>CTDL &amp; Giải thuật</h2><p>12 thẻ để thử lật, đánh dấu đã nhớ và theo dõi lịch ôn.</p><form method="post" action="/flashcards/demo"><button type="submit" class="btn btn-ghost">Mở bộ thẻ mẫu</button></form><details><summary>Về bộ thẻ mẫu</summary><p>Bộ mẫu được nạp riêng vào tài khoản. Mở lại giữ nguyên tiến độ, không tạo trùng. Quiz áp dụng quyền tài khoản hiện có.</p></details></section>
 </div>
-
-<form method="post" action="/flashcards" class="card form inline-form">
-  <input type="text" name="title" required placeholder="Tên bộ thẻ mới (VD: Công thức Kinh tế lượng)">
-  <input type="text" name="description" placeholder="Mô tả ngắn">
-  <button class="btn btn-primary">+ Tạo bộ thẻ</button>
-</form>
-
-<div class="grid grid-3">
-  <% decks.forEach(function (d) { %>
-    <div class="card">
-      <h3><a href="/flashcards/<%= d.id %>"><%= d.title %></a></h3>
-      <p class="muted small"><%= d.description || '' %></p>
-      <div class="doc-meta">
-        <span class="tag"><%= d.card_count %> thẻ</span>
-        <span class="tag tag-green"><%= d.due_count %> cần ôn hôm nay</span>
-      </div>
-      <div class="btn-row" style="margin-top:10px">
-        <a href="/flashcards/<%= d.id %>/study" class="btn btn-primary btn-sm">▶ Học (<%= d.due_count %>)</a>
-        <a href="/flashcards/<%= d.id %>" class="btn btn-ghost btn-sm">Sửa</a>
-        <% if (unlimited && d.card_count >= 4) { %><a href="/flashcards/<%= d.id %>/quiz" class="btn btn-gold btn-sm">🎯 Quiz</a><% } %>
-      </div>
-    </div>
-  <% }) %>
-  <% if (!decks.length) { %><div class="empty card">Bạn chưa có bộ flashcard nào. Bạn cũng có thể bấm "✨ Tạo Flashcard AI" ngay trên trang xem tài liệu!</div><% } %>
-</div>
+<div class="learning-section-title" id="my-decks"><div><p class="eyebrow">BÀN HỌC CỦA BẠN</p><h2>Các bộ thẻ</h2></div><p><% if(unlimited){ %>Premium · Không giới hạn bộ thẻ<% }else{ %>Tối đa <%= config.FREE_DECK_LIMIT %> bộ / <%= config.FREE_CARD_LIMIT %> thẻ. <a href="/premium">Xem Premium</a><% } %></p></div>
+<details class="deck-create" id="create-deck" open><summary>Tạo một bộ thẻ mới</summary><form method="post" action="/flashcards" class="form"><label>Tên bộ thẻ<input type="text" name="title" required placeholder="Ví dụ: Công thức Kinh tế lượng"></label><label>Mô tả ngắn<input type="text" name="description" placeholder="Bạn muốn ghi nhớ điều gì?"></label><button class="btn btn-primary" type="submit">Tạo bộ thẻ</button></form></details>
+<div class="deck-grid">
+<% decks.forEach(function(d){ %><article class="deck-tile"><div class="deck-art" aria-hidden="true"><img src="/img/illustrations/study-cards.svg" width="640" height="400" alt=""><span><%= d.card_count %><small>thẻ học</small></span></div><h3><a href="/flashcards/<%= d.id %>"><%= d.title %></a></h3><% if(d.description){ %><p class="deck-description"><%= d.description %></p><% } %><p class="deck-due"><%= d.card_count %> thẻ · <%= Number(d.due_count)>0?d.due_count+' thẻ đến lịch ôn':'Chưa có thẻ đến lịch ôn' %></p><div class="deck-actions"><% if(Number(d.card_count)>0){ %><a href="/flashcards/<%= d.id %>/study<%= Number(d.due_count)>0?'':'?all=1' %>" class="btn btn-ghost btn-sm"><%= Number(d.due_count)>0?'Ôn tập':'Ôn toàn bộ' %></a><% } %><a href="/flashcards/<%= d.id %>"><%= Number(d.card_count)>0?'Chi tiết / sửa':'Thêm thẻ' %></a><% if(unlimited && d.card_count>=4){ %><a href="/flashcards/<%= d.id %>/quiz">Làm Quiz →</a><% } %></div></article><% }) %>
+<% if(!decks.length){ %><div class="learning-empty"><img src="/img/illustrations/open-book.svg" width="640" height="400" alt=""><div><h3>Bàn học đang chờ bộ thẻ đầu tiên.</h3><p>Điền tên bộ thẻ ở trên hoặc mở bộ mẫu để bắt đầu.</p></div></div><% } %>
+</div></div>
 <%- include('../partials/footer') %>

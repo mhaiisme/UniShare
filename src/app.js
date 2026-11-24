@@ -54,8 +54,17 @@ async function createApp() {
 if (require.main === module) {
   createApp()
     .then((app) => {
-      app.listen(config.PORT, '0.0.0.0', () => {
-        console.log(`\n🚀 UniShare đang chạy tại http://0.0.0.0:${config.PORT}\n`);
+      const server = app.listen(config.PORT, '0.0.0.0', () => {
+        console.log(`\n🚀 UniShare đang chạy tại http://localhost:${config.PORT}\n`);
+      });
+      server.on('error', (error) => {
+        if (error.code === 'EADDRINUSE') {
+          console.error(`Không thể khởi động UniShare: cổng ${config.PORT} đang được sử dụng.`);
+          console.error(`Nếu UniShare đã chạy, mở http://localhost:${config.PORT}. Muốn khởi động lại, hãy dừng bản đang chạy bằng Ctrl+C trong terminal cũ rồi chạy npm start.`);
+        } else {
+          console.error('Không mở được server UniShare:', error);
+        }
+        process.exit(1);
       });
       const shutdown = () => {
         db.close();

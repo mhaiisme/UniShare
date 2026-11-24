@@ -3,6 +3,7 @@ const db = require('../db');
 const config = require('../config');
 const { requireLogin, flash } = require('../middleware/auth');
 const { generateQuiz } = require('../services/flashcardGen');
+const { loadDemoDeck } = require('../services/demoFlashcards');
 const { toInt, isPremium, sqlNow } = require('../utils');
 
 const router = express.Router();
@@ -92,6 +93,14 @@ router.post('/flashcards', (req, res) => {
     req.user.id, title, String(req.body.description || '').trim(),
   ]).lastInsertRowid;
   res.redirect('/flashcards/' + id);
+});
+
+// Explicitly requested sample: available once per account for feature testing.
+// Regular deck/card creation keeps its existing subscription limits.
+router.post('/flashcards/demo', (req, res) => {
+  const deck = loadDemoDeck(db, req.user.id);
+  flash(req, 'success', deck.created ? 'Đã nạp 12 thẻ mẫu. Bấm vào thẻ hoặc nhấn Space để lật, rồi chọn Đã nhớ / Chưa nhớ.' : 'Đã mở lại bộ thẻ mẫu, giữ nguyên tiến độ của bạn.');
+  res.redirect('/flashcards/' + deck.id + '/study?all=1');
 });
 
 router.get('/flashcards/:id', (req, res, next) => {

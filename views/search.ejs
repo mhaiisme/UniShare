@@ -1,9 +1,10 @@
 <%- include('partials/header') %>
-<div class="layout-sidebar">
-  <aside class="filters card">
-    <form method="get" action="/search">
-      <h3>Bộ lọc tra cứu</h3>
-      <label>Từ khoá<input type="text" name="q" value="<%= f.q %>" placeholder="Tên môn, chủ đề..."></label>
+<div class="learning-page resources-page">
+<header class="learning-hero"><div><p class="eyebrow">KHO TRI THỨC UNISHARE</p><h1>Tìm đúng học liệu.<br><span>Hiểu sâu môn học.</span></h1><p class="learning-lead">Đề cương, lời giải và tài liệu được chia sẻ từ cộng đồng. Khám phá theo trường và học phần của bạn.</p><a class="text-link" href="/my/library">Mở thư viện của tôi →</a></div><div class="learning-art"><img src="/img/illustrations/study-cards.svg" width="640" height="400" alt=""><div class="art-caption"><span>ĐỀ CƯƠNG</span><span>BÀI TẬP</span><span>ÔN THI</span></div></div></header>
+<div class="resource-layout">
+  <details class="resource-filters" open><summary>Bộ lọc học liệu</summary><div class="filters">
+    <form method="get" action="/search" class="uf-filter uf-sidebar">
+      <fieldset class="uf-group"><legend>Tìm theo môn</legend><label>Từ khoá<input type="text" name="q" value="<%= f.q %>" placeholder="Tên môn, chủ đề..."></label>
       <label>Trường đại học
         <select name="school">
           <option value="">Tất cả trường</option>
@@ -12,7 +13,7 @@
       </label>
       <label>Mã / tên học phần<input type="text" name="course" value="<%= f.course %>" placeholder="VD: IT3011, TOKT1101"></label>
       <label>Giảng viên phụ trách<input type="text" name="lecturer" value="<%= f.lecturer || '' %>" placeholder="VD: PGS.TS Nguyễn Văn A"></label>
-      <label>Loại tài liệu
+      </fieldset><fieldset class="uf-group"><legend>Loại học liệu</legend><label>Loại tài liệu
         <select name="type">
           <option value="">Tất cả loại</option>
           <% Object.keys(config.DOC_TYPES).forEach(function (k) { %><option value="<%= k %>" <%= f.type === k ? 'selected' : '' %>><%= config.DOC_TYPES[k] %></option><% }) %>
@@ -25,8 +26,8 @@
           <option value="paid" <%= f.price === 'paid' ? 'selected' : '' %>>Trả phí (Marketplace)</option>
         </select>
       </label>
-      <label class="check"><input type="checkbox" name="verified" value="1" <%= f.verified ? 'checked' : '' %>> Chỉ tài liệu Verified A/A+</label>
-      <label>Sắp xếp theo
+      </fieldset><fieldset class="uf-group"><legend>Tùy chọn thêm</legend><label class="check"><input type="checkbox" name="verified" value="1" <%= f.verified ? 'checked' : '' %>><span><strong>Đã xác thực A/A+</strong><small>Điểm học phần đã được xác thực</small></span></label>
+      </fieldset><fieldset class="uf-group"><legend>Thứ tự kết quả</legend><label>Sắp xếp theo
         <select name="sort">
           <option value="newest" <%= f.sort === 'newest' ? 'selected' : '' %>>Mới cập nhật</option>
           <option value="rating" <%= f.sort === 'rating' ? 'selected' : '' %>>Điểm đánh giá cao</option>
@@ -34,21 +35,22 @@
           <option value="price_asc" <%= f.sort === 'price_asc' ? 'selected' : '' %>>Giá tăng dần</option>
         </select>
       </label>
-      <button class="btn btn-primary btn-block">Lọc kết quả</button>
-      <a href="/search" class="btn btn-ghost btn-block">Đặt lại</a>
+      </fieldset><div class="uf-actions"><button class="btn btn-primary btn-block" type="submit">Áp dụng bộ lọc</button><a class="uf-clear" href="/search">Xóa lọc</a></div>
+
     </form>
     <%- include('partials/ads-sidebar') %>
-  </aside>
-  <section style="margin-top:0">
+  </div></details>
+  <section class="resource-results">
+<%- include('partials/filter-chips', {filterValues:f,filterRoute:'/search'}) %>
     <div class="section-head">
-      <h2>Kết quả tra cứu (<%= total.toLocaleString('vi-VN') %> tài liệu)</h2>
+      <h2><%= total.toLocaleString('vi-VN') %> học liệu<%= f.q || f.school || f.course || f.type || f.price || f.verified || f.lecturer ? ' phù hợp' : ' để khám phá' %></h2>
       <span class="muted small">Trang <%= page %> / <%= pages %></span>
     </div>
-    <div class="grid grid-3">
+    <div class="resource-grid">
       <% docs.forEach(function (d) { %><%- include('partials/doc-card', { d: d }) %><% }) %>
     </div>
     <% if (!docs.length) { %>
-      <div class="empty card">Không tìm thấy tài liệu phù hợp với bộ lọc. Bạn có thể <a href="/documents/new">đóng góp tài liệu tự soạn</a> cho học phần này.</div>
+      <div class="learning-empty"><img src="/img/illustrations/open-book.svg" width="640" height="400" alt=""><div><h3>Chưa tìm thấy học liệu phù hợp</h3><p>Thử đổi từ khóa hoặc bỏ bớt điều kiện lọc. Bạn cũng có thể chia sẻ tài liệu tự soạn cho học phần này.</p><a class="text-link" href="/search">Xóa bộ lọc →</a> · <a class="text-link" href="/documents/new">Chia sẻ học liệu →</a></div></div>
     <% } %>
     <% if (pages > 1) {
          var mkUrl = function(p) { return '/search?' + new URLSearchParams(Object.assign({}, query, { page: p })).toString(); };
@@ -66,5 +68,6 @@
       </div>
     <% } %>
   </section>
+</div>
 </div>
 <%- include('partials/footer') %>

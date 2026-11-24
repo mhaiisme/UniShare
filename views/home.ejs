@@ -1,119 +1,13 @@
 <%- include('partials/header') %>
-<section class="hero">
-  <div>
-    <h1>Thư viện học liệu & đề cương ôn tập theo mã học phần</h1>
-    <p>Tra cứu đề cương tự biên soạn, bảng tóm tắt công thức, lời giải đề thi chi tiết và trao đổi giáo trình cũ giữa sinh viên các trường đại học.</p>
-    <form action="/search" method="get" class="hero-search">
-      <input type="text" name="q" placeholder="Tên môn, chủ đề (VD: quy hoạch động, OLS, L/C)...">
-      <select name="school">
-        <option value="">Tất cả trường (<%= stats.schools %>)</option>
-        <% schools.forEach(function (s) { %><option value="<%= s.id %>"><%= s.code %> – <%= s.name %></option><% }) %>
-      </select>
-      <input type="text" name="course" placeholder="Mã môn: IT3011" class="w-course">
-      <button class="btn btn-primary">Tra cứu</button>
-    </form>
-    <div class="hero-stats">
-      <div><strong><%= stats.docs.toLocaleString('vi-VN') %></strong><span>tài liệu đã duyệt</span></div>
-      <div><strong><%= stats.courses %></strong><span>môn học</span></div>
-      <div><strong><%= stats.users.toLocaleString('vi-VN') %></strong><span>sinh viên</span></div>
-      <div><strong><%= stats.reviews.toLocaleString('vi-VN') %></strong><span>đánh giá</span></div>
-      <div><strong><%= stats.listings %></strong><span>giáo trình đang bán</span></div>
-    </div>
-  </div>
-  <div class="hero-card">
-    <h3>Đóng góp học liệu & nhận doanh thu</h3>
-    <ul class="checklist">
-      <li>Nhận <strong>80%</strong> doanh thu khi bán đề cương, lời giải, báo cáo mẫu do chính bạn biên soạn</li>
-      <li>Cộng <strong>+<%= config.POINTS.approvedUpload %> điểm</strong> cho mỗi tài liệu miễn phí vượt qua kiểm duyệt</li>
-      <li>Bảo vệ tài liệu bằng trình đọc chống sao chép & đóng dấu chìm PDF động</li>
-    </ul>
-    <a href="/documents/new" class="btn btn-light btn-sm">Tải tài liệu lên →</a>
-  </div>
-</section>
-
-<section>
-  <div class="section-head">
-    <h2>Tra cứu theo trường đại học</h2>
-    <span class="muted small"><%= schools.length %> trường thành viên</span>
-  </div>
-  <div class="school-grid">
-    <% schools.forEach(function (s) { %>
-      <a class="school-item" href="/search?school=<%= s.id %>">
-        <div>
-          <span class="school-code"><%= s.code %></span>
-          <span class="school-name" title="<%= s.name %>"><%= s.name %></span>
-        </div>
-        <span class="school-count"><%= s.doc_count %> TL</span>
-      </a>
-    <% }) %>
-  </div>
-</section>
-
-<section>
-  <div class="section-head">
-    <h2>Học phần được tra cứu nhiều</h2>
-    <a href="/search" class="small">Xem toàn bộ kho tài liệu →</a>
-  </div>
-  <div class="course-chips">
-    <% popularCourses.forEach(function (c) { %>
-      <a class="course-chip" href="/search?school=<%= c.school_id %>&course=<%= c.code %>">
-        <code><%= c.school_code %> · <%= c.code %></code>
-        <span><%= c.name %></span>
-        <span class="muted small">(<%= c.doc_count %>)</span>
-      </a>
-    <% }) %>
-  </div>
-</section>
-
-<% if (ads.home && ads.home.length) { %>
-<section class="ad-strip">
-  <% ads.home.forEach(function (ad) { %>
-    <a class="ad-banner" href="/ads/<%= ad.id %>/click" target="_blank" rel="noopener sponsored">
-      <span class="ad-label">Đối tác tài trợ · <%= ad.advertiser %></span>
-      <strong><%= ad.title %></strong><span class="small muted"><%= ad.body %></span>
-    </a>
-  <% }) %>
-</section>
-<% } %>
-
-<section>
-  <div class="section-head"><h2>Tài liệu được đánh giá cao</h2><a href="/search?sort=rating" class="small">Xem tất cả →</a></div>
-  <div class="grid grid-3">
-    <% topRated.forEach(function (d) { %><%- include('partials/doc-card', { d: d }) %><% }) %>
-  </div>
-</section>
-
-<section>
-  <div class="section-head"><h2>Tài liệu mới cập nhật</h2><a href="/search?sort=newest" class="small">Xem tất cả →</a></div>
-  <div class="grid grid-4">
-    <% latest.forEach(function (d) { %><%- include('partials/doc-card', { d: d }) %><% }) %>
-    <% if (!latest.length) { %><p class="muted">Chưa có tài liệu nào.</p><% } %>
-  </div>
-</section>
-
-<section class="two-col">
-  <div>
-    <div class="section-head"><h2>Giáo trình cũ đang giao dịch</h2><a href="/market" class="small">Vào chợ giáo trình →</a></div>
-    <div class="grid grid-3">
-      <% listings.forEach(function (l) { %><%- include('partials/listing-card', { l: l }) %><% }) %>
-    </div>
-  </div>
-  <div>
-    <div class="section-head"><h2>Thảo luận & kinh nghiệm thi</h2><a href="/forum" class="small">Xem diễn đàn →</a></div>
-    <div class="card list">
-      <% posts.forEach(function (p) { %>
-        <a href="/forum/<%= p.id %>" class="list-item">
-          <div>
-            <div style="margin-bottom:2px">
-              <span class="tag"><%= config.POST_CATEGORIES[p.category] %></span>
-              <% if (p.course_code) { %><span class="tag tag-code"><%= p.school_code %> · <%= p.course_code %></span><% } %>
-            </div>
-            <strong><%= p.title %></strong>
-          </div>
-          <span class="muted small right" style="white-space:nowrap"><%= p.comment_count %> phản hồi</span>
-        </a>
-      <% }) %>
-    </div>
-  </div>
-</section>
+<section class="home-hero" aria-labelledby="home-heading">
+<div><p class="eyebrow">CÙNG HỌC · CÙNG CHIA SẺ · CÙNG TIẾN XA</p><h1 id="home-heading">Kết tri thức,<br><span>nối tương lai.</span></h1><p class="hero-intro">Mỗi tài liệu được sẻ chia, một cơ hội được mở ra. Tìm học liệu đúng môn, gặp cộng đồng cùng chí hướng.</p>
+<form action="/search" method="get" class="home-search uf-filter"><label for="home-q">Bạn muốn học gì hôm nay?</label><div class="search-line"><input id="home-q" name="q" placeholder="Tên môn học, tài liệu hoặc chủ đề…"><button class="btn btn-primary">Tìm học liệu →</button></div><details class="search-options"><summary>Lọc theo trường và mã học phần</summary><div class="search-fields"><label>Trường đại học<select name="school"><option value="">Tất cả trường</option><% schools.forEach(function(s) { %><option value="<%= s.id %>"><%= s.code %> — <%= s.name %></option><% }) %></select></label><label>Mã học phần<input name="course" placeholder="Ví dụ: IT3011"></label></div></details></form></div>
+<div class="knowledge-map"><div class="knowledge-bird" aria-hidden="true"><%- include('partials/paper-bird') %></div><img class="study-reference" src="/img/study-reference.png" width="528" height="184" alt="Chồng giáo trình xanh, sổ ghi chép và bút trên bàn học"><div class="book-scene-note"><span>HỌC LIỆU</span><span>GIÁO TRÌNH</span><span>ÔN TẬP</span></div><a href="/documents/new" class="map-share">Chia sẻ học liệu của bạn →</a><nav class="knowledge-journey" aria-label="Hành trình tri thức"><svg class="knowledge-route" viewBox="0 0 360 24" width="360" height="24" aria-hidden="true" fill="none"><path d="M60 12H300" stroke="currentColor" stroke-width="2"/><circle cx="60" cy="12" r="5" fill="currentColor"/><circle cx="180" cy="12" r="5" fill="currentColor"/><circle cx="300" cy="12" r="5" fill="currentColor"/></svg><a href="/search"><span>Khám phá</span><small>Tìm đúng học liệu</small></a><a href="/flashcards"><span>Học tập</span><small>Hiểu sâu, nhớ lâu</small></a><a href="/documents/new"><span>Chia sẻ</span><small>Nối thêm tri thức</small></a></nav></div></section>
+<div class="community-strip"><div><strong><%= stats.docs.toLocaleString('vi-VN') %></strong><span>học liệu đã duyệt</span></div><div><strong><%= stats.courses %></strong><span>môn học</span></div><div><strong><%= stats.users.toLocaleString('vi-VN') %></strong><span>sinh viên kết nối</span></div><div><strong><%= stats.listings %></strong><span>giáo trình đang bán</span></div></div>
+<section class="learning-layout"><div><div class="section-head"><div><p class="eyebrow">THÊM KIẾN THỨC MỖI NGÀY</p><h2>Học liệu mới</h2></div><a href="/search?sort=newest">Xem thêm →</a></div><div class="grid latest-grid"><% latest.slice(0,3).forEach(function(d) { %><%- include('partials/doc-card',{d:d}) %><% }) %><% if(!latest.length) { %><div class="card"><h3>Cùng mở đầu kho tri thức</h3><a href="/documents/new">Chia sẻ học liệu đầu tiên →</a></div><% } %></div></div><aside class="study-corner"><p class="eyebrow">HỌC MỘT CHÚT, NHỚ THÊM NHIỀU</p><h2>Góc ôn tập</h2><p>Biến kiến thức vừa đọc thành điều bạn thực sự ghi nhớ.</p><div class="sample-card"><span>THỬ MỘT THẺ NHANH</span><button type="button" id="sample-flip" aria-pressed="false"><strong id="sample-question">Học thế nào để nhớ lâu hơn?</strong><span id="sample-answer" hidden>Chủ động nhớ lại kiến thức và ôn tập cách quãng.</span><small>Bấm để lật thẻ ↻</small></button></div><a class="btn btn-primary btn-block" href="/flashcards">Khám phá flashcard →</a><p class="study-note">Tạo bộ thẻ và luyện quiz theo môn học</p></aside></section>
+<section><div class="section-head"><div><p class="eyebrow">SÁCH CŨ · HÀNH TRÌNH MỚI</p><h2>Chợ giáo trình</h2></div><a href="/market">Khám phá chợ sách →</a></div><div class="grid grid-4"><% listings.forEach(function(l) { %><%- include('partials/listing-card',{l:l}) %><% }) %><% if(!listings.length) { %><p>Chưa có giáo trình đang bán. <a href="/market">Khám phá chợ sách</a></p><% } %></div></section>
+<section><div class="section-head"><h2>Tra cứu theo trường đại học</h2><span class="muted small"><%= schools.length %> trường thành viên</span></div><div class="school-grid"><% schools.forEach(function(s) { %><a class="school-item" href="/search?school=<%= s.id %>"><div><span class="school-code"><%= s.code %></span><span class="school-name"><%= s.name %></span></div><span class="school-count"><%= s.doc_count %> TL</span></a><% }) %></div></section>
+<section><div class="section-head"><h2>Học phần được tra cứu nhiều</h2><a href="/search">Xem toàn bộ →</a></div><div class="course-chips"><% popularCourses.forEach(function(c) { %><a class="course-chip" href="/search?school=<%= c.school_id %>&course=<%= c.code %>"><code><%= c.school_code %> · <%= c.code %></code><span><%= c.name %></span><span class="muted">(<%= c.doc_count %>)</span></a><% }) %></div></section>
+<% if(ads.home && ads.home.length) { %><section class="ad-strip"><% ads.home.forEach(function(ad) { %><a class="ad-banner" href="/ads/<%= ad.id %>/click" target="_blank" rel="noopener sponsored"><span class="ad-label">Đối tác tài trợ · <%= ad.advertiser %></span><strong><%= ad.title %></strong><span class="small muted"><%= ad.body %></span></a><% }) %></section><% } %>
+<section class="two-col"><div><div class="section-head"><h2>Học liệu được đánh giá cao</h2><a href="/search?sort=rating">Xem thêm →</a></div><div class="grid grid-2"><% topRated.forEach(function(d) { %><%- include('partials/doc-card',{d:d}) %><% }) %></div></div><div><div class="section-head"><h2>Kết nối cộng đồng</h2><a href="/forum">Vào diễn đàn →</a></div><div class="card list"><% posts.forEach(function(p) { %><a href="/forum/<%= p.id %>" class="list-item"><div><span class="tag"><%= config.POST_CATEGORIES[p.category] %></span><% if(p.course_code) { %><span class="tag tag-code"><%= p.school_code %> · <%= p.course_code %></span><% } %><strong class="post-title"><%= p.title %></strong></div><span class="muted small"><%= p.comment_count %> phản hồi</span></a><% }) %><% if(!posts.length) { %><p>Hãy mở đầu một cuộc thảo luận học tập.</p><a href="/forum">Đặt câu hỏi →</a><% } %></div><div class="share-invite"><img src="/img/illustrations/open-book.svg" width="640" height="400" alt=""><div><h3>Tri thức lớn lên khi được sẻ chia.</h3><p>Nhận 80% doanh thu khi bán học liệu tự biên soạn và +<%= config.POINTS.approvedUpload %> điểm cho mỗi tài liệu miễn phí được duyệt.</p><a href="/documents/new">Chia sẻ học liệu →</a></div></div></section>
 <%- include('partials/footer') %>

@@ -1,28 +1,13 @@
 <%- include('../partials/header') %>
-<div class="page-narrow">
-  <h1>👤 Hồ sơ cá nhân</h1>
-  <% if (error) { %><div class="alert alert-error"><%= error %></div><% } %>
-  <form method="post" action="/profile" class="card form">
-    <label>Email (không thay đổi)<input type="email" value="<%= currentUser.email %>" disabled></label>
-    <label>Họ tên *<input type="text" name="name" required value="<%= currentUser.name %>"></label>
-    <div class="row">
-      <label>Trường
-        <select name="school_id">
-          <option value="">-- Chọn --</option>
-          <% schools.forEach(function (s) { %><option value="<%= s.id %>" <%= currentUser.school_id === s.id ? 'selected' : '' %>><%= s.code %> – <%= s.name %></option><% }) %>
-        </select>
-      </label>
-      <label>Ngành học<input type="text" name="major" value="<%= currentUser.major || '' %>"></label>
-    </div>
-    <label>Giới thiệu<textarea name="bio" rows="3"><%= currentUser.bio || '' %></textarea></label>
-    <hr>
-    <h3>Đổi mật khẩu (bỏ trống nếu không đổi)</h3>
-    <div class="row">
-      <label>Mật khẩu hiện tại<input type="password" name="current_password"></label>
-      <label>Mật khẩu mới<input type="password" name="new_password" minlength="6"></label>
-    </div>
-    <button class="btn btn-primary">Lưu thay đổi</button>
-    <a href="/u/<%= currentUser.id %>" class="btn btn-ghost">Xem trang cá nhân công khai</a>
-  </form>
-</div>
-<%- include('../partials/footer') %>
+<% const profileSchool=schools.find(s=>s.id===currentUser.school_id); const initials=String(currentUser.name||'U').trim().split(/\s+/).slice(-2).map(w=>w[0]).join('').toLocaleUpperCase('vi-VN'); %>
+<div class="learning-page account-page">
+<div class="learning-section-title"><div><p class="eyebrow">KHÔNG GIAN CỦA BẠN</p><h1>Hồ sơ &amp; hành trình học tập</h1></div><a class="text-link" href="/u/<%= currentUser.id %>">Xem hồ sơ công khai →</a></div>
+<% if(error){ %><div class="alert alert-error" role="alert"><%= error %></div><% } %>
+<div class="account-layout">
+<aside class="account-summary"><div class="account-avatar" aria-hidden="true"><%= initials %></div><h2><%= currentUser.name %></h2><p><%= profileSchool?profileSchool.name:'Thêm trường học để mọi người hiểu hơn về bạn.' %></p><% if(currentUser.major){ %><p><%= currentUser.major %></p><% } %><span class="tag"><%= premium?'Thành viên Premium':'Thành viên UniShare' %></span><p><strong><%= currentUser.points %> điểm</strong> trong tài khoản</p>
+<nav class="account-links" aria-label="Không gian học tập cá nhân"><a href="/my/library"><span>Thư viện của tôi</span><span aria-hidden="true">→</span></a><a href="/flashcards"><span>Ôn tập &amp; tiến độ</span><span aria-hidden="true">→</span></a><a href="/my/documents"><span>Học liệu đã chia sẻ</span><span aria-hidden="true">→</span></a><a href="/notifications"><span>Thông báo hoạt động</span><span aria-hidden="true">→</span></a></nav></aside>
+<form method="post" action="/profile" class="form account-form"><fieldset><legend>Thông tin cá nhân</legend><label>Email<input type="email" value="<%= currentUser.email %>" disabled><small class="muted">Email gắn với tài khoản và không thể thay đổi tại đây.</small></label><label>Họ tên *<input type="text" name="name" required value="<%= currentUser.name %>" autocomplete="name"></label></fieldset>
+<fieldset><legend>Bạn đang học gì?</legend><div class="row"><label>Trường<select name="school_id"><option value="">Chọn trường</option><% schools.forEach(function(s){ %><option value="<%= s.id %>" <%= currentUser.school_id===s.id?'selected':'' %>><%= s.code %> – <%= s.name %></option><% }) %></select></label><label>Ngành học<input type="text" name="major" value="<%= currentUser.major||'' %>"></label></div><label>Giới thiệu<textarea name="bio" rows="4" maxlength="500" placeholder="Một vài điều về bạn và những chủ đề bạn quan tâm"><%= currentUser.bio||'' %></textarea></label></fieldset>
+<details class="account-security" <%- error?'open':'' %>><summary>Bảo mật &amp; mật khẩu</summary><p>Chỉ điền phần này khi bạn muốn đổi mật khẩu.</p><div class="row"><label>Mật khẩu hiện tại<input type="password" name="current_password" autocomplete="current-password"></label><label>Mật khẩu mới<input type="password" name="new_password" minlength="6" autocomplete="new-password"></label></div></details>
+<div class="account-actions"><button class="btn btn-primary" type="submit">Lưu thay đổi</button><a href="/u/<%= currentUser.id %>" class="text-link">Xem hồ sơ công khai →</a></div></form>
+</div></div><%- include('../partials/footer') %>

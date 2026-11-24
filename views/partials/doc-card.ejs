@@ -1,24 +1,44 @@
-<a class="card doc-card" href="/documents/<%= d.id %>">
-  <div>
+<%
+  const cleanText = value => String(value == null ? '' : value).normalize('NFC');
+  const docTitle = cleanText(d.title);
+  const matchText = (docTitle + ' ' + cleanText(d.course_code)).normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').toLowerCase();
+  let visual = {theme:'general', label:'Học liệu', caption:'Đọc · Hiểu · Ghi nhớ'};
+  if (/srs|brd|phan mem|software|int2208/.test(matchText)) visual = {theme:'software',label:'Công nghệ phần mềm',caption:'Yêu cầu · Quy trình · Thiết kế'};
+  else if (/ctdl|cau truc|giai thuat|algorithm|int2210/.test(matchText)) visual = {theme:'algorithm',label:'Cấu trúc dữ liệu',caption:'Tư duy · Kết nối · Thuật toán'};
+  else if (/kinh te luong|ols|econometrics|tokt/.test(matchText)) visual = {theme:'economics',label:'Kinh tế lượng',caption:'Dữ liệu · Mô hình · Phân tích'};
+  else if (/kinh te|econom/.test(matchText)) visual = {theme:'economics',label:'Kinh tế học',caption:'Dữ liệu · Mô hình · Phân tích'};
+  else if (/xac suat|thong ke|statistics/.test(matchText)) visual = {theme:'statistics',label:'Xác suất & thống kê',caption:'Quan sát · Phân tích · Suy luận'};
+  else if (/giai tich|dai so|toan|mat\d|mi\d|mth\d/.test(matchText)) visual = {theme:'math',label:/dai so/.test(matchText)?'Đại số':'Toán học',caption:'Khái niệm · Công thức · Bài tập'};
+  else if (/phap luat|luat|law/.test(matchText)) visual = {theme:'law',label:'Pháp luật',caption:'Khái niệm · Quy định · Tình huống'};
+%>
+<a class="card doc-card doc-card--<%= visual.theme %>" href="/documents/<%= d.id %>">
+  <div class="paper-preview" aria-hidden="true">
+    <div class="paper-sheet">
+      <div class="paper-imprint"><span>UNISHARE</span><span class="paper-course"><%= cleanText(d.course_code || d.school_code || 'HỌC LIỆU') %></span></div>
+      <strong class="paper-title"><%= visual.label %></strong>
+      <%- include('doc-illustration', {theme:visual.theme}) %>
+      <span class="paper-topic"><%= visual.caption %></span>
+    </div>
+    <span class="paper-caption">Minh họa chủ đề</span>
+  </div>
+  <div class="doc-card-content">
     <div class="doc-card-top">
       <div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center">
-        <span class="tag tag-type"><%= config.DOC_TYPES[d.doc_type] || d.doc_type %></span>
-        <% if (d.grade_verified && d.author_grade) { %>
-          <span class="tag tag-green" title="Tác giả đã xác thực bảng điểm học phần">Verified <%= d.author_grade %></span>
-        <% } %>
+        <span class="tag tag-type"><%= cleanText(config.DOC_TYPES[d.doc_type] || d.doc_type) %></span>
       </div>
       <% if (d.price > 0) { %><span class="price"><%= u.fmtMoney(d.price) %></span><% } else { %><span class="price free">Miễn phí</span><% } %>
     </div>
-    <h3><%= d.title %></h3>
-    <p class="muted small" style="margin:4px 0 8px"><%= u.truncate(d.description, 95) %></p>
+    <h3 class="doc-card-title"><%= docTitle %></h3>
+    <% if (d.description) { %><p class="doc-card-description"><%= cleanText(d.description) %></p><% } %>
   </div>
-  <div>
+  <div class="doc-card-footer">
     <div class="doc-meta">
-      <% if (d.course_code) { %><span class="tag tag-code"><%= d.school_code %> · <%= d.course_code %></span><% } %>
-      <% if (d.lecturer_name) { %><span class="tag" title="Giảng viên phụ trách">GV: <%= u.truncate(d.lecturer_name, 20) %></span><% } %>
-      <span><%= d.rating_count ? d.rating_avg.toFixed(1) + '/5 (' + d.rating_count + ')' : 'Mới' %></span>
-      <span>· <%= d.views %> lượt xem</span>
+      <% if (d.school_code || d.course_code) { %><span class="doc-course-label"><%= [d.school_code,d.course_code].filter(Boolean).map(cleanText).join(' · ') %></span><% } %>
+      <% if (d.grade_verified && d.author_grade) { %><span class="tag tag-green" title="Tác giả đã xác thực bảng điểm học phần">Đã xác thực <%= cleanText(d.author_grade) %></span><% } %>
     </div>
-    <div class="muted small">Tác giả: <%= d.author_name %><% if (d.semester) { %> · HK <%= d.semester %><% } %></div>
+    <div class="doc-card-stats"><span><%= d.rating_count ? Number(d.rating_avg).toFixed(1) + '/5 · ' + d.rating_count + ' đánh giá' : 'Mới đăng' %></span><span><%= Number(d.views || 0).toLocaleString('vi-VN') %> lượt xem</span></div>
+    <span class="doc-author">Tác giả: <%= cleanText(d.author_name || 'Thành viên UniShare') %><% if (d.semester) { %> · HK <%= cleanText(d.semester) %><% } %></span>
+    <% if (d.lecturer_name) { %><span class="doc-lecturer">GV: <%= cleanText(d.lecturer_name) %></span><% } %>
+    <span class="doc-open">Xem học liệu <span aria-hidden="true">↗</span></span>
   </div>
 </a>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" width="640" height="400">
+<defs><linearGradient id="paper" x2="0" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#e9f0f7"/></linearGradient><linearGradient id="fold"><stop stop-color="#fff"/><stop offset=".46" stop-color="#f9fbff"/><stop offset=".5" stop-color="#b5c8dc"/><stop offset=".54" stop-color="#f0f5fc"/><stop offset="1" stop-color="#fff"/></linearGradient><filter id="shadow" x="-.3" y="-.3" width="1.6" height="1.8"><feDropShadow dx="0" dy="18" stdDeviation="12" flood-color="#204b75" flood-opacity=".2"/></filter></defs>
+<ellipse cx="321" cy="337" rx="248" ry="24" fill="#90b4cf" opacity=".18"/>
+<g filter="url(#shadow)"><path d="m67 155 229 18 35 3 225-24-17 176-211 24-39-2L84 323Z" fill="#174a8b"/><path d="m78 144 223 14 26 8 220-24-13 176-208 23-35-2-201-27Z" fill="#d3dfeb"/>
+<path d="m79 158 212 19 35 3 215-26M80 167l210 18 36 4 214-25M82 290l207 27 38 3 209-24M82 299l207 27 38 3 208-23" fill="none" stroke="#9fbbd3" stroke-width="2"/>
+<path d="M91 124q111-19 226 41 113-58 221-39l-17 173q-102-14-204 32-108-46-207-31Z" fill="url(#fold)"/><path d="M317 166v163" stroke="#a3b8ca" stroke-width="2"/>
+<g stroke="#c2cfdd" stroke-width="3" fill="none"><path d="M123 159q76-7 158 26M125 175q75-4 156 26M127 191q74-1 154 27M130 254q72 4 151 31M132 269q72 5 149 31M352 187q79-34 153-29M352 203q78-32 152-29M352 270q74-25 145-25M352 286q74-24 143-24"/></g>
+<path d="m151 239 29-31 33 20 31-12 30 38" fill="none" stroke="#4082bc" stroke-width="3"/><g fill="#0e5a9b"><circle cx="151" cy="239" r="5"/><circle cx="180" cy="208" r="5"/><circle cx="213" cy="228" r="5"/><circle cx="244" cy="216" r="5"/></g>
+<path d="m373 235 25-8v23l-25 8Zm35-18 25-8v31l-25 8Zm35-17 25-8v38l-25 8Z" fill="#5f9ac9"/><path d="m300 315 15 6 2 43-9-7-10 3Z" fill="#e2ad41"/>
+</g>
+<g filter="url(#shadow)"><path d="M115 36h126a16 16 0 0 1 16 16v39a16 16 0 0 1-16 16h-63l-30 23 5-23h-37a16 16 0 0 1-16-16V52a16 16 0 0 1 16-16Z" fill="#fff"/><path d="M127 60h101M127 78h72" stroke="#377ab5" stroke-width="6" stroke-linecap="round"/>
+<path d="M390 33h105a16 16 0 0 1 16 16v36a16 16 0 0 1-16 16h-15l8 20-31-20h-67a16 16 0 0 1-16-16V49a16 16 0 0 1 16-16Z" fill="#1767a5"/><path d="m403 66 12 12 24-27M456 59h30M456 76h22" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+</svg>

@@ -1,0 +1,167 @@
+<% /* Original subject illustrations, kept inside a 220 × 160 artboard. */ %>
+<g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<% if(motif==='algebra'){ %>
+ <path d="M27 124 111 154 199 112 114 82Z" fill="currentColor" opacity=".12" stroke="none"/>
+ <path d="M27 124 114 82 199 112 111 154ZM27 124V47l87-39 85 29v75M114 8v74M111 154V78L27 47M111 78l88-41"/>
+ <path d="m49 115 83 30m-61-40 83 30m-62-40 84 31M49 37v75m22-85v75m22-85v75M134 16v73m21-66v74m22-67v73" opacity=".25"/>
+ <path d="M43 135 150 84m-12 0 12 0-5 11M111 133V27m-6 11 6-11 6 11M52 55l104 36m-9-9 9 9-12 2" stroke-width="3"/>
+ <circle cx="111" cy="78" r="7" fill="currentColor"/>
+<% } else if(motif==='calculus'){ %>
+ <path d="M12 132H211M33 146V12M33 35h173M33 68h173M33 100h173M69 14v118M105 14v118M141 14v118M177 14v118" opacity=".23"/>
+ <path d="M47 123C82 123 93 114 112 96S161 76 198 22" stroke-width="3"/>
+ <path d="M69 119v13h111V48c-19 27-47 28-68 48-15 15-25 20-43 23Z" fill="currentColor" opacity=".14" stroke="none"/>
+ <path d="M69 120v12m18-17v17m19-29v29m18-46v46m19-55v55m18-67v67m19-84v84" opacity=".7"/>
+ <path d="M33 14v118h177m-7-5 7 5-7 5m-182-116 5-7 5 7"/>
+ <text x="49" y="55" fill="currentColor" stroke="none" font-family="Georgia,serif" font-size="34">∫</text><text x="70" y="52" fill="currentColor" stroke="none" font-size="16">ƒ(x) dx</text>
+ <circle cx="112" cy="96" r="5" fill="currentColor"/>
+<% } else if(motif==='algorithms'){ %>
+ <path d="M110 31v24H52v23m58-23h58v23M52 98v18H24v20m28-20h28v20m88-38v18h-28v20m28-20h28v20" opacity=".8"/>
+ <rect x="86" y="7" width="48" height="28" rx="5" fill="currentColor" fill-opacity=".17"/>
+ <rect x="28" y="75" width="48" height="27" rx="5"/><rect x="144" y="75" width="48" height="27" rx="5"/>
+ <g fill="currentColor"><circle cx="24" cy="141" r="9"/><circle cx="80" cy="141" r="9"/><circle cx="140" cy="141" r="9"/><circle cx="196" cy="141" r="9"/></g>
+ <path d="M99 17h22m-22 8h14M40 85h24m-24 8h14M156 85h24m-24 8h14"/>
+ <path d="M13 44H40m-7-6 7 6-7 6M181 44h27m-7-6 7 6-7 6" opacity=".4"/>
+<% } else if(motif==='database'){ %>
+ <ellipse cx="69" cy="35" rx="45" ry="17" fill="currentColor" fill-opacity=".16"/>
+ <path d="M24 35v83c0 23 90 23 90 0V35M24 62c0 23 90 23 90 0M24 90c0 23 90 23 90 0"/>
+ <path d="M114 62h24v-27h56M114 100h24v26h56"/>
+ <rect x="151" y="17" width="51" height="34" rx="4"/><rect x="151" y="108" width="51" height="34" rx="4"/>
+ <path d="M161 28h30m-30 10h20M161 119h30m-30 10h20" opacity=".65"/>
+ <g fill="currentColor"><circle cx="34" cy="69" r="3"/><circle cx="34" cy="97" r="3"/><circle cx="34" cy="123" r="3"/></g>
+ <path d="M55 146h28m-14-7v14" opacity=".4"/>
+<% } else if(motif==='network'){ %>
+ <path d="M109 80 34 29m75 51 74-51m-74 51-75 51m75-51 74 51M35 29h148M35 131h148" opacity=".4"/>
+ <path d="M109 80V10m0 70v70M22 80h174" stroke-dasharray="3 6" opacity=".45"/>
+ <circle cx="109" cy="80" r="27" fill="currentColor" fill-opacity=".15"/>
+ <path d="M94 75h30v17H94Zm4-7h22M99 98h20"/>
+ <g fill="currentColor" fill-opacity=".16"><rect x="16" y="13" width="38" height="28" rx="4"/><rect x="164" y="13" width="38" height="28" rx="4"/><rect x="16" y="119" width="38" height="28" rx="4"/><rect x="164" y="119" width="38" height="28" rx="4"/></g>
+ <path d="M25 46h20m-10-5v5M173 46h20m-10-5v5M25 152h20m-10-5v5M173 152h20m-10-5v5"/>
+<% } else if(motif==='ai'){ %>
+ <% const layers=[[28,[40,80,120]],[82,[20,60,100,140]],[138,[20,60,100,140]],[192,[50,110]]]; for(let k=0;k<layers.length-1;k++){for(const y of layers[k][1]){for(const y2 of layers[k+1][1]){ %><path d="M<%= layers[k][0] %> <%= y %>L<%= layers[k+1][0] %> <%= y2 %>" opacity=".18"/><% }}} %>
+ <% layers.forEach((layer,i)=>layer[1].forEach(y=>{ %><circle cx="<%= layer[0] %>" cy="<%= y %>" r="<%= i===3?11:8 %>" fill="currentColor" fill-opacity="<%= i===3?.85:.18 %>"/><% })); %>
+ <path d="M29 80 82 60l56 40 54-50" stroke-width="3"/>
+<% } else if(motif==='programming'){ %>
+ <rect x="16" y="14" width="188" height="131" rx="7" fill="currentColor" fill-opacity=".06"/>
+ <path d="M16 39h188"/><g fill="currentColor" stroke="none"><circle cx="29" cy="27" r="3"/><circle cx="41" cy="27" r="3"/><circle cx="53" cy="27" r="3"/></g>
+ <path d="m70 65-22 23 22 22m80-45 22 23-22 22m-27-52-22 72" stroke-width="4"/>
+ <path d="M31 131h42m7 0h24" opacity=".45"/>
+<% } else if(motif==='objects'){ %>
+ <rect x="66" y="7" width="88" height="52" rx="4" fill="currentColor" fill-opacity=".12"/><path d="M66 25h88M78 17h37M78 35h60m-60 12h43M110 59v23H50v18m60-18h60v18"/>
+ <rect x="10" y="99" width="80" height="52" rx="4"/><rect x="130" y="99" width="80" height="52" rx="4"/>
+ <path d="M10 117h80m-68-9h36m-36 20h52m-52 12h35M130 117h80m-68-9h36m-36 20h52m-52 12h35"/>
+ <path d="m105 68 5-9 5 9"/>
+<% } else if(motif==='systems'){ %>
+ <rect x="63" y="32" width="94" height="94" rx="8" fill="currentColor" fill-opacity=".12"/><rect x="80" y="49" width="60" height="60" rx="4"/>
+ <% for(let n=0;n<5;n++){ %><path d="M<%= 75+n*17 %> 16v16m0 94v16M47 <%= 44+n*17 %>h16m94 0h16"/><% } %>
+ <path d="M95 65h30v28H95Zm-64-24H14v88h17m158-88h17v88h-17"/><circle cx="110" cy="79" r="5" fill="currentColor"/>
+<% } else if(motif==='software'){ %>
+ <rect x="12" y="10" width="196" height="140" rx="5" opacity=".35"/>
+ <rect x="25" y="24" width="55" height="42" rx="4" fill="currentColor" fill-opacity=".1"/><rect x="140" y="24" width="55" height="42" rx="4"/>
+ <rect x="82" y="103" width="57" height="33" rx="4" fill="currentColor" fill-opacity=".15"/>
+ <path d="M80 45h60m-7-5 7 5-7 5M167 66v19H53V66m57 19v18M35 36h33m-33 9h22m-22 9h28M151 36h33m-33 9h22m-22 9h28M94 115h32m-32 10h21"/>
+ <path d="M25 131h25m-25-8h15M166 122h28m-28 9h20" opacity=".4"/>
+<% } else if(motif==='security'){ %>
+ <path d="M110 8c22 15 45 21 69 24v49c0 33-27 57-69 73-42-16-69-40-69-73V32c24-3 47-9 69-24Z" fill="currentColor" fill-opacity=".09" stroke-width="3"/>
+ <path d="M110 23c17 11 37 17 54 20v37c0 25-20 45-54 59-34-14-54-34-54-59V43c17-3 37-9 54-20Z" opacity=".35"/>
+ <rect x="83" y="69" width="54" height="39" rx="6" fill="currentColor" fill-opacity=".16"/><path d="M93 69V56a17 17 0 0 1 34 0v13m-17 17v10"/><circle cx="110" cy="83" r="4" fill="currentColor"/>
+ <path d="M7 54h19v15h15M7 112h19V97h15M213 54h-19v15h-15M213 112h-19V97h-15" opacity=".6"/>
+<% } else if(motif==='information'){ %>
+ <rect x="69" y="15" width="108" height="125" rx="4" opacity=".3"/><rect x="54" y="23" width="108" height="125" rx="4" opacity=".55"/><rect x="39" y="31" width="108" height="125" rx="4" fill="currentColor" fill-opacity=".1"/>
+ <path d="M54 50h75m-75 13h53m-53 32h52m-52 12h65m-65 12h41"/><rect x="54" y="76" width="21" height="8" fill="currentColor"/>
+ <circle cx="166" cy="92" r="24" fill="none" stroke-width="4"/><path d="m183 110 23 24" stroke-width="6"/>
+<% } else if(motif==='accounting'){ %>
+ <path d="M21 24h120v118H21Z" fill="currentColor" fill-opacity=".08"/><path d="M21 48h120M21 72h120M21 96h120M21 120h120M59 24v118M101 24v118" opacity=".55"/>
+ <path d="M30 36h20M69 36h21M110 36h20M30 60h20M69 60h21M110 60h20M30 84h20M69 84h21M110 84h20M30 108h20M69 108h21"/>
+ <rect x="133" y="63" width="70" height="89" rx="7" fill="currentColor" fill-opacity=".18"/><rect x="143" y="74" width="50" height="18" rx="2"/>
+ <% for(let y=104;y<=136;y+=16){for(let x=149;x<=185;x+=18){ %><rect x="<%= x-3 %>" y="<%= y-3 %>" width="6" height="6" rx="1" fill="currentColor"/><% }} %>
+<% } else if(motif==='audit'){ %>
+ <rect x="31" y="15" width="120" height="135" rx="4" fill="currentColor" fill-opacity=".07"/><path d="M47 35h65m-65 13h87M78 72h44M78 96h37M78 120h43m-74-48 6 6 11-14m-17 32 6 6 11-14m-17 32 6 6 11-14"/>
+ <circle cx="156" cy="85" r="35" stroke-width="4"/><circle cx="156" cy="85" r="26" opacity=".3"/><path d="m181 111 27 30" stroke-width="7"/><path d="m142 84 9 9 19-22" stroke-width="3"/>
+<% } else if(motif==='finance'){ %>
+ <path d="M17 142h188M30 140V97h30v43M82 140V68h30v72M134 140V35h30v105" fill="currentColor" fill-opacity=".1"/>
+ <path d="m25 76 46-19 40-22 66-21m-15-5 15 5-8 13" stroke-width="3"/>
+ <ellipse cx="178" cy="124" rx="26" ry="9"/><path d="M152 124v18c0 12 52 12 52 0v-18m-52 9c0 12 52 12 52 0"/>
+ <circle cx="63" cy="18" r="8" opacity=".4"/><path d="M63 13v10m-5-5h10" opacity=".4"/>
+<% } else if(motif==='money'){ %>
+ <path d="m60 60 50-29 50 29ZM65 68h90m-84 0v52m26-52v52m26-52v52m26-52v52M59 121h102v9H59Z" fill="currentColor" fill-opacity=".12"/>
+ <path d="M28 94a84 68 0 0 1 151-59m-3-16 3 16-17 1M192 66A84 68 0 0 1 41 125m3 16-3-16 17-1" stroke-width="3"/>
+ <circle cx="110" cy="56" r="5" fill="currentColor"/>
+<% } else if(motif==='micro'){ %>
+ <path d="M25 15v125h177M25 43h177M25 76h177M25 108h177M62 15v125M101 15v125M140 15v125M179 15v125" opacity=".25"/>
+ <path d="M25 15v125h177m-160-19 148-93M42 28l148 94" stroke-width="3"/>
+ <path d="M116 74v66m0-66H25" stroke-dasharray="4 5"/><circle cx="116" cy="74" r="7" fill="currentColor"/>
+ <text x="188" y="25" fill="currentColor" stroke="none" font-size="14">S</text><text x="189" y="124" fill="currentColor" stroke="none" font-size="14">D</text>
+<% } else if(motif==='macro'){ %>
+ <path d="M12 144h198M24 143V85h36v58M77 143V47h45v96M142 143V71h37v72M188 143V112h16v31" fill="currentColor" fill-opacity=".12"/>
+ <path d="M86 61h27m-27 14h27m-27 14h27m-27 14h27m-27 14h27M33 98h18m-18 14h18m-18 14h18M151 85h19m-19 14h19m-19 14h19m-19 14h19" opacity=".5"/>
+ <path d="M18 61 68 32l48 6 76-26m-14-5 14 5-8 13" stroke-width="3"/>
+<% } else if(motif==='econometrics'){ %>
+ <path d="M25 14v128h178M25 42h178M25 74h178M25 106h178M61 14v128M97 14v128M133 14v128M169 14v128" opacity=".22"/>
+ <path d="m41 109 150-77v25L41 135Z" fill="currentColor" opacity=".12" stroke="none"/>
+ <path d="m41 122 150-77" stroke-width="3"/>
+ <% [[44,114],[57,104],[75,112],[87,87],[102,94],[122,67],[136,80],[153,53],[170,69],[184,42],[194,52]].forEach(p=>{ %><circle cx="<%= p[0] %>" cy="<%= p[1] %>" r="4" fill="currentColor"/><% }); %>
+ <path d="M25 14v128h178"/><text x="35" y="31" fill="currentColor" stroke="none" font-size="12">y = β₀ + β₁x</text>
+<% } else if(motif==='statistics'){ %>
+ <path d="M15 135h191M32 135V20M32 47h170M32 77h170M32 107h170" opacity=".28"/>
+ <path d="M39 132c39 0 35-101 76-101s37 101 80 101Z" fill="currentColor" fill-opacity=".13"/>
+ <path d="M39 132c39 0 35-101 76-101s37 101 80 101" stroke-width="3"/>
+ <path d="M115 31v104" stroke-dasharray="4 5"/><path d="M86 75v60m58-60v60" opacity=".35"/>
+ <text x="110" y="153" fill="currentColor" stroke="none" font-size="14">μ</text>
+<% } else if(motif==='marketing' || motif==='global-marketing'){ %>
+ <circle cx="93" cy="82" r="61" opacity=".25"/><circle cx="93" cy="82" r="44" opacity=".5"/><circle cx="93" cy="82" r="27"/><circle cx="93" cy="82" r="9" fill="currentColor"/>
+ <path d="m95 80 87-66m-17 3 17-3-7 17M158 32l11 12" stroke-width="3"/>
+ <% if(motif==='global-marketing'){ %><circle cx="177" cy="119" r="30"/><ellipse cx="177" cy="119" rx="13" ry="30"/><path d="M147 119h60m-54-14h48m-48 28h48" opacity=".5"/><% } else { %><path d="m159 104 39-17v51l-39-17h-15v-17Zm1 18 9 25h14l-9-20M207 98l7-7m-7 21h10m-10 13 7 7" fill="currentColor" fill-opacity=".08"/><% } %>
+<% } else if(motif==='digital'){ %>
+ <rect x="15" y="15" width="189" height="126" rx="6"/><path d="M15 38h189M28 27h4m8 0h4m8 0h4"/>
+ <path d="M32 57h75l-24 35v24l-26 13V92Z" fill="currentColor" fill-opacity=".15"/>
+ <path d="M128 115V88h13v27m14 0V69h13v46m14 0V53h13v62" fill="currentColor" fill-opacity=".25"/>
+ <path d="m109 48 18 13-9 2-3 10Z" fill="currentColor"/>
+<% } else if(motif==='commerce'){ %>
+ <rect x="22" y="12" width="176" height="113" rx="6"/><path d="M22 36h176M37 24h23M46 55h14l13 39h68l14-31H65M78 104h58"/>
+ <circle cx="82" cy="112" r="4" fill="currentColor"/><circle cx="132" cy="112" r="4" fill="currentColor"/>
+ <path d="m151 111 28-14 27 14-27 14Zm0 0v29l28 14 27-14v-29m-27 14v29m-14-49 27 14v13" fill="currentColor" fill-opacity=".15"/>
+<% } else if(motif==='logistics'){ %>
+ <path d="M23 52h173M23 126h173M23 52v74m173-74v74" stroke-dasharray="4 5" opacity=".45"/>
+ <% [[19,21],[150,21],[85,95]].forEach(p=>{ %><g transform="translate(<%= p[0] %> <%= p[1] %>)"><path d="m0 14 25-13 25 13-25 14Zm0 0v29l25 13 25-13V14M25 28v28m-12-49 25 14v12" fill="currentColor" fill-opacity=".15"/></g><% }); %>
+ <path d="M83 47h46m-8-6 8 6-8 6M157 113h-28m7-6-7 6 7 6M63 113h-25m7-6-7 6 7 6" stroke-width="3"/>
+<% } else if(motif==='management' || motif==='humanresources'){ %>
+ <circle cx="110" cy="30" r="23" fill="currentColor" fill-opacity=".17"/><path d="M110 53v23H39v23m71-23h71v23m-71-23v23"/>
+ <path d="m100 29 7 7 14-16" stroke-width="3"/>
+ <% [39,110,181].forEach((x,i)=>{ %><rect x="<%= x-26 %>" y="99" width="52" height="48" rx="7" fill="currentColor" fill-opacity=".08"/><% if(motif==='humanresources'){ %><circle cx="<%= x %>" cy="115" r="6"/><path d="M<%= x-11 %> 135q0-14 11-14t11 14"/><% }else{ %><path d="M<%= x-13 %> 114h26m-26 10h26m-26 10h17"/><% }}); %>
+<% } else if(motif==='law' || motif==='international-law'){ %>
+ <% if(motif==='international-law'){ %><circle cx="110" cy="79" r="73" opacity=".22"/><ellipse cx="110" cy="79" rx="34" ry="73" opacity=".22"/><path d="M39 79h142M50 43h120M50 115h120" opacity=".22"/><% } %>
+ <path d="M110 20v119M77 144h66M91 136h38M44 47h132M110 29 44 47m66-18 66 18M44 48 20 99h48ZM176 48l-24 51h48Z" stroke-width="2.5"/>
+ <path d="M20 99q24 33 48 0M152 99q24 33 48 0" fill="currentColor" fill-opacity=".3"/><circle cx="110" cy="19" r="7" fill="currentColor"/>
+<% } else if(['relations','international','payments'].includes(motif)){ %>
+ <circle cx="110" cy="80" r="58"/><ellipse cx="110" cy="80" rx="27" ry="58"/><path d="M52 80h116M61 50h98M61 110h98" opacity=".6"/>
+ <% if(motif==='relations'){ %><ellipse cx="110" cy="80" rx="101" ry="30" transform="rotate(-25 110 80)" opacity=".5"/><g fill="currentColor"><circle cx="25" cy="118" r="6"/><circle cx="190" cy="34" r="6"/><circle cx="110" cy="22" r="5"/></g><% } else if(motif==='payments'){ %><path d="M7 56h53m-9-7 9 7-9 7M213 106h-53m9-7-9 7 9 7" stroke-width="4"/><circle cx="32" cy="25" r="15"/><circle cx="188" cy="138" r="15"/><path d="M26 25h12m-6-6v12M182 138h12m-6-6v12"/><% } else { %><path d="M14 144v-30h18v30m10 0V99h18v45m101 0V99h18v45m10 0V81h18v63" fill="currentColor" fill-opacity=".25"/><path d="m22 82 15-19 14 3M173 40l16-15 16 3" stroke-width="3"/><% } %>
+<% } else if(motif==='trade'){ %>
+ <path d="M16 118h190l-22 25H40ZM46 83h61v35H46ZM112 83h61v35h-61ZM79 47h61v35H79Z" fill="currentColor" fill-opacity=".13"/>
+ <path d="M56 90v20m12-20v20m12-20v20m12-20v20m30-20v20m12-20v20m12-20v20m12-20v20M89 54v20m12-20v20m12-20v20m12-20v20M12 152q11-8 22 0t22 0 22 0 22 0 22 0 22 0 22 0 22 0 22 0" opacity=".7"/>
+ <path d="M17 25h70m-8-7 8 7-8 7M203 25h-54m8-7-8 7 8 7"/>
+<% } else if(motif==='english'){ %>
+ <path d="M19 32q44-13 91 5 47-18 91-5v103q-44-13-91 5-47-18-91-5ZM110 37v103" fill="currentColor" fill-opacity=".07"/>
+ <text x="34" y="91" font-family="Georgia,serif" font-size="52" fill="currentColor" stroke="none">Aa</text>
+ <path d="M131 56h48m-48 15h39m-39 15h48m-48 15h32M34 113h56m41 3h48"/>
+ <path d="m169 17 8-10m8 16 13-3" opacity=".5"/>
+<% } else if(motif==='writing'){ %>
+ <rect x="31" y="13" width="125" height="136" rx="5" fill="currentColor" fill-opacity=".06"/><path d="M48 35h57M48 51h89M48 67h89M48 83h76M48 99h55M48 115h41" opacity=".7"/>
+ <path d="m179 36 17 10-49 83-25 16 2-30Zm-55 79 23 14m27-84 17 10" fill="currentColor" fill-opacity=".18" stroke-width="2.5"/><path d="m122 145 11-13"/>
+<% } else if(motif==='translation'){ %>
+ <path d="M17 22h91v81H72l-21 18v-18H17Z" fill="currentColor" fill-opacity=".08"/><path d="M112 57h91v81h-32l-22 16v-16h-37Z" fill="currentColor" fill-opacity=".13"/>
+ <text x="44" y="79" font-family="Georgia,serif" font-size="46" fill="currentColor" stroke="none">A</text><text x="136" y="114" font-family="'Microsoft YaHei',sans-serif" font-size="37" fill="currentColor" stroke="none">文</text>
+ <path d="M124 26h51m-8-6 8 6-8 6M96 137H45m7-6-7 6 7 6"/>
+<% } else if(motif==='chinese'){ %>
+ <rect x="49" y="10" width="122" height="122" rx="3" opacity=".55"/><path d="M110 10v122M49 71h122M49 10l122 122M171 10 49 132" stroke-dasharray="4 5" opacity=".2"/>
+ <text x="67" y="104" font-family="'Microsoft YaHei',sans-serif" font-size="88" fill="currentColor" stroke="none">语</text><path d="M67 150h86" opacity=".6"/>
+<% } else if(motif==='communication'){ %>
+ <rect x="91" y="23" width="38" height="67" rx="19" fill="currentColor" fill-opacity=".15"/><path d="M78 67v12a32 32 0 0 0 64 0V67m-32 44v27m-24 0h48M101 38h18m-18 11h18"/>
+ <path d="M60 44q-25 34 0 68M43 27q-40 51 0 102M160 44q25 34 0 68m17-85q40 51 0 102" opacity=".6"/>
+<% } else if(motif==='physics'){ %>
+ <ellipse cx="110" cy="79" rx="91" ry="31"/><ellipse cx="110" cy="79" rx="91" ry="31" transform="rotate(60 110 79)"/><ellipse cx="110" cy="79" rx="91" ry="31" transform="rotate(-60 110 79)"/>
+ <circle cx="110" cy="79" r="12" fill="currentColor"/><g fill="currentColor"><circle cx="201" cy="79" r="6"/><circle cx="65" cy="1" r="5"/><circle cx="65" cy="157" r="5"/></g>
+<% } else { %>
+ <path d="M24 32q44-15 86 6 42-21 86-6v108q-44-15-86 6-42-21-86-6ZM110 38v108" fill="currentColor" fill-opacity=".08"/>
+ <path d="M40 57q26-6 52 5M40 76q26-6 52 5M40 95q26-6 52 5M40 114q26-6 52 5M128 62q26-11 52-5M128 81q26-11 52-5M128 100q26-11 52-5M128 119q26-11 52-5" opacity=".55"/>
+<% } %>
+</g>

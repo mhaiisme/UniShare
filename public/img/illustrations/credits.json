@@ -1,0 +1,27 @@
+[
+  {
+    "path": "../study-reference.png",
+    "source": "User-provided reference, existing cropped asset",
+    "originalAttachment": "attachment-001.png",
+    "author": null,
+    "license": "User-provided; rights not independently verified",
+    "usage": "Home and marketplace decorative book scene"
+  },
+  {
+    "path": "open-book.svg",
+    "source": "Original editable vector artwork created for UniShare",
+    "usage": "Forum and sharing illustration; no people"
+  },
+  {
+    "path": "study-cards.svg",
+    "source": "Original editable vector artwork created for UniShare",
+    "usage": "Study and search illustration"
+  },
+  {
+    "path": "../../../views/partials/book-art.ejs",
+    "source": "Original editable UniShare cover system rendered from listing metadata",
+    "designSource": "../../../views/partials/book-cover.ejs",
+    "artworkSource": "../../../views/partials/book-cover-motif.ejs",
+    "usage": "Illustration only; not an actual edition cover or seller photograph. Authored course designs cover all 61 current course codes, using 39 subject motifs. Material types and original listing titles distinguish the current 205 titles. No publisher logos or edition claims are added."
+  }
+]

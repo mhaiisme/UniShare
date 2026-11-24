@@ -1,37 +1,44 @@
-<%- include('../partials/header') %>
-<div class="page-narrow">
-  <div class="card">
-    <div class="doc-meta">
-      <span class="tag"><%= config.POST_CATEGORIES[post.category] %></span>
-      <% if (post.school_name) { %><span class="tag"><%= post.school_name %></span><% } %>
-      <% if (post.course_code) { %><span class="tag"><%= post.course_code %></span><% } %>
-      <span class="muted small"><a href="/u/<%= post.user_id %>"><%= post.author_name %></a> · <%= u.fmtDate(post.created_at) %></span>
+﻿<%- include('../partials/header') %>
+<div class="forum-page forum-detail-page">
+  <nav class="forum-breadcrumb" aria-label="Đường dẫn"><a href="/forum"><%- include('../partials/forum-icon',{name:'back'}) %>Bảng tin học tập</a><span>/</span><a href="<%= '/forum?' + new URLSearchParams({category:post.category}).toString() %>"><%= config.POST_CATEGORIES[post.category] %></a></nav>
+  <div class="forum-reading-layout">
+    <div class="forum-reading-main">
+      <article class="forum-article forum-post--<%= post.category %>">
+        <div class="forum-article-labels"><span class="forum-topic-badge"><%= config.POST_CATEGORIES[post.category] %></span><% if(post.course_code){ %><a class="forum-course" href="<%= '/forum?' + new URLSearchParams({course:post.course_code}).toString() %>"><%= post.course_code %></a><% } %></div>
+        <h1><%= post.title %></h1>
+        <header class="forum-post-header">
+          <a class="forum-avatar forum-avatar--<%= post.avatar_tone %>" href="/u/<%= post.user_id %>" aria-label="Hồ sơ <%= post.author_name %>"><%= post.author_initials %></a>
+          <div class="forum-author-line"><a href="/u/<%= post.user_id %>"><%= post.author_name %></a><time><%= u.fmtDate(post.created_at) %></time></div>
+          <a class="forum-article-response" href="#comments"><%- include('../partials/forum-icon',{name:'message'}) %><%= comments.length %> phản hồi</a>
+        </header>
+        <% if(post.school_name){ %><p class="forum-article-school"><%= post.school_name %></p><% } %>
+        <div class="doc-body forum-article-body"><%- u.renderMarkdown(post.body) %></div>
+        <footer class="forum-article-footer"><span><%- include('../partials/forum-icon',{name:comments.length?'check':'clock'}) %><%= comments.length ? 'Có phản hồi' : 'Chưa có phản hồi' %></span><a href="#reply-form">Tham gia trao đổi →</a></footer>
+        <% if(currentUser && (currentUser.id===post.user_id || currentUser.role==='admin')){ %><form class="forum-owner-actions" method="post" action="/forum/<%= post.id %>/delete" onsubmit="return confirm('Xoá bài viết?')"><button class="btn btn-ghost btn-sm text-danger">Xóa bài viết</button></form><% } %>
+      </article>
+      <section class="forum-comments" id="comments" aria-labelledby="comments-heading">
+        <div class="forum-comments-heading"><h2 id="comments-heading">Cùng trao đổi <span><%= comments.length %></span></h2><span>Theo thứ tự gửi</span></div>
+        <% if(!comments.length){ %><div class="forum-comments-empty"><%- include('../partials/forum-icon',{name:'message'}) %><div><strong>Lời giải có thể bắt đầu từ bạn</strong><p>Chia sẻ cách làm, gợi ý tài liệu hoặc hỏi rõ thêm về vấn đề.</p></div></div><% } %>
+        <div class="forum-comment-list"><% comments.forEach(function(c){ %>
+          <article class="forum-comment" id="comment-<%= c.id %>">
+            <a class="forum-avatar forum-avatar--<%= c.avatar_tone %>" href="/u/<%= c.user_id %>" aria-label="Hồ sơ <%= c.author_name %>"><%= c.author_initials %></a>
+            <div class="forum-comment-content"><header><a href="/u/<%= c.user_id %>"><%= c.author_name %></a><% if(c.user_id===post.user_id){ %><span class="forum-author-badge">Tác giả bài viết</span><% } %><time><%= u.fmtDate(c.created_at) %></time></header><p><%= String(c.body || '').normalize('NFC') %></p></div>
+          </article>
+        <% }) %></div>
+        <div class="forum-reply" id="reply-form">
+          <% if(currentUser){ %>
+            <form method="post" action="/forum/<%= post.id %>/comments" class="form">
+              <label for="forum-reply-body">Chia sẻ góc nhìn của bạn<textarea id="forum-reply-body" name="body" rows="5" required minlength="2" maxlength="3000" aria-describedby="forum-reply-help" placeholder="Bạn có cách giải hoặc kinh nghiệm nào hữu ích?"></textarea></label>
+              <div class="forum-reply-actions"><small id="forum-reply-help">Trao đổi tôn trọng, tập trung vào nội dung học tập.</small><button type="submit" class="btn btn-primary"><span data-submit-label>Gửi phản hồi</span> <%- include('../partials/forum-icon',{name:'arrow'}) %></button></div>
+            </form>
+          <% }else{ %><div class="forum-login-prompt"><div><h3>Góp thêm một góc nhìn</h3><p>Đăng nhập để phản hồi và cùng tìm lời giải.</p></div><a class="btn btn-primary" href="/login">Đăng nhập</a></div><% } %>
+        </div>
+      </section>
     </div>
-    <h1><%= post.title %></h1>
-    <div class="doc-body"><%- u.renderMarkdown(post.body) %></div>
-    <% if (currentUser && (currentUser.id === post.user_id || currentUser.role === 'admin')) { %>
-      <form method="post" action="/forum/<%= post.id %>/delete" onsubmit="return confirm('Xoá bài viết?')">
-        <button class="btn btn-ghost btn-sm text-danger">Xoá bài</button>
-      </form>
-    <% } %>
-  </div>
-
-  <div class="card" id="comments">
-    <h2>💬 Bình luận (<%= comments.length %>)</h2>
-    <% comments.forEach(function (c) { %>
-      <div class="review-item">
-        <div><strong><%= c.author_name %></strong> <span class="muted small">· <%= u.fmtDate(c.created_at) %></span></div>
-        <div><%= c.body %></div>
-      </div>
-    <% }) %>
-    <% if (currentUser) { %>
-      <form method="post" action="/forum/<%= post.id %>/comments" class="form">
-        <textarea name="body" rows="3" required placeholder="Viết bình luận..."></textarea>
-        <button class="btn btn-primary btn-sm">Gửi bình luận</button>
-      </form>
-    <% } else { %>
-      <p><a href="/login">Đăng nhập</a> để bình luận.</p>
-    <% } %>
+    <aside class="forum-reading-sidebar">
+      <section class="forum-side-panel forum-help-panel"><span class="forum-side-kicker">CÙNG HỌC TỐT HƠN</span><h2>Một phản hồi hữu ích</h2><ul class="forum-conversation-guide"><li>Nêu rõ cách bạn hiểu vấn đề.</li><li>Giải thích các bước hoặc lý do.</li><li>Ghi nguồn khi chia sẻ tài liệu.</li></ul><a class="forum-side-more" href="/forum?category=question&response=unanswered">Giúp thêm một câu hỏi →</a></section>
+      <section class="forum-side-panel"><h2>Tiếp tục khám phá</h2><div class="forum-related-links"><a href="<%= '/forum?' + new URLSearchParams({category:post.category}).toString() %>"><span><%= config.POST_CATEGORIES[post.category] %></span><%- include('../partials/forum-icon',{name:'arrow'}) %></a><% if(post.course_code){ %><a href="<%= '/forum?' + new URLSearchParams({course:post.course_code}).toString() %>"><span>Thảo luận môn <%= post.course_code %></span><%- include('../partials/forum-icon',{name:'arrow'}) %></a><% } %></div></section>
+    </aside>
   </div>
 </div>
 <%- include('../partials/footer') %>

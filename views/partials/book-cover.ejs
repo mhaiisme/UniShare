@@ -1,0 +1,148 @@
+<%
+/* Each course has an authored title composition, illustration and palette.
+   These are UniShare illustrations, not publisher covers or claims of edition. */
+const courseDesigns = {
+ ACC201:[['KẾ TOÁN','TÀI CHÍNH 1'],'accounting','petrol'],
+ AUD310:[['KIỂM TOÁN','CĂN BẢN'],'audit','slate'],
+ CHN202:[['NGỮ PHÁP','TIẾNG TRUNG','TRUNG CẤP'],'chinese','vermilion'],
+ CO2003:[['CẤU TRÚC DỮ LIỆU','VÀ GIẢI THUẬT'],'algorithms','royal'],
+ CO2013:[['HỆ CƠ SỞ','DỮ LIỆU'],'database','petrol'],
+ CSC10004:[['CẤU TRÚC DỮ LIỆU','VÀ GIẢI THUẬT'],'algorithms','forest'],
+ CSC10006:[['CƠ SỞ','DỮ LIỆU'],'database','ivoryblue'],
+ CSC14003:[['CƠ SỞ TRÍ TUỆ','NHÂN TẠO'],'ai','midnight'],
+ DMKT305:[['DIGITAL','MARKETING'],'digital','cobalt'],
+ ECOM301:[['THƯƠNG MẠI','ĐIỆN TỬ','CĂN BẢN'],'commerce','petrol'],
+ ENG201:[['ACADEMIC','WRITING'],'writing','ivoryblue'],
+ ENG220:[['TIẾNG ANH','CHUYÊN NGÀNH','QUAN HỆ QUỐC TẾ'],'english','royal'],
+ ENG305:[['TRANSLATION','THEORY &','PRACTICE'],'translation','forest'],
+ FIN210:[['CORPORATE','FINANCE'],'finance','midnight'],
+ FIN301:[['TÀI CHÍNH','DOANH NGHIỆP'],'finance','forest'],
+ HRM202:[['QUẢN TRỊ','NHÂN LỰC'],'humanresources','plum'],
+ IBA204:[['PRINCIPLES OF','MANAGEMENT'],'management','slate'],
+ IC210:[['TRUYỀN THÔNG','ĐỐI NGOẠI'],'communication','cobalt'],
+ IE103:[['QUẢN LÝ','THÔNG TIN'],'information','ivoryblue'],
+ IE205:[['KINH TẾ','QUỐC TẾ'],'international','petrol'],
+ IL301:[['CÔNG PHÁP','QUỐC TẾ'],'international-law','plum'],
+ INT1154:[['TIN HỌC CƠ SỞ 2','NGÔN NGỮ C'],'programming','royal'],
+ INT1306:[['CẤU TRÚC DỮ LIỆU','VÀ GIẢI THUẬT'],'algorithms','vermilion'],
+ INT1332:[['LẬP TRÌNH','HƯỚNG ĐỐI TƯỢNG','JAVA'],'objects','royal'],
+ INT1336:[['MẠNG','MÁY TÍNH'],'network','midnight'],
+ INT1414:[['AN TOÀN & BẢO MẬT','HỆ THỐNG','THÔNG TIN'],'security','midnight'],
+ INT2208:[['CÔNG NGHỆ','PHẦN MỀM'],'software','ivoryblue'],
+ INT2210:[['CẤU TRÚC DỮ LIỆU','VÀ GIẢI THUẬT'],'algorithms','ivoryblue'],
+ INT2211:[['CƠ SỞ','DỮ LIỆU'],'database','royal'],
+ INT3401:[['TRÍ TUỆ','NHÂN TẠO'],'ai','cobalt'],
+ IR201:[['LÝ THUYẾT','QUAN HỆ QUỐC TẾ'],'relations','royal'],
+ IT001:[['NHẬP MÔN','LẬP TRÌNH'],'programming','forest'],
+ IT002:[['LẬP TRÌNH','HƯỚNG ĐỐI TƯỢNG'],'objects','slate'],
+ IT004:[['CƠ SỞ','DỮ LIỆU'],'database','forest'],
+ IT005:[['NHẬP MÔN','MẠNG MÁY TÍNH'],'network','ivoryblue'],
+ IT3011:[['CẤU TRÚC DỮ LIỆU','VÀ GIẢI THUẬT'],'algorithms','midnight'],
+ IT3070:[['NGUYÊN LÝ','HỆ ĐIỀU HÀNH'],'systems','slate'],
+ IT3080:[['MẠNG','MÁY TÍNH'],'network','cobalt'],
+ IT4490:[['THIẾT KẾ & XÂY DỰNG','PHẦN MỀM'],'software','petrol'],
+ KDQ301:[['GIAO DỊCH','THƯƠNG MẠI','QUỐC TẾ'],'trade','slate'],
+ KHMA1101:[['KINH TẾ','VĨ MÔ'],'macro','midnight'],
+ KHMI1101:[['KINH TẾ','VI MÔ'],'micro','ivoryblue'],
+ KTKT1101:[['NGUYÊN LÝ','KẾ TOÁN'],'accounting','forest'],
+ LAW101:[['PHÁP LUẬT','ĐẠI CƯƠNG'],'law','plum'],
+ LOG310:[['QUẢN TRỊ','CHUỖI CUNG ỨNG'],'logistics','petrol'],
+ MAT1093:[['ĐẠI SỐ','TUYẾN TÍNH'],'algebra','royal'],
+ MI1111:[['GIẢI TÍCH I'],'calculus','cobalt'],
+ MI1141:[['ĐẠI SỐ'],'algebra','midnight'],
+ MIS304:[['HỆ THỐNG','THÔNG TIN QUẢN LÝ'],'information','slate'],
+ MKT201:[['NGUYÊN LÝ','MARKETING'],'marketing','vermilion'],
+ MT1003:[['GIẢI TÍCH 1'],'calculus','forest'],
+ MT1007:[['ĐẠI SỐ','TUYẾN TÍNH'],'algebra','petrol'],
+ MTH00003:[['VI TÍCH PHÂN','1B'],'calculus','ivoryblue'],
+ MTH00040:[['XÁC SUẤT','THỐNG KÊ'],'statistics','midnight'],
+ NHLT1107:[['LÝ THUYẾT','TÀI CHÍNH TIỀN TỆ'],'money','petrol'],
+ PH1003:[['VẬT LÝ 1'],'physics','cobalt'],
+ STA202:[['THỐNG KÊ ỨNG DỤNG','TRONG KINH DOANH'],'statistics','forest'],
+ TAN331:[['TIẾNG ANH','THƯƠNG MẠI'],'english','slate'],
+ TCQ305:[['THANH TOÁN','QUỐC TẾ'],'payments','forest'],
+ TMA302:[['MARKETING','QUỐC TẾ'],'global-marketing','plum'],
+ TOKT1101:[['KINH TẾ','LƯỢNG'],'econometrics','ivoryblue']
+};
+const palettes = {
+ royal:['#153e7b','#09254f','#ffffff','#8ec6f2','#d7e7f8'],
+ cobalt:['#135ca2','#0a3265','#ffffff','#a4d9f3','#deebf8'],
+ midnight:['#192c4a','#0b182e','#ffffff','#d5ba78','#e4e8ef'],
+ forest:['#164e4a','#092e2d','#ffffff','#b4d9bb','#e1ede8'],
+ petrol:['#1d566a','#0d3548','#ffffff','#a9d7d7','#deedf1'],
+ slate:['#354c62','#1e2e40','#ffffff','#c8d9e8','#e6ecf2'],
+ plum:['#613849','#351d30','#ffffff','#e0be9b','#eee5e9'],
+ vermilion:['#8b3b33','#54231f','#fffaf0','#f1d3a5','#f3e8e3'],
+ ivoryblue:['#f3f6fa','#163767','#17365b','#3373ac','#e4edf6']
+};
+const nfc = value => String(value == null ? '' : value).normalize('NFC');
+const title = nfc(book.title || 'Học liệu');
+const ascii = title.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase();
+const course = nfc(book.course_code).trim().toUpperCase();
+let design = courseDesigns[course];
+let known = Boolean(design);
+const wrap = (value,limit=17) => {
+ const result=[]; let line='';
+ for (const word of value.split(/\s+/)) {
+  if (line && (line+' '+word).length>limit) { result.push(line);line=''; }
+  if(word.length>limit) { if(line){result.push(line);line='';} for(let i=0;i<word.length;i+=limit)result.push(word.slice(i,i+limit)); }
+  else line+=(line?' ':'')+word;
+ }
+ if(line)result.push(line);
+ return result;
+};
+if(!design){
+ const inferred = /co so du lieu/.test(ascii)?'database':/mang may tinh/.test(ascii)?'network':/tri tue nhan tao/.test(ascii)?'ai':/lap trinh/.test(ascii)?'programming':/phap luat|luat/.test(ascii)?'law':/xac suat|thong ke/.test(ascii)?'statistics':/dai so/.test(ascii)?'algebra':/giai tich|tich phan/.test(ascii)?'calculus':/kinh te/.test(ascii)?'econometrics':'reference';
+ const shortTitle=title.replace(/^(Giáo trình|Sách bài tập|Tài liệu tham khảo|Tuyển tập bài tập|Hướng dẫn học tập)\s+/i,'').replace(/\s*\([^)]*\)\s*$/,'');
+ design=[wrap(shortTitle.toLocaleUpperCase('vi-VN')),inferred,'royal'];
+}
+let [heading,motif,paletteName]=design;
+let subtitle='';
+if(/introduction to algorithms/.test(ascii)){heading=['INTRODUCTION','TO ALGORITHMS'];paletteName='midnight';subtitle='CORMEN · LEISERSON · RIVEST · STEIN';}
+else if(/stata|eviews/.test(ascii)) subtitle='BÀI TẬP & THỰC HÀNH STATA / EVIEWS';
+else if(/va ung dung/.test(ascii)) subtitle='VÀ ỨNG DỤNG';
+else if(/tuyen tap bai tap & huong dan/.test(ascii)) subtitle='TUYỂN TẬP BÀI TẬP & HƯỚNG DẪN';
+const kind=/^sach bai tap/.test(ascii)?'BÀI TẬP':/^tuyen tap/.test(ascii)?'TUYỂN TẬP':/^huong dan/.test(ascii)?'HƯỚNG DẪN HỌC TẬP':/^tai lieu/.test(ascii)?'TÀI LIỆU THAM KHẢO':/ban in tham khao/.test(ascii)?'BẢN IN THAM KHẢO':'GIÁO TRÌNH';
+const variant=/^sach bai tap|^tuyen tap/.test(ascii)?'practice':/^huong dan/.test(ascii)?'guide':/^tai lieu|ban in tham khao/.test(ascii)?'reference':'textbook';
+const p=palettes[paletteName];
+const uid='cover-'+String(book.id || 'new').replace(/[^a-zA-Z0-9_-]/g,'')+'-'+Math.random().toString(36).slice(2,9);
+const lines=heading.slice(0,4);
+if(heading.length>4)lines[3]=lines[3].slice(0,15)+'…';
+const textSize=Math.max(17,Math.min(29, Math.floor(320/Math.max(...lines.map(t=>t.length)))));
+const courseNumber=Array.from(course).reduce((a,c)=>a+c.charCodeAt(0),0);
+%>
+<svg class="edition-cover" viewBox="0 0 420 560" width="420" height="560" role="img" aria-label="Bìa minh họa: <%= title %>" data-cover-course="<%= course %>" data-cover-motif="<%= motif %>" data-cover-known="<%= known %>">
+<defs>
+ <linearGradient id="<%= uid %>-sheen" x1="0" x2="1"><stop stop-color="#fff" stop-opacity=".02"/><stop offset=".07" stop-color="#fff" stop-opacity=".14"/><stop offset=".1" stop-color="#000" stop-opacity=".10"/><stop offset=".18" stop-color="#fff" stop-opacity=".02"/><stop offset="1" stop-color="#000" stop-opacity=".08"/></linearGradient>
+ <linearGradient id="<%= uid %>-paper"><stop stop-color="#c9d0d2"/><stop offset=".25" stop-color="#fffdf6"/><stop offset=".75" stop-color="#e7e7df"/><stop offset="1" stop-color="#b5bfc5"/></linearGradient>
+ <pattern id="<%= uid %>-linen" width="5" height="5" patternUnits="userSpaceOnUse"><path d="M0 1h5M1 0v5" stroke="#fff" stroke-opacity=".06" stroke-width=".5"/></pattern>
+</defs>
+<ellipse cx="215" cy="520" rx="157" ry="18" fill="#284766" opacity=".07"/><ellipse cx="218" cy="515" rx="131" ry="10" fill="#284766" opacity=".10"/>
+<path d="M71 55 337 32 364 49v447L95 524l-24-22Z" fill="<%= p[1] %>"/>
+<path d="m91 70 264-24v443L93 516Z" fill="url(#<%= uid %>-paper)"/>
+<path d="m96 76 252-24v430L96 509Z" fill="#fcfbf4"/>
+<% for(let i=0;i<9;i++){ %><path d="M<%= 339+i*1.5 %> <%= 51+i %>V<%= 482+i %>L<%= 96+i*.3 %> <%= 509+i*.8 %>" fill="none" stroke="<%= i%2?'#c3c9c8':'#e0e2da' %>" stroke-width=".9"/><% } %>
+<path d="m71 55 266-23v443L71 503Z" fill="<%= p[0] %>"/>
+<path d="m71 55-16 10v426l16 12Z" fill="<%= p[1] %>"/>
+<path d="m71 55 266-23v443L71 503Z" fill="url(#<%= uid %>-linen)"/>
+<path d="m71 55 266-23v443L71 503Z" fill="url(#<%= uid %>-sheen)"/>
+<path d="m83 54 2-.2v446l-2 .2Z" fill="#000" opacity=".13"/><path d="m87 54 1-.2v446l-1 .2Z" fill="#fff" opacity=".2"/>
+<path d="M72 57 335 34M72 500l262-27" stroke="#fff" stroke-opacity=".22" fill="none"/>
+<g transform="matrix(1 -.086 0 1 100 86)" fill="<%= p[2] %>" style="font-family:'Segoe UI',Tahoma,sans-serif">
+ <text x="0" y="0" font-size="9" font-weight="600" letter-spacing="1.4">UNISHARE / TỦ SÁCH HỌC TẬP</text>
+ <path d="M0 16H210" stroke="<%= p[2] %>" stroke-opacity=".4"/>
+ <text x="0" y="37" font-size="10" font-weight="600" letter-spacing=".7"><%= kind %></text>
+ <% lines.forEach(function(line,i){ %><text x="0" y="<%= 76+i*32 %>" font-size="<%= textSize %>" font-weight="700" letter-spacing="-.4"><%= line %></text><% }) %>
+ <% if(subtitle){ %><text x="0" y="<%= Math.max(150,92+lines.length*32) %>" font-size="8" font-weight="600"><%= subtitle %></text><% } %>
+ <g transform="translate(0 185)" style="color:<%= p[3] %>">
+  <% if(variant==='practice'){ %><path d="M0 0H218M0 32H218M0 64H218M0 96H218M0 128H218M0 160H218M0 0v160M32 0v160M64 0v160M96 0v160M128 0v160M160 0v160M192 0v160" fill="none" stroke="currentColor" stroke-opacity=".11"/><% } %>
+  <% if(variant==='guide'){ %><path d="M0 0h36M0 0v36M218 124v36h-36" stroke="currentColor" opacity=".65" fill="none" stroke-width="2"/><% } %>
+  <% if(variant==='reference'){ %><circle cx="110" cy="80" r="78" fill="none" stroke="currentColor" stroke-opacity=".16"/><circle cx="110" cy="80" r="67" fill="none" stroke="currentColor" stroke-opacity=".1"/><% } %>
+  <%- include('book-cover-motif',{motif,courseNumber}) %>
+ </g>
+ <path d="M0 370H210" stroke="<%= p[2] %>" stroke-opacity=".4"/>
+ <text x="0" y="393" font-size="12" font-weight="700" letter-spacing="1"><%= course || 'HỌC LIỆU' %></text>
+ <text x="210" y="393" text-anchor="end" font-size="10" font-weight="600"><%= nfc(book.school_code) %></text>
+</g>
+<g stroke="<%= p[3] %>" stroke-opacity=".6"><path d="m59 84 8-3m-8 8 8-3m-8 374 8 2m-8 4 8 2"/></g>
+</svg>

@@ -1,5 +1,5 @@
 <%- include('../partials/header') %>
-<div class="section-head">
+<div class="section-head visual-heading visual-heading--market">
   <div>
     <h1>📖 Chợ Giáo trình & Combo Học liệu số Độc quyền</h1>
     <p class="muted">Thanh toán giữ ký quỹ (escrow) an toàn · Tự động mở khoá <strong>Học liệu số tặng kèm</strong> ngay khi xác nhận nhận sách.</p>
@@ -18,9 +18,9 @@
 
 <div class="layout-sidebar">
   <aside class="filters card">
-    <form method="get" action="/market">
+    <form method="get" action="/market" class="uf-filter uf-sidebar">
       <h3>Bộ lọc</h3>
-      <label>Từ khoá<input type="text" name="q" value="<%= f.q %>"></label>
+      <fieldset class="uf-group"><legend>Tìm theo môn</legend><label>Từ khoá<input type="text" name="q" value="<%= f.q %>"></label>
       <label>Trường
         <select name="school">
           <option value="">Tất cả</option>
@@ -28,27 +28,28 @@
         </select>
       </label>
       <label>Mã môn<input type="text" name="course" value="<%= f.course %>" placeholder="VD: MI1111"></label>
-      <label>Tình trạng
+      </fieldset><fieldset class="uf-group"><legend>Chọn giáo trình</legend><label>Tình trạng
         <select name="condition">
           <option value="">Tất cả</option>
           <% Object.keys(config.CONDITIONS).forEach(function (k) { %><option value="<%= k %>" <%= f.condition === k ? 'selected' : '' %>><%= config.CONDITIONS[k] %></option><% }) %>
         </select>
       </label>
-      <label class="check"><input type="checkbox" name="bundle" value="1" <%= f.bundle ? 'checked' : '' %>> Chỉ Combo tặng kèm Học liệu số</label>
-      <label class="check"><input type="checkbox" name="free" value="1" <%= f.free ? 'checked' : '' %>> Tủ sách 0 đồng (Tặng miễn phí)</label>
-      <label>Sắp xếp
+      </fieldset><fieldset class="uf-group"><legend>Tùy chọn thêm</legend><label class="check"><input type="checkbox" name="bundle" value="1" <%= f.bundle ? 'checked' : '' %>><span><strong>Có học liệu số</strong><small>Sách kèm tài liệu học tập</small></span></label>
+      <label class="check"><input type="checkbox" name="free" value="1" <%= f.free ? 'checked' : '' %>><span><strong>Sách miễn phí</strong><small>Giáo trình được tặng lại</small></span></label>
+      </fieldset><fieldset class="uf-group"><legend>Thứ tự kết quả</legend><label>Sắp xếp
         <select name="sort">
           <option value="newest" <%= f.sort === 'newest' ? 'selected' : '' %>>Mới nhất</option>
           <option value="price_asc" <%= f.sort === 'price_asc' ? 'selected' : '' %>>Giá thấp → cao</option>
           <option value="price_desc" <%= f.sort === 'price_desc' ? 'selected' : '' %>>Giá cao → thấp</option>
         </select>
       </label>
-      <button class="btn btn-primary btn-block">Lọc</button>
+      </fieldset><div class="uf-actions"><button class="btn btn-primary btn-block" type="submit">Áp dụng bộ lọc</button><a class="uf-clear" href="/market">Xóa lọc</a></div>
     </form>
     <%- include('../partials/ads-sidebar') %>
   </aside>
 
   <section>
+<%- include('../partials/filter-chips', {filterValues:f,filterRoute:'/market'}) %>
     <div class="grid grid-3">
       <% listings.forEach(function (l) { %><%- include('../partials/listing-card', { l: l }) %><% }) %>
     </div>

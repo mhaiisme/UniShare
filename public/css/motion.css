@@ -1,0 +1,93 @@
+/* UniShare: open knowledge, connect ideas. Static content is the fallback. */
+:root{--us-fast:160ms;--us-motion:240ms;--us-scene:360ms;--us-enter:cubic-bezier(.2,.7,.2,1);--us-exit:cubic-bezier(.4,0,1,1);--us-lift:0 16px 32px #143d7624}
+.brand-mark{display:inline-grid;flex:none;width:48px;height:48px;perspective:240px;align-items:center}
+.brand-mark .brand-logo{grid-area:1/1;display:block;width:48px;height:auto;backface-visibility:hidden}
+.brand-page--left{clip-path:inset(0 50% 0 0);transform-origin:50% 55%}
+.brand-page--right{clip-path:inset(0 0 0 50%);transform-origin:50% 55%}
+.knowledge-journey{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;width:100%;margin-top:24px}
+.knowledge-route{grid-column:1/-1;display:block;width:100%;height:24px;color:var(--primary)}
+.knowledge-journey a{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;color:var(--primary-dark);text-decoration:none;font-size:13px;text-align:center}
+.knowledge-journey a small{font-size:11px;color:var(--muted)}
+.knowledge-journey a span{display:block}
+.listing-img,.listing-detail-img{perspective:1000px}
+.forum-preview{margin:12px 0}
+.forum-preview summary{cursor:pointer;list-style:none;display:block;border-radius:4px}
+.forum-preview summary::-webkit-details-marker{display:none}
+.forum-preview .forum-post-excerpt{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin:0}
+.forum-preview[open] .forum-post-excerpt{display:block;overflow:visible;-webkit-line-clamp:unset}
+.forum-preview-hint{display:block;margin-top:4px;font-size:12px;font-weight:600;color:var(--primary)}
+.forum-preview[open] .forum-preview-hint{display:none}
+.forum-preview>a{display:inline-block;margin-top:8px;font-size:14px}
+.forum-comment.is-new-comment{outline:2px solid var(--primary);outline-offset:4px;border-radius:12px;scroll-margin-top:24px}
+.comment-received{display:block;color:var(--primary-dark);font-size:12px;font-weight:700;margin-bottom:8px}
+.motion-feedback{position:fixed;bottom:24px;right:24px;z-index:1000;max-width:min(360px,calc(100vw - 48px));padding:16px 24px;background:var(--primary-dark);color:#fff;border-radius:12px;box-shadow:var(--us-lift);font-size:16px;line-height:1.5;pointer-events:none}
+.motion-feedback:empty{display:none}
+.btn[aria-busy=true]::after{content:' · Đang gửi…';display:inline;font-size:12px}
+.action-receipt{display:inline-block;width:20px;height:20px;vertical-align:middle;margin-right:8px;flex:none}
+.flashcard{display:grid;perspective:1000px;position:relative;overflow-wrap:anywhere}
+.flashcard .fc-side{grid-area:1/1;align-self:center;backface-visibility:hidden;animation:none;transition:transform var(--us-motion) var(--us-enter),opacity var(--us-fast) var(--us-enter)}
+.flashcard .fc-front{transform:rotateY(0);opacity:1}
+.flashcard .fc-back{transform:rotateY(-180deg);opacity:0;pointer-events:none}
+.flashcard.is-flipped .fc-front{transform:rotateY(180deg);opacity:0;pointer-events:none}
+.flashcard.is-flipped .fc-back{transform:rotateY(0);opacity:1;pointer-events:auto}
+.flashcard[aria-disabled=true]{cursor:default}
+.forum-preview summary:focus-visible,.knowledge-journey a:focus-visible{outline:3px solid var(--primary);outline-offset:4px}
+@media(prefers-reduced-motion:no-preference){
+ .home-hero,.knowledge-step{animation:none}
+ .brand-page--left,.brand-page--right{transition:transform var(--us-motion) var(--us-enter)}
+ .brand-opening .brand-page--left{animation:us-page-left var(--us-scene) var(--us-enter) both}
+ .brand-opening .brand-page--right{animation:us-page-right var(--us-scene) var(--us-enter) both}
+ .listing-card,.doc-card,.forum-post,.school-item{transition:transform var(--us-motion) var(--us-enter),border-color var(--us-fast)}
+ .edition-cover,.seller-book-photo{transform-origin:50% 70%;transition:transform var(--us-motion) var(--us-enter)}
+ .btn:active{transform:scale(.97);transition-duration:var(--us-fast)}
+ .book-media:active .edition-cover{transform:rotateY(-4deg) translateY(-2px)}
+ .forum-preview[open]>a{animation:us-in var(--us-motion) var(--us-enter)}
+ .alert{animation:us-in var(--us-motion) var(--us-enter)}
+ @media(hover:hover) and (pointer:fine){
+  .topbar .brand:hover .brand-page--left{transform:rotateY(-28deg)}
+  .topbar .brand:hover .brand-page--right{transform:rotateY(28deg)}
+  .listing-card:hover{transform:translateY(-4px);box-shadow:var(--us-lift)}
+  .listing-card:hover .edition-cover,.listing-detail-img:hover .edition-cover{transform:rotateY(-9deg) rotateZ(-2deg) translateY(-4px)}
+  .listing-card:hover .seller-book-photo,.listing-detail-img:hover .seller-book-photo{transform:rotateY(-6deg) translateY(-4px)}
+  .forum-post:hover{transform:translateY(-2px);box-shadow:var(--us-lift)}
+ }
+}
+@keyframes us-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes us-page-left{from{transform:rotateY(-65deg);opacity:.4}to{transform:rotateY(0);opacity:1}}
+@keyframes us-page-right{from{transform:rotateY(65deg);opacity:.4}to{transform:rotateY(0);opacity:1}}
+@media(prefers-reduced-motion:reduce){
+ .flashcard .fc-side{transition:none;transform:none!important}
+ .flashcard .fc-front,.flashcard.is-flipped .fc-back{opacity:1}
+ .flashcard .fc-back,.flashcard.is-flipped .fc-front{opacity:0}
+ .listing-card:hover,.doc-card:hover,.btn:hover,.forum-post:hover{transform:none}
+ .brand-mark *, .edition-cover,.seller-book-photo{transform:none!important}
+}
+@media(max-width:600px){.motion-feedback{bottom:16px;right:16px;max-width:calc(100vw - 32px)}.knowledge-journey{gap:4px}.knowledge-journey a{font-size:12px}}
+
+/* Connected knowledge interactions. */
+/* Compact utility control uses the existing UniShare brand palette. */
+.sound-toggle{display:inline-flex;align-items:center;justify-content:center;gap:8px;flex:none;width:44px;min-height:44px;padding:8px;border:1px solid var(--border);border-radius:12px;background:#fff;color:var(--primary-dark);font:inherit;cursor:pointer}
+.sound-toggle[aria-pressed="true"]{background:var(--primary-soft);border-color:var(--primary);color:var(--primary)}
+.sound-icon{display:block;width:24px;height:24px;flex:none}
+.sound-toggle .sound-waves{display:none}
+.sound-toggle[aria-pressed="true"] .sound-waves{display:block}
+.sound-toggle[aria-pressed="true"] .sound-muted{display:none}
+.sound-copy{display:none}
+.sound-toggle:focus-visible{outline:3px solid var(--primary);outline-offset:4px}
+@media(hover:hover){.sound-toggle:hover{background:var(--primary-soft);border-color:var(--primary)}}
+@media(max-width:860px){.sound-toggle{width:100%;justify-content:flex-start;padding:8px 12px}.sound-copy{display:flex;flex:1;align-items:center;gap:8px;font-size:16px}.sound-copy [data-sound-state]{display:block;margin-left:auto;font-size:14px;font-weight:600}}
+.forum-reply .btn[aria-busy=true]::after{content:none}
+.knowledge-map{position:relative}
+.knowledge-bird{position:absolute;z-index:2;right:4%;top:4%;width:64px;pointer-events:none;color:#2860a1;transform:rotate(-8deg)}
+.paper-bird{display:block;width:100%;height:auto;filter:drop-shadow(0 5px 5px rgba(24,67,112,.16))}
+.knowledge-bird.is-flying{animation:bird-arrive 1.2s cubic-bezier(.2,.7,.2,1) both}
+@keyframes bird-arrive{0%{opacity:0;transform:translate(-100px,36px) rotate(-20deg) scale(.7)}65%{opacity:1;transform:translate(5px,-6px) rotate(5deg)}100%{opacity:1;transform:rotate(-8deg)}}
+.empty-bird{width:76px;flex:0 0 76px}.search-empty .empty-bird{margin:0 auto 12px}
+.forum-comment-list{position:relative}.forum-comment-list:before{content:"";position:absolute;left:45px;top:24px;bottom:24px;border-left:2px solid #dbe9f5;pointer-events:none}.forum-comment{position:relative}.forum-reply{transition:border-color 200ms ease,box-shadow 200ms ease}.forum-reply:focus-within{border-color:#7caad4;box-shadow:0 8px 24px rgba(31,85,139,.12)}
+.forum-reply textarea{transition:box-shadow 200ms ease}.forum-reply textarea:focus{box-shadow:0 0 0 3px rgba(46,120,190,.13)}
+.forum-reply button[aria-busy="true"]{opacity:.7;cursor:wait}.forum-comment.is-new-comment{border-color:#72accc;background:#f2f9ff;box-shadow:0 8px 24px rgba(32,96,153,.12)}
+.comment-bird{width:54px;margin:0 0 4px auto;pointer-events:none;animation:bird-send 900ms ease-out both}
+@keyframes bird-send{from{opacity:0;transform:translate(-24px,20px) rotate(-18deg)}35%{opacity:1}to{opacity:0;transform:translate(12px,-36px) rotate(8deg)}}
+.flashcard.is-complete{background:#eaf7f2;border-color:#81bba6;box-shadow:0 10px 28px rgba(30,110,85,.16)}
+@media(max-width:600px){.knowledge-bird{width:48px}.forum-comment-list:before{left:34px}.empty-bird{width:56px;flex-basis:56px}}
+@media(prefers-reduced-motion:reduce){.knowledge-bird.is-flying,.comment-bird{animation:none}.comment-bird{display:none}.forum-reply,.forum-reply textarea{transition:none}}

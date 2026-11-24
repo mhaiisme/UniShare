@@ -1,14 +1,15 @@
 <%- include('../partials/header') %>
 <h1>📄 Tất cả tài liệu</h1>
 <%- include('nav') %>
-<form method="get" class="inline-filter">
-  <select name="status">
+<form method="get" class="inline-filter uf-filter">
+  <label class="uf-admin-field">Trạng thái<select name="status">
     <option value="">Tất cả trạng thái</option>
     <% Object.keys(config.DOC_STATUS).forEach(function (k) { %><option value="<%= k %>" <%= f.status === k ? 'selected' : '' %>><%= config.DOC_STATUS[k] %></option><% }) %>
-  </select>
-  <input type="text" name="q" placeholder="Tiêu đề / email" value="<%= f.q %>">
-  <button class="btn btn-ghost">Lọc</button>
+  </select></label>
+  <label class="uf-admin-field">Tiêu đề hoặc email<input type="text" name="q" placeholder="Tiêu đề / email" value="<%= f.q %>">
+</label><button class="btn btn-primary" type="submit">Áp dụng</button><a class="uf-clear" href="/admin/documents">Xóa lọc</a>
 </form>
+<%- include('../partials/filter-chips', {filterValues:f,filterRoute:'/admin/documents'}) %>
 
 <div class="card table-wrap">
   <table>

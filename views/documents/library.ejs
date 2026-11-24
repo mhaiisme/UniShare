@@ -1,13 +1,7 @@
 <%- include('../partials/header') %>
-<h1>📚 Thư viện của tôi</h1>
-<h2>Đã mua (<%= purchased.length %>)</h2>
-<div class="grid grid-4">
-  <% purchased.forEach(function (d) { %><%- include('../partials/doc-card', { d: d }) %><% }) %>
-  <% if (!purchased.length) { %><p class="muted">Chưa có tài liệu đã mua.</p><% } %>
-</div>
-<h2>Đã mở khoá bằng điểm (<%= unlocked.length %>)</h2>
-<div class="grid grid-4">
-  <% unlocked.forEach(function (d) { %><%- include('../partials/doc-card', { d: d }) %><% }) %>
-  <% if (!unlocked.length) { %><p class="muted">Chưa có tài liệu nào.</p><% } %>
-</div>
-<%- include('../partials/footer') %>
+<div class="learning-page library-page">
+<header class="learning-hero"><div><p class="eyebrow">THƯ VIỆN CÁ NHÂN</p><h1>Kiến thức bạn chọn,<br><span>luôn ở đây.</span></h1><p class="learning-lead">Tìm lại tài liệu đã mua và học liệu đã mở khóa bằng điểm.</p><nav class="library-jumps" aria-label="Nhóm học liệu"><a href="#library-purchased">Đã mua <span><%= purchased.length %></span></a><a href="#library-unlocked">Đã mở khóa <span><%= unlocked.length %></span></a></nav></div><div class="learning-art"><img src="/img/illustrations/open-book.svg" width="640" height="400" alt=""></div></header>
+<% [{id:'library-purchased',title:'Tài liệu đã mua',items:purchased},{id:'library-unlocked',title:'Đã mở khóa bằng điểm',items:unlocked}].forEach(function(group){ %>
+<section id="<%= group.id %>"><div class="learning-section-title"><div><h2><%= group.title %></h2></div><p><%= group.items.length %> tài liệu</p></div><div class="resource-grid"><% group.items.forEach(function(d){ %><%- include('../partials/doc-card',{d:d}) %><% }) %>
+<% if(!group.items.length){ %><div class="learning-empty"><img src="/img/illustrations/study-cards.svg" width="640" height="400" alt=""><div><h3>Chưa có học liệu trong mục này</h3><p>Khám phá tài liệu theo trường và học phần để xây dựng thư viện của bạn.</p><a class="text-link" href="/search">Tìm học liệu →</a></div></div><% } %></div></section><% }) %>
+</div><%- include('../partials/footer') %>

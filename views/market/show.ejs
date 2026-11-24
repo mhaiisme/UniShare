@@ -3,14 +3,7 @@
   <div class="card">
     <div class="listing-detail">
       <div class="listing-detail-img">
-        <% if (listing.image_path) { %>
-          <img src="/uploads/<%= listing.image_path %>" alt="<%= listing.title %>">
-        <% } else { %>
-          <div class="book-cover" style="width:110px;height:150px">
-            <code><%= listing.course_code || listing.school_code || 'BOOK' %></code>
-            <span><%= u.truncate(listing.title, 48) %></span>
-          </div>
-        <% } %>
+        <%- include('../partials/book-media', {book:listing}) %>
       </div>
       <div>
         <div class="doc-meta">

@@ -1,0 +1,54 @@
+[
+  {
+    "id": "hero-study",
+    "query": "students studying books notebook university library",
+    "status": "ok",
+    "provider": "pexels",
+    "path": "assets/stock/hero-study.jpg",
+    "alt": "Three students work on laptops and books in a university library filled with shelves.",
+    "author": "Tima Miroshnichenko",
+    "authorUrl": "https://www.pexels.com/@tima-miroshnichenko",
+    "sourceUrl": "https://www.pexels.com/photo/students-sitting-at-the-table-9572389/",
+    "license": "Pexels License (https://www.pexels.com/license/)",
+    "usedInInterface": false
+  },
+  {
+    "id": "market-books",
+    "query": "stack of textbooks library books",
+    "status": "ok",
+    "provider": "pexels",
+    "path": "assets/stock/market-books.jpg",
+    "alt": "A collection of stacked books with visible Holy Bibles in a library arrangement.",
+    "author": "Chris Liu",
+    "authorUrl": "https://www.pexels.com/@chris-liu-753004655",
+    "sourceUrl": "https://www.pexels.com/photo/chinese-bible-in-stack-of-books-23021420/",
+    "license": "Pexels License (https://www.pexels.com/license/)",
+    "usedInInterface": false
+  },
+  {
+    "id": "community-study",
+    "query": "university students studying together library",
+    "status": "ok",
+    "provider": "pexels",
+    "path": "assets/stock/community-study.jpg",
+    "alt": "A diverse group of students studying together at a university library, engaged in discussion.",
+    "author": "Yan Krukau",
+    "authorUrl": "https://www.pexels.com/@yankrukov",
+    "sourceUrl": "https://www.pexels.com/photo/group-of-people-sitting-on-chair-in-front-of-table-8199558/",
+    "license": "Pexels License (https://www.pexels.com/license/)",
+    "usedInInterface": false
+  },
+  {
+    "id": "flashcard-study",
+    "query": "study notes flash cards notebook desk",
+    "status": "ok",
+    "provider": "pexels",
+    "path": "assets/stock/flashcard-study.jpg",
+    "alt": "Top view of a study desk with a notebook, laptop, and colorful sticky notes for efficient organization.",
+    "author": "cottonbro studio",
+    "authorUrl": "https://www.pexels.com/@cottonbro",
+    "sourceUrl": "https://www.pexels.com/photo/sticky-notes-on-laptop-5185081/",
+    "license": "Pexels License (https://www.pexels.com/license/)",
+    "usedInInterface": false
+  }
+]

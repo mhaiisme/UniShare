@@ -5,17 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= typeof title !== 'undefined' ? title + ' · ' : '' %>UniShare — Kho tài liệu & giáo trình đại học</title>
   <link rel="icon" type="image/png" href="/img/logo.png">
+  <link rel="stylesheet" href="/css/fonts.css">
   <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/unishare.css">
+  <link rel="stylesheet" href="/css/book-visuals.css">
+  <link rel="stylesheet" href="/css/book-editions.css">
+  <% if(path.startsWith('/forum')) { %><link rel="stylesheet" href="/css/forum.css"><% } %>
+  <link rel="stylesheet" href="/css/motion.css">
+  <link rel="stylesheet" href="/css/typography.css">
+  <link rel="stylesheet" href="/css/learning-spaces.css">
+  <link rel="stylesheet" href="/css/filters.css">
 </head>
 <body>
+<a class="skip-link" href="#main-content">Đến nội dung chính</a>
 <header class="topbar">
   <div class="container nav">
-    <a href="/" class="brand"><img src="/img/logo.png" alt="Bá Khí UniShare" class="brand-logo"><span>Uni<b>Share</b></span></a>
-    <form action="/search" method="get" class="nav-search">
-      <input type="search" name="q" placeholder="Tìm theo tên tài liệu, mã học phần (IT3011, TOKT1101)..." value="<%= typeof query !== 'undefined' && path === '/search' ? (query.q || '') : '' %>">
+    <a href="/" class="brand"><span class="brand-mark" aria-hidden="true"><img src="/img/logo.png" alt="" class="brand-logo brand-page--left"><img src="/img/logo.png" alt="" class="brand-logo brand-page--right"></span><span class="brand-copy"><span>Uni<b>Share</b></span><small>Kết tri thức, nối tương lai</small></span></a>
+    <form action="/search" method="get" class="nav-search uf-filter" aria-label="Tìm học liệu">
+      <input type="search" name="q" aria-label="Tìm tài liệu hoặc mã học phần" placeholder="Tìm theo tên tài liệu, mã học phần (IT3011, TOKT1101)..." value="<%= typeof query !== 'undefined' && path === '/search' ? (query.q || '') : '' %>">
     </form>
-    <button class="nav-toggle" type="button" onclick="document.querySelector('.nav-links').classList.toggle('open')">Menu</button>
-    <nav class="nav-links">
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-navigation">Menu</button>
+    <nav class="nav-links" id="main-navigation" aria-label="Điều hướng chính">
       <a href="/search" class="<%= path.startsWith('/search') || path.startsWith('/documents') ? 'active' : '' %>">Kho tài liệu</a>
       <a href="/market" class="<%= path.startsWith('/market') ? 'active' : '' %>">Giáo trình cũ</a>
       <a href="/forum" class="<%= path.startsWith('/forum') ? 'active' : '' %>">Thảo luận</a>
@@ -45,10 +55,14 @@
         <a href="/login">Đăng nhập</a>
         <a href="/register" class="btn btn-primary btn-sm">Đăng ký</a>
       <% } %>
+      <button type="button" class="sound-toggle" data-sound-toggle aria-pressed="false" aria-label="Âm thanh hiệu ứng" title="Bật Âm thanh hiệu ứng">
+        <svg class="sound-icon" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4Z"/><path class="sound-waves" d="M15 8a6 6 0 0 1 0 8M18 5a10 10 0 0 1 0 14"/><path class="sound-muted" d="m16 9 5 6m0-6-5 6"/></svg>
+        <span class="sound-copy">Âm thanh <span data-sound-state>Tắt</span></span>
+      </button>
     </nav>
   </div>
 </header>
-<main class="container main">
+<main class="container main" id="main-content">
 <% if (flash) { %>
-  <div class="alert alert-<%= flash.type %>"><%= flash.msg %></div>
+  <div class="alert alert-<%= flash.type %>" role="<%= flash.type === 'error' ? 'alert' : 'status' %>"><%= flash.msg %></div>
 <% } %>

@@ -1,10 +1,11 @@
 <%- include('../partials/header') %>
 <h1>👥 Người dùng</h1>
 <%- include('nav') %>
-<form method="get" class="inline-filter">
-  <input type="text" name="q" placeholder="Tìm email hoặc họ tên" value="<%= q %>">
-  <button class="btn btn-ghost">Tìm</button>
+<form method="get" class="inline-filter uf-filter">
+  <label class="uf-admin-field">Email hoặc họ tên<input type="text" name="q" placeholder="Tìm email hoặc họ tên" value="<%= q %>">
+</label><button class="btn btn-primary" type="submit">Áp dụng</button><a class="uf-clear" href="/admin/users">Xóa lọc</a>
 </form>
+<%- include('../partials/filter-chips', {filterValues:{q:q},filterRoute:'/admin/users'}) %>
 
 <div class="card table-wrap">
   <table>

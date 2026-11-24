@@ -1,0 +1,29 @@
+<svg class="paper-diagram" viewBox="0 0 256 112" width="256" height="112" fill="none">
+<% if (theme === 'algorithm') { %>
+  <path class="diagram-grid" d="M16 24H240M16 56H240M16 88H240M48 8V104M88 8V104M128 8V104M168 8V104M208 8V104"/>
+  <path class="diagram-link" d="M128 30V48H64V66M128 48H192V66M64 86v14M192 86v14"/>
+  <rect class="diagram-solid" x="100" y="8" width="56" height="28" rx="8"/>
+  <rect class="diagram-node" x="36" y="64" width="56" height="28" rx="8"/><rect class="diagram-node" x="164" y="64" width="56" height="28" rx="8"/>
+  <path class="diagram-on-solid" d="M119 18h18M119 25h12"/><path class="diagram-link" d="M53 74h22M53 81h14M181 74h22M181 81h14"/>
+  <circle class="diagram-dot" cx="64" cy="102" r="4"/><circle class="diagram-dot" cx="192" cy="102" r="4"/>
+<% } else if (theme === 'software') { %>
+  <rect class="diagram-node" x="16" y="16" width="70" height="80" rx="8"/><path class="diagram-link" d="M30 35h40M30 47h28M30 60h36M30 72h24M92 56h25m-6-6 6 6-6 6M187 56h23m-6-6 6 6-6 6"/>
+  <rect class="diagram-solid" x="124" y="32" width="56" height="48" rx="8"/><path class="diagram-on-solid" d="m145 47-8 9 8 9m14-18 8 9-8 9"/>
+  <circle class="diagram-node" cx="228" cy="56" r="18"/><path class="diagram-link" d="m220 56 6 6 11-13"/>
+<% } else if (['economics','statistics','math'].includes(theme)) { %>
+  <path class="diagram-grid" d="M24 24H236M24 48H236M24 72H236M64 16V96M104 16V96M144 16V96M184 16V96M224 16V96"/><path class="diagram-link" d="M24 12v84h216"/>
+  <% if (theme === 'economics') { %>
+    <path class="diagram-area" d="m40 78 184-56v23L40 94Z"/><path class="diagram-trend" d="m40 86 184-53"/>
+    <% [[48,76],[69,82],[90,60],[112,69],[134,45],[155,57],[176,31],[197,43],[219,25]].forEach(function(p){ %><circle class="diagram-dot" cx="<%= p[0] %>" cy="<%= p[1] %>" r="4"/><% }) %>
+  <% } else if (theme === 'statistics') { %>
+    <path class="diagram-area" d="M35 94C78 94 82 21 130 21s52 73 96 73Z"/><path class="diagram-trend" d="M35 94C78 94 82 21 130 21s52 73 96 73"/><path class="diagram-link" stroke-dasharray="4 4" d="M130 22v74"/>
+  <% } else { %>
+    <path class="diagram-area" d="M72 81Q132 82 195 31V96H72Z"/><path class="diagram-trend" d="M30 83C92 83 145 84 224 10"/><circle class="diagram-dot" cx="145" cy="66" r="4"/>
+  <% } %>
+<% } else if (theme === 'law') { %>
+  <path class="diagram-link" d="M128 14v80M96 98h64M128 24 65 40M128 24l63 16M65 40 41 76h48ZM191 40l-24 36h48Z"/>
+  <path class="diagram-area" d="M41 76q24 26 48 0M167 76q24 26 48 0"/><circle class="diagram-dot" cx="128" cy="17" r="5"/>
+<% } else { %>
+  <rect class="diagram-node" x="54" y="14" width="146" height="84" rx="8"/><path class="diagram-link" d="M79 35h85M79 49h99M104 68h63M104 82h47m-73-14 5 5 10-12m-15 21 5 5 10-12"/><path class="diagram-area" d="M188 14h12v84h-12Z"/>
+<% } %>
+</svg>

@@ -58,35 +58,61 @@
   const front = document.getElementById('fc-front');
   const back = document.getElementById('fc-back');
   const prog = document.getElementById('fc-progress');
+  const box = document.getElementById('fc-box');
+  let reviewing = false;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   function show() {
     const c = cards[i];
     flipped = false;
-    front.hidden = false;
-    back.hidden = true;
+    box.classList.remove('is-flipped');
+    box.setAttribute('aria-pressed', 'false');
+    front.setAttribute('aria-hidden', 'false');
+    back.setAttribute('aria-hidden', 'true');
     front.textContent = c.front;
     back.textContent = c.back;
     prog.textContent = `Thẻ ${i + 1} / ${cards.length} (Hộp ${c.box}/5) · Bấm vào thẻ hoặc Space để lật`;
   }
   window.flipCard = function () {
+    if (reviewing || i >= cards.length) return;
     flipped = !flipped;
-    front.hidden = flipped;
-    back.hidden = !flipped;
+    box.classList.toggle('is-flipped', flipped);
+    box.setAttribute('aria-pressed', String(flipped));
+    front.setAttribute('aria-hidden', String(flipped));
+    back.setAttribute('aria-hidden', String(!flipped));
   };
   window.gradeCard = async function (result) {
+    if (reviewing || i >= cards.length) return;
+    reviewing = true;
+    const controls = document.querySelectorAll('[onclick^="gradeCard"]');
+    controls.forEach(button => { button.disabled = true; });
     const c = cards[i];
-    await fetch(`/flashcards/${window.FC_DECK_ID}/cards/${c.id}/review`, {
+    try {
+    const response = await fetch(`/flashcards/${window.FC_DECK_ID}/cards/${c.id}/review`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ result }),
     });
+    if (!response.ok || response.redirected) throw new Error('Không lưu được kết quả. Hãy kiểm tra kết nối và đăng nhập rồi thử lại.');
+    if (!reduced.matches && box.animate) {
+      await box.animate([{opacity:1,transform:'translateX(0)'},{opacity:0,transform:'translateX(-20px)'}], {duration:160,easing:'ease-in'}).finished.catch(() => {});
+    }
     i++;
     if (i >= cards.length) {
-      document.getElementById('fc-box').innerHTML = '🎉 Hoàn thành phiên học!';
+      box.textContent = 'Hoàn thành phiên học!';
+      box.setAttribute('aria-disabled', 'true');
+      box.removeAttribute('aria-pressed');
       prog.textContent = `Đã ôn xong ${cards.length} thẻ.`;
     } else show();
+    if (!reduced.matches && box.animate) box.animate([{opacity:0,transform:'translateX(20px)'},{opacity:1,transform:'translateX(0)'}],{duration:240,easing:'ease-out'});
+    } catch (error) {
+      prog.textContent = error.message || 'Chưa lưu được kết quả. Vui lòng thử lại.';
+    } finally {
+      reviewing = false;
+      controls.forEach(button => { button.disabled = i >= cards.length; });
+    }
   };
   window.addEventListener('keydown', (e) => {
-    if (e.code === 'Space') { e.preventDefault(); window.flipCard(); }
+    if (e.code === 'Space' && !e.repeat && !e.target.closest('input,textarea,select,button,a,[contenteditable=true]')) { e.preventDefault(); window.flipCard(); }
   });
   show();
 })();
@@ -172,7 +198,7 @@
         ? `Đã tự động lưu <strong>${wrongItems.length} câu làm sai</strong> vào <a href="/flashcards/errors"><strong>Sổ tay bẫy đề thi</strong></a> để bạn ôn lại.`
         : 'Xuất sắc! Bạn không mắc lỗi sai nào.'
     }`;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   });
 })();
 
@@ -191,4 +217,13 @@
       try { localStorage.setItem(key, JSON.stringify(saved)); } catch (_) {}
     });
   });
+})();
+
+// Shared accessible menu and home study card.
+(() => {
+ const toggle=document.querySelector('.nav-toggle');
+ const menu=document.getElementById('main-navigation');
+ if(toggle && menu){toggle.addEventListener('click',()=>{const open=menu.classList.toggle('open');toggle.setAttribute('aria-expanded',String(open));});document.addEventListener('keydown',e=>{if(e.key==='Escape' && menu.classList.contains('open')){menu.classList.remove('open');toggle.setAttribute('aria-expanded','false');toggle.focus();}});}
+ const sample=document.getElementById('sample-flip');
+ if(sample)sample.addEventListener('click',()=>{const flipped=sample.getAttribute('aria-pressed')!=='true';sample.setAttribute('aria-pressed',String(flipped));document.getElementById('sample-question').hidden=flipped;document.getElementById('sample-answer').hidden=!flipped;});
 })();

@@ -1,19 +1,12 @@
 <a class="card listing-card" href="/market/<%= l.id %>">
-  <div>
+  <div class="listing-card-main">
     <div class="listing-img">
-      <% if (l.image_path) { %>
-        <img src="/uploads/<%= l.image_path %>" alt="<%= l.title %>">
-      <% } else { %>
-        <div class="book-cover">
-          <code><%= l.course_code || l.school_code || 'BOOK' %></code>
-          <span><%= u.truncate(l.title, 36) %></span>
-        </div>
-      <% } %>
+      <%- include('book-media', {book:l}) %>
     </div>
-    <h3><%= l.title %></h3>
-    <div class="muted small"><%= l.author || '' %></div>
+    <h3><%= String(l.title || '').normalize('NFC') %></h3>
+    <div class="muted small listing-author"><%= String(l.author || '').normalize('NFC') %></div>
   </div>
-  <div>
+  <div class="listing-card-info">
     <div class="doc-meta">
       <% if (l.course_code) { %><span class="tag tag-code"><%= l.school_code || '' %> <%= l.course_code %></span><% } %>
       <span class="tag"><%= config.CONDITIONS[l.condition] %></span>

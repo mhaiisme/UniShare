@@ -9,9 +9,9 @@
     </div>
   <% } else { %>
     <p class="muted" id="fc-progress">Thẻ 1 / <%= cards.length %> · Bấm vào thẻ (hoặc phím Space) để lật</p>
-    <div class="flashcard" id="fc-box" onclick="flipCard()">
-      <div class="fc-side" id="fc-front"></div>
-      <div class="fc-side fc-back" id="fc-back" hidden></div>
+    <div class="flashcard" id="fc-box" role="button" tabindex="0" aria-label="Lật thẻ ôn tập" onclick="flipCard()" onkeydown="if(event.key==='Enter'){event.preventDefault();flipCard()}">
+      <div class="fc-side fc-front" id="fc-front"></div>
+      <div class="fc-side fc-back" id="fc-back" aria-hidden="true"></div>
     </div>
     <div class="btn-row center" style="margin-top:16px">
       <button class="btn btn-danger btn-lg" onclick="gradeCard('again')">❌ Chưa nhớ (về hộp 1)</button>
